@@ -1,28 +1,57 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "auth.h"
 #include "event.h"
+#include "fileio.h"
+#include "report.h"
+#include "staff.h"
 #include "user.h"
+#include "utils.h"
 
-bool loginStatus = false;
+bool loginSession = false;
 
 int main()
 {
+    char studentId[20];
+    char password[255];
+
+    // init sample account - using only once - after done using, comment this shit!
+    initData();
 
     printf("-- WELCOME TO EVENT CONTRIBUTING SYSTEM --\n");
-    int choice;
-    do
+    printf("YOU'RE NOT LOGIN! LOGIN DOWN HERE!\n");
+    while (!loginSession)
     {
-        if (loginStatus == false)
+        printf("Enter MSSV: ");
+        inputString(studentId, sizeof(studentId));
+
+        printf("Enter Password: ");
+        inputString(password, sizeof(password));
+
+        int loginStatus = loginAccount(studentId, password);
+        if (loginStatus == -1)
         {
-            printf("YOU'RE NOT LOGIN YET! PLEASE LOGIN NOW!");
-            // routing to login logic
+            printf("ACCOUNT NOT FOUND! REENTER!\n");
+        }
+        else if (loginStatus == -2)
+        {
+            printf("THIS ACCOUNT IS LOCKED! CONTACT BCN\n");
         }
         else
         {
-            // print menu here, divide function for role
+            loginSession = true;
+            int role = loginStatus;
+            if (role == 1)
+            {
+                bcnMenu();
+            }
+            else
+            {
+                staffMenu();
+            }
         }
-    } while (choice != 0);
+    }
 
     return 0;
 }

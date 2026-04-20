@@ -3,7 +3,7 @@
 
 typedef struct
 {
-    char studentId[9];
+    char studentId[20];
     int role;
     char description[255];
 } StaffEntry;

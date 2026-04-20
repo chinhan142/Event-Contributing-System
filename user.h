@@ -4,7 +4,7 @@
 
 typedef struct
 {
-    char studentId[9];
+    char studentId[20];
     char studentName[255];
     char email[255];
     Event event[30];
