@@ -8,8 +8,5 @@ void printDivider(char *title);
 int  confirmAction(char *message);
 void toLowerStr(char *dest, const char *src);
 
-// menu group
-void bcnMenu();
-void staffMenu();
 
 #endif
