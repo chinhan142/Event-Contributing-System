@@ -8,6 +8,8 @@
 #include "staff.h"
 #include "user.h"
 #include "utils.h"
+#include "menuBCN.h"
+#include "menuStaff.h"
 
 bool loginSession = false;
 
