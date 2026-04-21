@@ -2,5 +2,4 @@
 #define FILEIO_H
 
 void initData();
-
 #endif
