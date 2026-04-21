@@ -77,7 +77,7 @@ int loginAccount(char id[], char password[])
         // updateAccount implementation -> update the failCount to 0
         updateAccount(&foundAccount);
         
-        // Trả về role thành công
+        // Return success role
         if (foundAccount.role == ROLE_BCN)
         {
             return LOGIN_SUCCESS_BCN;
