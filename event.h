@@ -16,10 +16,17 @@ typedef enum
     STATUS_FINISHED = 2
 } EventStatus;
 
+typedef enum
+{
+    STAFF_LEADER = 0,
+    STAFF_MEMBER = 1,
+    STAFF_SUPPORT = 2
+} StaffRole;
+
 typedef struct
 {
     char studentId[ID_LENGTH];
-    int role;
+    StaffRole role; // Sử dụng StaffRole
     char description[DESC_LENGTH];
 } StaffEntry;
 
@@ -31,10 +38,9 @@ typedef struct
     char location[LOCATION_LENGTH];
     char startDate[DATE_LENGTH];
     char endDate[DATE_LENGTH];
-    int status; // Will use EventStatus values
+    int status; // Sử dụng các giá trị của EventStatus
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
 
-
-#endif
+#endif
