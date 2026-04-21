@@ -63,12 +63,12 @@ int loginAccount(char id[], char password[])
     // account not found
     if (!findAccountById(id, &foundAccount))
     {
-        return -1;
+        return LOGIN_FAILED;
     }
 
-    if (foundAccount.isLocked == 1)
+    if (foundAccount.isLocked == ACCOUNT_LOCKED)
     {
-        return -2;
+        return LOGIN_LOCKED;
     }
 
     if (strcmp(foundAccount.password, password) == 0)
@@ -76,7 +76,16 @@ int loginAccount(char id[], char password[])
         foundAccount.failCount = 0;
         // updateAccount implementation -> update the failCount to 0
         updateAccount(&foundAccount);
-        return foundAccount.role;
+        
+        // Trả về role thành công
+        if (foundAccount.role == ROLE_BCN)
+        {
+            return LOGIN_SUCCESS_BCN;
+        }
+        else
+        {
+            return LOGIN_SUCCESS_MEMBER;
+        }
     }
     else
     {
@@ -84,12 +93,16 @@ int loginAccount(char id[], char password[])
         if (foundAccount.failCount >= MAX_LOGIN_ATTEMPTS)
         {
             // updateAccount inside the .dat files
-            foundAccount.isLocked = 1;
+            foundAccount.isLocked = ACCOUNT_LOCKED;
             updateAccount(&foundAccount);
-            return -2;
+            return LOGIN_LOCKED;
         }
         updateAccount(&foundAccount);
-        return -1;
+        return LOGIN_FAILED;
     }
+    
+    return LOGIN_FAILED;
 }
+
+
 
