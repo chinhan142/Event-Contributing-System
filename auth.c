@@ -35,7 +35,9 @@ int findAccountById(char *id, Account *result)
     // open file in read binary mode
     FILE *f = fopen("data/accounts.dat", "rb");
     if (f == NULL)
+    {
         return 0;
+    }
 
     Account temp;
     // reading every line in the accounts.dat files
@@ -60,29 +62,47 @@ int loginAccount(char id[], char password[])
     Account foundAccount;
     // account not found
     if (!findAccountById(id, &foundAccount))
-        return -1;
+    {
+        return LOGIN_FAILED;
+    }
 
-    if (foundAccount.isLocked == 1)
-        return -2;
+    if (foundAccount.isLocked == ACCOUNT_LOCKED)
+    {
+        return LOGIN_LOCKED;
+    }
 
     if (strcmp(foundAccount.password, password) == 0)
     {
         foundAccount.failCount = 0;
         // updateAccount implementation -> update the failCount to 0
         updateAccount(&foundAccount);
-        return foundAccount.role;
+        
+        // Trả về role thành công
+        if (foundAccount.role == ROLE_BCN)
+        {
+            return LOGIN_SUCCESS_BCN;
+        }
+        else
+        {
+            return LOGIN_SUCCESS_MEMBER;
+        }
     }
     else
     {
         foundAccount.failCount++;
-        if (foundAccount.failCount >= 3)
+        if (foundAccount.failCount >= MAX_LOGIN_ATTEMPTS)
         {
             // updateAccount inside the .dat files
-            foundAccount.isLocked = 1;
+            foundAccount.isLocked = ACCOUNT_LOCKED;
             updateAccount(&foundAccount);
-            return -2;
+            return LOGIN_LOCKED;
         }
         updateAccount(&foundAccount);
-        return -1;
+        return LOGIN_FAILED;
     }
+    
+    return LOGIN_FAILED;
 }
+
+
+
