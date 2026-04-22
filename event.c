@@ -1,8 +1,8 @@
-#include <event.h>
+#include "event.h"
+#include "colors.h"
+#include "utils.h"
 #include <stdio.h>
-#include <utils.h>
 #include <string.h>
-#include <colors.h>
 #include <time.h>
 
 
