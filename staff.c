@@ -116,3 +116,74 @@ void addStaffToEvent() {
     printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
   }
 }
+
+// 2.6: Implementation of editing staff
+void editStaffInEvent() {
+  char eventId[EVENT_ID_LENGTH];
+  printDivider("EDIT STAFF ROLE/MISSION");
+  printf("Enter Event ID (EVxxxxxx): ");
+  inputString(eventId, sizeof(eventId));
+
+  int idx = findEventIndexById(eventId);
+  if (idx == -1) {
+    printf("\033[1;31m[ERROR] Event not found!\033[0m\n");
+    return;
+  }
+
+  Event e;
+  loadEventAt(idx, &e);
+
+  if (!canModifyStaff(&e)) {
+    printf("\033[1;31m[ERROR] Only allowed to edit when event is UPCOMING!\033[0m\n");
+    return;
+  }
+
+  if (e.staffCount == 0) {
+    printf("\033[1;33m[INFO] No staff members in this event.\033[0m\n");
+    return;
+  }
+
+  // Display current staff
+  printf("\nCurrent Staff List:\n");
+  for (int i = 0; i < e.staffCount; i++) {
+    printf("%d. [%s] Role: %d, Mission: %s\n", i + 1, e.staffList[i].studentId,
+           e.staffList[i].role, e.staffList[i].description);
+  }
+
+  int choice;
+  printf("Select staff member to edit (1-%d) or 0 to cancel: ", e.staffCount);
+  if (scanf("%d", &choice) != 1) choice = 0;
+  getchar();
+
+  if (choice < 1 || choice > e.staffCount) return;
+
+  StaffEntry *entry = &e.staffList[choice - 1];
+
+  // Update Role
+  int tempRole;
+  printf("New Role (%d: Leader, %d: Member, %d: Support) [%d]: ", STAFF_LEADER,
+         STAFF_MEMBER, STAFF_SUPPORT, entry->role);
+  if (scanf("%d", &tempRole) == 1) {
+    entry->role = (StaffRole)tempRole;
+  }
+  getchar();
+
+  // Update Mission
+  printf("New Mission Description [%s]: ", entry->description);
+  char newDesc[DESC_LENGTH];
+  inputString(newDesc, sizeof(newDesc));
+  if (strlen(newDesc) > 0) {
+    strcpy(entry->description, newDesc);
+  }
+
+  if (saveEventAt(idx, &e)) {
+    printf("\033[1;32m[SUCCESS] Staff information updated successfully!\033[0m\n");
+  } else {
+    printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
+  }
+}
+
+// Helper: check if staff in event can be modified (only if status is UPCOMING)
+int canModifyStaff(Event *e) {
+  return (e->status == STATUS_UPCOMING);
+}
