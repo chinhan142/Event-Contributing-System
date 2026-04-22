@@ -29,8 +29,8 @@ typedef struct
 {
     char studentId[ID_LENGTH];
     char password[PASSWORD_LENGTH];
-    int role;        // Sử dụng AccountRole
-    int isLocked;    // Sử dụng AccountLockState
+    AccountRole role;
+    AccountLockState isLocked;
     int failCount;
 } Account;
 
