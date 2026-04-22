@@ -42,9 +42,9 @@ typedef struct
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
-
-int isValidDate(char *start, char *end);
-void createEvent();
+int isValidDate(char *date);
+int isChronological(char *start, char *end);
 int checkTime(int year, int mon, int day);
+void createEvent();
 void updateStatus(Event *event);
 #endif

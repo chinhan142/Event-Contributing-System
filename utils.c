@@ -13,8 +13,8 @@ void inputString(char *str, int size)
 int stoi(char *str, int fromIndex, int toIndex){
     int result = 0;
     for(int i = fromIndex;i <= toIndex;i++){
-        i = i*10;
-        i += str[i] - '0';
+        result *= 10;
+        result += str[i] - '0';
     }
     return result;
 }
