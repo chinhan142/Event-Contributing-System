@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "menuBCN.h"
 #include "utils.h"
+#include "event.h"
 
 void bcnMenu()
 {
@@ -53,7 +54,9 @@ void bcnMenu()
             printf("[TODO] Update status\n");
             break;
         case 5:
-            printf("[TODO] View all events\n");
+            printf("View all events\n");
+            int filterStatus = inputEventStatus();
+            displayAllEvent(filterStatus);
             break;
         case 6:
             printf("[TODO] View event detail\n");
