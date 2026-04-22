@@ -2,7 +2,8 @@
 #include "event.h"
 #include "menuBCN.h"
 #include "utils.h"
-
+#include "event.h"
+#include "fileio.h"
 void bcnMenu()
 {
     int choice;
@@ -54,22 +55,25 @@ void bcnMenu()
             printf("[TODO] Update status\n");
             break;
         case 5:
-            printf("[TODO] View all events\n");
+            printf("View all events\n");
+            int filterStatus = inputEventStatus();
+            displayAllEvent(filterStatus);
             break;
         case 6:
             printf("[TODO] View event detail\n");
             break;
         case 7:
-            printf("[TODO] Search event\n");
+            printf("Search event\n");
+            printEventResult();
             break;
         case 8:
-            printf("[TODO] Add staff\n");
+            addStaffToEvent();
             break;
         case 9:
-            printf("[TODO] Edit staff role\n");
+            editStaffInEvent();
             break;
         case 10:
-            printf("[TODO] Remove staff\n");
+            deleteStaffFromEvent();
             break;
         case 11:
             printf("[TODO] Staff history\n");

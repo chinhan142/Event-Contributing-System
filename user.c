@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "user.h"
+#include "event.h"      // for access Event struct, StaffEntry
+#include "fileio.h"     // for access getNextEventIndex(), loadEventAt()
+#include "utils.h"      // for access printDivider()
+
+//global cache
+CacheEvent *eventCache = NULL;
+int cacheSize = 0;
+int cacheCapacity = 0;
+int cacheInitialized = 0;
+
+void initializeEventCache()
+{
+    //lấy event trước
+    if (cacheInitialized) return;  // Chỉ load 1 lần
+     cacheCapacity = getNextEventIndex(); // Số lượng event hiện có
+     if (cacheCapacity == 0) {
+        return; // No events to load
+     }
+     //cấp memory cho cache
+
+     eventCache = (CacheEvent *)malloc(sizeof(CacheEvent) * cacheCapacity);
+     if (eventCache == NULL) {
+        printf("Failed to allocate memory for event cache because out of memory.\n");
+        return; // Failed to allocate
+    }
+
+    // Mở file và đọc
+    FILE *f = fopen("data/events.dat", "rb");
+    if (f == NULL) return;
+    
+  
+    Event event;
+    while (fread(&event, sizeof(Event), 1, f))
+    {
+        // dọn rác bộ nhớ tránh in ký tự rác
+        event.eventId[sizeof(event.eventId) - 1] = '\0';
+        event.eventId[strcspn(event.eventId, "\r\n ")] = '\0';
+        // Lưu event vào cache
+        eventCache[cacheSize].event = event;
+        eventCache[cacheSize].studentRole = STAFF_MEMBER;  // Default
+        cacheSize++;
+    }
+    
+    fclose(f);
+    cacheInitialized = 1;  // load marked as done
+}
+
+int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role) {
+    for (int i = 0; i < event->staffCount; i++) {
+        if (strcmp(event->staffList[i].studentId, studentId) == 0) {
+            *role = event->staffList[i].role;
+            return 1; // Found
+        }
+    }
+    return 0; // Not found
+}
+void displayEventHistory(){    
+    char StudentId[20];
+    printf("Enter your Student ID: ");
+    inputString(StudentId, sizeof(StudentId));
+    initializeEventCache(); // call this once to load cache
+    if (cacheSize == 0) {
+        printf("\nNo events available in the system.\n");
+        printf("Press Enter to continue");
+        getchar();
+        return;
+    }
+    int foundCount = 0;
+    StaffRole role; //this variable will be used by findStaffInEvent to return the role of the user in the event
+    printDivider("MY EVENT HISTORY");
+    printf("%-10s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Your Role", "Start Date");
+    printf("-------------------------------------------------------------------------------\n");
+    for (int i = 0;i < cacheSize; i++){
+            if (findStaffInEvent(&eventCache[i].event, StudentId, &role)) {
+                printf("%-10s | %-25.25s | %-12s | %s\n", 
+                    eventCache[i].event.eventId, 
+                    eventCache[i].event.name, 
+                    (role == STAFF_LEADER) ? "Leader" : (role == STAFF_MEMBER) ? "Member" : "Support", 
+                    eventCache[i].event.startDate);
+                foundCount++;
+            }
+        }
+        printf("-------------------------------------------------------------------------------\n");
+        if (foundCount == 0) {
+            printf("You have not participated in any events yet.\n");
+        } else {
+            printf("Total: %d event(s) found in your history.\n", foundCount);
+        }
+        printf("\nPress Enter to continue");
+        getchar();
+    }

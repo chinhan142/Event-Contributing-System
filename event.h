@@ -1,8 +1,9 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "user.h"
 
+#define ID_LENGTH 20
+#define NAME_LENGTH 255
 #define MAX_STAFF_PER_EVENT 30
 #define EVENT_ID_LENGTH 10
 #define DESC_LENGTH 255
@@ -38,13 +39,18 @@ typedef struct
     char location[LOCATION_LENGTH];
     char startDate[DATE_LENGTH];
     char endDate[DATE_LENGTH];
-    int status; // Sử dụng các giá trị của EventStatus
+    EventStatus status;
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
+void printEventResult();
 int isValidDate(char *date);
 int isChronological(char *start, char *end);
 int checkTime(int year, int mon, int day);
 void createEvent();
 void updateStatus(Event *event);
+// Case 5: View all events Function
+int inputEventStatus();
+void displayAllEvent(int filterStatus);
+
 #endif
