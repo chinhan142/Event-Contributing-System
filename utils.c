@@ -10,6 +10,15 @@ void inputString(char *str, int size)
     str[strcspn(str, "\n")] = '\0';
 }
 
+int stoi(char *str, int fromIndex, int toIndex){
+    int result = 0;
+    for(int i = fromIndex;i <= toIndex;i++){
+        i = i*10;
+        i += str[i] - '0';
+    }
+    return result;
+}
+
 void clearScreen()
 {
     system("cls || clear");

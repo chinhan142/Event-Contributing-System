@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <event.h>
 #include "menuBCN.h"
 #include "utils.h"
 
@@ -41,7 +42,7 @@ void bcnMenu()
         {
             // calling function here
         case 1:
-            printf("[TODO] Create event\n");
+            createEvent();
             break;
         case 2:
             printf("[TODO] Edit event\n");
