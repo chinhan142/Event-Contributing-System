@@ -1,6 +1,6 @@
 #ifndef MENUBCN_H
 #define MENUBCN_H
 
-void bcnMenu();
+void bcnMenu(Account *acc);
 
 #endif

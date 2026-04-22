@@ -57,7 +57,7 @@ int findAccountById(char *id, Account *result)
 }
 
 // This function helps login the account of the user
-int loginAccount(char id[], char password[])
+int loginAccount(char id[], char password[], Account *sessionUser)
 {
     Account foundAccount;
     // account not found
@@ -76,7 +76,9 @@ int loginAccount(char id[], char password[])
         foundAccount.failCount = 0;
         // updateAccount implementation -> update the failCount to 0
         updateAccount(&foundAccount);
-        
+
+        *sessionUser = foundAccount;
+
         // Return success role
         if (foundAccount.role == ROLE_BCN)
         {

@@ -18,6 +18,8 @@ int main()
 {
     char studentId[20];
     char password[255];
+    Account currentAcc; //store the current logged in account info for later use
+
 
     // Initialize default(mocktest) datas and files
     initializeSystem();
@@ -33,7 +35,7 @@ int main()
         inputString(password, sizeof(password));
 
 
-        int loginStatus = loginAccount(studentId, password);
+        int loginStatus = loginAccount(studentId, password, &currentAcc);
         if (loginStatus == LOGIN_FAILED)
         {
             printf("ACCOUNT NOT FOUND! REENTER!\n");
@@ -47,11 +49,11 @@ int main()
             loginSession = true;
             if (loginStatus == LOGIN_SUCCESS_BCN)
             {
-                bcnMenu();
+                bcnMenu(&currentAcc);
             }
             else
             {
-                staffMenu();
+                staffMenu(&currentAcc);
             }
         }
 

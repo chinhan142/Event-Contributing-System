@@ -25,7 +25,7 @@ typedef enum
     ACCOUNT_LOCKED = 1
 } AccountLockState;
 
-typedef struct
+typedef struct Account
 {
     char studentId[ID_LENGTH];
     char password[PASSWORD_LENGTH];
@@ -36,6 +36,6 @@ typedef struct
 
 void updateAccount(Account *updated);
 int findAccountById(char *id, Account *result);
-int loginAccount(char id[], char password[]);
+int loginAccount(char id[], char password[], Account *sessionUser);
 
 #endif

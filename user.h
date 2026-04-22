@@ -6,14 +6,22 @@
 #define EMAIL_LENGTH 255
 #define PASSWORD_LENGTH 255
 #define MAX_SEARCH_RESULTS 50
+#define phoneNumberLength 20
+#define specializeLength 255
 
+typedef struct Account Account;
 typedef struct
 {
     char studentId[ID_LENGTH];
     char studentName[NAME_LENGTH];
     char email[EMAIL_LENGTH];
+    char phoneNumber[phoneNumberLength];
+    int role;
+    char specialize[specializeLength];
+
 } User;
 
+void viewProfile(const Account *acc);
 int findUserById(const char *id, User *result);
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count);
 

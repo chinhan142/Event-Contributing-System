@@ -1,9 +1,13 @@
 #include <stdio.h>
+#include "auth.h"
+#include "user.h"
 #include "menuBCN.h"
 #include "utils.h"
 #include "event.h"
 
-void bcnMenu()
+
+
+void bcnMenu(Account *acc)
 {
     int choice;
     do
@@ -80,7 +84,8 @@ void bcnMenu()
             printf("[TODO] Statistics\n");
             break;
         case 13:
-            printf("[TODO] View profile\n");
+            printf("View profile\n");
+            viewProfile(acc);
             break;
         case 14:
             printf("[TODO] Change password\n");
