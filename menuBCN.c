@@ -2,6 +2,7 @@
 #include "menuBCN.h"
 #include "utils.h"
 #include "event.h"
+#include "staff.h"
 
 void bcnMenu()
 {
@@ -65,13 +66,13 @@ void bcnMenu()
             printf("[TODO] Search event\n");
             break;
         case 8:
-            printf("[TODO] Add staff\n");
+            addStaffToEvent();
             break;
         case 9:
-            printf("[TODO] Edit staff role\n");
+            editStaffInEvent();
             break;
         case 10:
-            printf("[TODO] Remove staff\n");
+            deleteStaffFromEvent();
             break;
         case 11:
             printf("[TODO] Staff history\n");
