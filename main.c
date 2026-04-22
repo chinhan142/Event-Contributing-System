@@ -34,19 +34,18 @@ int main()
 
 
         int loginStatus = loginAccount(studentId, password);
-        if (loginStatus == -1)
+        if (loginStatus == LOGIN_FAILED)
         {
             printf("ACCOUNT NOT FOUND! REENTER!\n");
         }
-        else if (loginStatus == -2)
+        else if (loginStatus == LOGIN_LOCKED)
         {
             printf("THIS ACCOUNT IS LOCKED! CONTACT BCN\n");
         }
         else
         {
             loginSession = true;
-            int role = loginStatus;
-            if (role == 1)
+            if (loginStatus == LOGIN_SUCCESS_BCN)
             {
                 bcnMenu();
             }
@@ -55,6 +54,7 @@ int main()
                 staffMenu();
             }
         }
+
     }
 
     return 0;
