@@ -3,3 +3,7 @@
 *.o
 *.out
 main
+
+# Test files
+tests/
+test_staff

@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "menuStaff.h"
 #include "utils.h"
-
+#include "user.h"
 void staffMenu()
 {
     int choice;
@@ -33,7 +33,8 @@ void staffMenu()
             printf("[TODO] Event detail\n");
             break;
         case 3:
-            printf("[TODO] Event history\n");
+            printf("View Event history\n");
+            displayEventHistory();
             break;
         case 4:
             printf("[TODO] View profile\n");
