@@ -66,13 +66,13 @@ void bcnMenu()
             printEventResult();
             break;
         case 8:
-            printf("[TODO] Add staff\n");
+            addStaffToEvent();
             break;
         case 9:
-            printf("[TODO] Edit staff role\n");
+            editStaffInEvent();
             break;
         case 10:
-            printf("[TODO] Remove staff\n");
+            deleteStaffFromEvent();
             break;
         case 11:
             printf("[TODO] Staff history\n");

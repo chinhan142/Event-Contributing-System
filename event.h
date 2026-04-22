@@ -26,9 +26,10 @@ typedef enum
 typedef struct
 {
     char studentId[ID_LENGTH];
-    StaffRole role; // Using StaffRole
+    StaffRole role;
     char description[DESC_LENGTH];
 } StaffEntry;
+
 typedef struct
 {
     char eventId[EVENT_ID_LENGTH];
@@ -37,7 +38,7 @@ typedef struct
     char location[LOCATION_LENGTH];
     char startDate[DATE_LENGTH];
     char endDate[DATE_LENGTH];
-    EventStatus status; // Using EventStatus
+    EventStatus status;
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
