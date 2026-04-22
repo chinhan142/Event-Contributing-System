@@ -26,7 +26,7 @@ typedef enum
 typedef struct
 {
     char studentId[ID_LENGTH];
-    StaffRole role; // Sử dụng StaffRole
+    StaffRole role; // Using StaffRole
     char description[DESC_LENGTH];
 } StaffEntry;
 
@@ -38,9 +38,13 @@ typedef struct
     char location[LOCATION_LENGTH];
     char startDate[DATE_LENGTH];
     char endDate[DATE_LENGTH];
-    int status; // Sử dụng các giá trị của EventStatus
+    EventStatus status; // Using EventStatus
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
 
-#endif
+// Case 5: View all events Function
+int inputEventStatus();
+void displayAllEvent(int filterStatus);
+
+#endif

@@ -3,7 +3,6 @@
 #include "fileio.h"
 #include "auth.h"
 #include "user.h"
-
 // Get the index of the next event record in the events.dat file
 int getNextEventIndex()
 {
@@ -72,4 +71,4 @@ int findEventIndexById(const char *id)
     }
     fclose(f);
     return -1;
-}
+}
