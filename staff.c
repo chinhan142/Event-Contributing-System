@@ -18,7 +18,7 @@ int isStaffInEvent(Event *e, const char *studentId) {
   return 0;
 }
 
-// 2.5: Implementation of adding staff to an event
+// 2.5: Implementation of adding staff
 void addStaffToEvent() {
   char eventId[EVENT_ID_LENGTH];
   printDivider("ADD STAFF TO EVENT");
@@ -34,7 +34,7 @@ void addStaffToEvent() {
   Event e;
   loadEventAt(idx, &e);
 
-  // Validate Status: Cannot add if event is Finished
+  // Validate Status: Cannot add if event is finished
   if (e.status == STATUS_FINISHED) {
     printf("\033[1;31m[ERROR] Event has finished, cannot add staff!\033[0m\n");
     return;
