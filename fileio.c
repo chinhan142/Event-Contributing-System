@@ -62,7 +62,7 @@ int findEventIndexById(const char *id)
     int index = 0;
     while (fread(&temp, sizeof(Event), 1, f))
     {
-        if (strcmp(temp.eventId, id) == 0)
+        if (strcasecmp(temp.eventId, id) == 0)
         {
             fclose(f);
             return index;
@@ -72,3 +72,4 @@ int findEventIndexById(const char *id)
     fclose(f);
     return -1;
 }
+
