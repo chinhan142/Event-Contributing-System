@@ -3,13 +3,13 @@
 
 #include "event.h"
 
-// Task 2.5: logic + ui add staff to event
+// Case 8: logic + ui add staff to event
 void addStaffToEvent();
 
-// Task 2.6: edit staff role/mission
+// Case 9: logic + ui edit staff role/mission
 void editStaffInEvent();
 
-// Task 2.7: delete staff from event
+// Case 10: logic + ui delete staff from event
 void deleteStaffFromEvent();
 
 // Helper: checking if a student is already assigned to an event
