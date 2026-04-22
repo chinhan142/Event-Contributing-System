@@ -37,3 +37,19 @@ void toLowerStr(char *dest, const char *src)
         dest[i] = tolower(src[i]);
     dest[strlen(src)] = '\0';
 }
+
+void toUpperStr(char *dest, const char *src)
+{
+    for (int i = 0; src[i]; i++)
+        dest[i] = toupper(src[i]); 
+    dest[strlen(src)] = '\0';
+}
+int compareDates(const char *date1, const char *date2)
+{
+    int y1, m1, d1 ,y2, m2, d2;
+    sscanf(date1, "%d-%d-%d", &y1, &m1, &d1);
+    sscanf(date2, "%d-%d-%d", &y2, &m2, &d2);
+    if (y1 != y2) return y1 - y2;
+    if (m1 != m2) return m1 - m2;
+    return d1 - d2;
+}

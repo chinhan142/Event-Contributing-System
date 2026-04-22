@@ -1,8 +1,8 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "user.h"
-
+#define ID_LENGTH 20
+#define NAME_LENGTH 255
 #define MAX_STAFF_PER_EVENT 30
 #define EVENT_ID_LENGTH 10
 #define DESC_LENGTH 255
@@ -41,6 +41,7 @@ typedef struct
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
+void printEventResult();
 
 // Case 5: View all events Function
 int inputEventStatus();
