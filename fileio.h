@@ -1,5 +1,6 @@
 #ifndef FILEIO_H
 #define FILEIO_H
+#include <time.h>
 #include "event.h"
 
 int getNextEventIndex();
