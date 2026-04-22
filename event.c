@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "event.h"
 #include "fileio.h"
 #include "utils.h"
@@ -95,4 +96,50 @@ void displayAllEvent(int filterStatus)
         printf(" Total: %d event(s) listed.\n", count);
     }
     printf("\n");
+}
+
+// Search event with user input
+
+void printEventResult() {
+    clearScreen();
+    char inputID[EVENT_ID_LENGTH];
+    printf("Enter Event ID to search: ");
+    inputString(inputID, sizeof(inputID));
+    toUpperStr(inputID, inputID);
+    int index = findEventIndexById(inputID);
+    if (index == -1) {
+        printf("Event not found.\n");
+        printf("Press Enter to continue");
+        getchar();
+        clearScreen();
+        return;
+    }
+    
+    FILE *f = fopen("data/events.dat", "rb");
+    if (f == NULL) {
+        printf("No events found.\n");
+        printf("Press Enter to continue");
+        getchar();
+        clearScreen();
+        return;
+    }
+    
+    Event temp;
+    printf("\n");
+    printDivider("SEARCH RESULTS");
+    printf("%-12s | %-30s | %-15s | %s\n", "Event ID", "Name", "Status", "Date");
+    printf("===============================================================================\n");
+    fseek(f, index * sizeof(Event), SEEK_SET);
+    if(fread(&temp, sizeof(Event), 1, f)) {
+        printf("DEBUG: ID=%s | DATE=%s\n", temp.eventId, temp.startDate);
+        char statusStr[20];
+        switch (temp.status) {
+            case STATUS_UPCOMING: strcpy(statusStr, "Upcoming"); break;
+            case STATUS_ONGOING: strcpy(statusStr, "Ongoing"); break;
+            case STATUS_FINISHED: strcpy(statusStr, "Completed"); break;
+            default: strcpy(statusStr, "Unknown"); break;
+        }
+        printf("%-12s | %-30s | %-15s | %s\n", temp.eventId, temp.name, statusStr, temp.startDate);
+    }
+    fclose(f);
 }
