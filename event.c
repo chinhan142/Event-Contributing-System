@@ -23,7 +23,7 @@ void updateStatus(Event *event){
     int endY = stoi(event->endDate,0,3);
     int endM = stoi(event->endDate,5,6);
     int endD = stoi(event->endDate,8,9);
-    int start = checkStatus(startY, startM, startD);
+    int start = checkTime(startY, startM, startD);
     int end = checkTime(endY, endM, endD);
     if(start < 0) event->status = STATUS_UPCOMING;
     else if(start >= 0 && end <= 0) event->status = STATUS_ONGOING;
