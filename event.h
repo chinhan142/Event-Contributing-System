@@ -10,6 +10,7 @@ typedef struct
 
 typedef struct
 {
+    int index;
     char eventId[9];
     char name[255];
     char description[255];
