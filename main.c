@@ -32,7 +32,6 @@ int main()
         printf("Enter Password: ");
         inputString(password, sizeof(password));
 
-
         int loginStatus = loginAccount(studentId, password);
         if (loginStatus == LOGIN_FAILED)
         {
@@ -54,7 +53,6 @@ int main()
                 staffMenu();
             }
         }
-
     }
 
     return 0;

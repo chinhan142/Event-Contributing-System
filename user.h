@@ -18,10 +18,10 @@ typedef struct
 typedef struct
 {
     Event event;
-    StaffRole studentRole; //curent user role in this event
+    StaffRole studentRole; // curent user role in this event
 } CacheEvent;
 
-//Extern global cache
+// Extern global cache
 extern CacheEvent *eventCache;
 extern int cacheSize;
 extern int cacheCapacity;
