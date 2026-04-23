@@ -34,7 +34,7 @@ void staffMenu(Account *acc)
             break;
         case 3:
             printf("View Event history\n");
-            displayEventHistory();
+            displayEventHistory(acc);
             break;
         case 4:
             printf("View profile\n");
