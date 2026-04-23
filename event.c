@@ -6,8 +6,9 @@
 #include <string.h>
 #include <time.h>
 
-//Returns the difference in seconds between now and the specified date (start date and end date)
-int checkTime(int year, int mon, int day){
+// Returns the difference in seconds between now and the specified date (start date and end date)
+int checkTime(int year, int mon, int day)
+{
     time_t now = time(NULL);
     struct tm info = {0};
     info.tm_year = year - 1900;
@@ -16,134 +17,160 @@ int checkTime(int year, int mon, int day){
     info.tm_isdst = -1;
     return now - mktime(&info);
 }
-void updateStatus(Event *event){
+void updateStatus(Event *event)
+{
 
-    int startY = stoi(event->startDate,0,3);
+    int startY = stoi(event->startDate, 0, 3);
 
-    int startM = stoi(event->startDate,5,6);
-    int startD = stoi(event->startDate,8,9);
-    int endY = stoi(event->endDate,0,3);
-    int endM = stoi(event->endDate,5,6);
-    int endD = stoi(event->endDate,8,9);
+    int startM = stoi(event->startDate, 5, 6);
+    int startD = stoi(event->startDate, 8, 9);
+    int endY = stoi(event->endDate, 0, 3);
+    int endM = stoi(event->endDate, 5, 6);
+    int endD = stoi(event->endDate, 8, 9);
     int start = checkTime(startY, startM, startD);
     int end = checkTime(endY, endM, endD);
 
-    if(start < 0) event->status = STATUS_UPCOMING;
-    else if(start >= 0 && end <= 0) event->status = STATUS_ONGOING;
-    else event->status = STATUS_FINISHED;
+    if (start < 0)
+        event->status = STATUS_UPCOMING;
+    else if (start >= 0 && end <= 0)
+        event->status = STATUS_ONGOING;
+    else
+        event->status = STATUS_FINISHED;
 }
-// Checks if two dates follow the yyyy/mm/dd format ensure the date is valid
-int isValidDate(char *date){
-    if(date[4] != '/' || date[7] != '/' || date[10] != '\0'){
-        printf(RED "Input does not match the required format (yyyy/mm/dd) !\n" RESET);
+// Checks if two dates follow the yyyy-mm-dd format ensure the date is valid
+int isValidDate(char *date)
+{
+    if (date[4] != '-' || date[7] != '-' || date[10] != '\0')
+    {
+        printf(RED "Input does not match the required format (yyyy-mm-dd) !\n" RESET);
         return 0;
     }
 
-    int checkY = stoi(date,0,3);
-    int checkM = stoi(date,5,6);
-    int checkD = stoi(date,8,9); 
-    if(checkM > 12 || checkM < 1){
-        printf(RED "Invalid date, Please try again !\n"RESET);
+    int checkY = stoi(date, 0, 3);
+    int checkM = stoi(date, 5, 6);
+    int checkD = stoi(date, 8, 9);
+    if (checkM > 12 || checkM < 1)
+    {
+        printf(RED "Invalid date, Please try again !\n" RESET);
         return 0;
     }
-    else if(checkM == 4 || checkM == 6 || checkM == 9 || checkM == 11){
-        if(1 <= checkD && checkD <= 30){
+    else if (checkM == 4 || checkM == 6 || checkM == 9 || checkM == 11)
+    {
+        if (1 <= checkD && checkD <= 30)
+        {
             return 1;
         }
-        else {
-            printf(RED "Invalid date, Please try again !\n"RESET);
+        else
+        {
+            printf(RED "Invalid date, Please try again !\n" RESET);
             return 0;
         }
     }
-    else if(checkM == 2){
-        if(1 <= checkD && checkD <= (checkY % 4 == 0 && checkY % 100 != 0 ? 29 : 28)){
+    else if (checkM == 2)
+    {
+        if (1 <= checkD && checkD <= (checkY % 4 == 0 && checkY % 100 != 0 ? 29 : 28))
+        {
             return 1;
         }
-        else{
-            printf(RED "Invalid date, Please try again !\n"RESET);
+        else
+        {
+            printf(RED "Invalid date, Please try again !\n" RESET);
             return 0;
         }
     }
-    else{
-        if(1 <= checkD && checkD <= 31){
+    else
+    {
+        if (1 <= checkD && checkD <= 31)
+        {
             return 1;
         }
-        else{
-            printf(RED "Invalid date, Please try again !\n"RESET);
+        else
+        {
+            printf(RED "Invalid date, Please try again !\n" RESET);
             return 0;
         }
     }
 }
 // Check if  Start Date ≤ End Date.
-int isChronological(char *start, char *end){
+int isChronological(char *start, char *end)
+{
     int year = strncmp(start, end, 4);
     int month = strncmp(start + 5, end + 5, 2);
     int day = strncmp(start + 8, end + 8, 2);
 
-    if(year < 0) return 1;
-    else if(year <= 0){
-        if(month < 0) return 1;
-        else if(month == 0){
-            if(day <= 0) return 1;
-            else{
+    if (year < 0)
+        return 1;
+    else if (year <= 0)
+    {
+        if (month < 0)
+            return 1;
+        else if (month == 0)
+        {
+            if (day <= 0)
+                return 1;
+            else
+            {
                 printf(RED "Invalid date, Please try again !\n" RESET);
                 return 0;
             }
         }
-        else return 0; 
+        else
+            return 0;
     }
     return 0;
 }
 // Collects information to initialize a new Event and save it.
-void createEvent(){
+void createEvent()
+{
     Event newEvent;
-    
+
     printf("Enter event's name: ");
-    inputString(newEvent.name, sizeof(newEvent.name));  
+    inputString(newEvent.name, sizeof(newEvent.name));
 
     printf("Enter event's decription: ");
     inputString(newEvent.description, sizeof(newEvent.description));
-    do{
-        do{
-            printf("Enter event's start date (yyyy/mm/dd): ");
+    do
+    {
+        do
+        {
+            printf("Enter event's start date (yyyy-mm-dd): ");
             inputString(newEvent.startDate, sizeof(newEvent.startDate));
-            getchar();
-        } while(!isValidDate(newEvent.startDate));
-        
-        do{
-            printf("Enter event's end date (yyyy/mm/dd): ");
-            inputString(newEvent.endDate,sizeof(newEvent.endDate));
-            getchar();
-        } while(!isValidDate(newEvent.endDate));
+        } while (!isValidDate(newEvent.startDate));
 
-    } while(!isChronological(newEvent.startDate,newEvent.endDate));
-    
+        do
+        {
+            printf("Enter event's end date (yyyy-mm-dd): ");
+            inputString(newEvent.endDate, sizeof(newEvent.endDate));
+        } while (!isValidDate(newEvent.endDate));
+
+    } while (!isChronological(newEvent.startDate, newEvent.endDate));
+
     printf("Enter event's location: ");
-    inputString(newEvent.location,sizeof(newEvent.location));
-    
+    inputString(newEvent.location, sizeof(newEvent.location));
+
     newEvent.staffCount = 0;
     updateStatus(&newEvent);
-    int nextIndex = getNextEventIndex();
-    int index = 7;
-    while(nextIndex > 0){
-        newEvent.eventId[index--] = nextIndex%10 + '0';
-        nextIndex/=10;
+
+    int actualIndex = getNextEventIndex();
+    int tempID = actualIndex + 1;
+
+    strcpy(newEvent.eventId, "EV000000");
+
+    int pos = 7;
+    while (tempID > 0 && pos > 1)
+    {
+        newEvent.eventId[pos--] = (tempID % 10) + '0';
+        tempID /= 10;
     }
-    for(int i = 0;i <= index;i++){
-        switch (i)
-        {
-        case 0:
-            newEvent.eventId[i] = 'E';
-            break;
-        case 1:
-            newEvent.eventId[i] = 'V';
-            break;
-        default:
-            newEvent.eventId[i] = '0';
-            break;
-        }
+
+    if (saveEventAt(actualIndex, &newEvent))
+    {
+        printf("\033[1;32m[SUCCESS] Event created successfully with ID: %s\033[0m\n", newEvent.eventId);
     }
-    saveEventAt(nextIndex, &newEvent);
+    else
+    {
+        printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
+    }
 }
 // Define format for row in case 5
 #define EVENT_ROW_FORMAT "| %-10s | %-15.15s | %-11s | %-11s | %-15.15s | %-5d | %-10s |\n"
@@ -174,7 +201,8 @@ void printEventRow(Event e)
            e.staffCount,
            statusText[e.status]);
 }
-int inputEventStatus(){
+int inputEventStatus()
+{
     int choice;
     while (1)
     {
@@ -240,44 +268,57 @@ void displayAllEvent(int filterStatus)
 
 // Search event with user input
 
-void printEventResult() {
+void printEventResult()
+{
     clearScreen();
     char inputID[EVENT_ID_LENGTH];
     printf("Enter Event ID to search: ");
     inputString(inputID, sizeof(inputID));
     toUpperStr(inputID, inputID);
     int index = findEventIndexById(inputID);
-    if (index == -1) {
+    if (index == -1)
+    {
         printf("Event not found.\n");
         printf("Press Enter to continue");
         getchar();
         clearScreen();
         return;
     }
-    
+
     FILE *f = fopen("data/events.dat", "rb");
-    if (f == NULL) {
+    if (f == NULL)
+    {
         printf("No events found.\n");
         printf("Press Enter to continue");
         getchar();
         clearScreen();
         return;
     }
-    
+
     Event temp;
     printf("\n");
     printDivider("SEARCH RESULTS");
     printf("%-12s | %-30s | %-15s | %s\n", "Event ID", "Name", "Status", "Date");
     printf("===============================================================================\n");
     fseek(f, index * sizeof(Event), SEEK_SET);
-    if(fread(&temp, sizeof(Event), 1, f)) {
+    if (fread(&temp, sizeof(Event), 1, f))
+    {
         printf("DEBUG: ID=%s | DATE=%s\n", temp.eventId, temp.startDate);
         char statusStr[20];
-        switch (temp.status) {
-            case STATUS_UPCOMING: strcpy(statusStr, "Upcoming"); break;
-            case STATUS_ONGOING: strcpy(statusStr, "Ongoing"); break;
-            case STATUS_FINISHED: strcpy(statusStr, "Completed"); break;
-            default: strcpy(statusStr, "Unknown"); break;
+        switch (temp.status)
+        {
+        case STATUS_UPCOMING:
+            strcpy(statusStr, "Upcoming");
+            break;
+        case STATUS_ONGOING:
+            strcpy(statusStr, "Ongoing");
+            break;
+        case STATUS_FINISHED:
+            strcpy(statusStr, "Completed");
+            break;
+        default:
+            strcpy(statusStr, "Unknown");
+            break;
         }
         printf("%-12s | %-30s | %-15s | %s\n", temp.eventId, temp.name, statusStr, temp.startDate);
     }
