@@ -18,7 +18,7 @@ int main()
 {
     char studentId[20];
     char password[255];
-    Account currentAcc; // store the current logged in account info for later use
+    Account currentAcc; // track the current logged in account info for functions related to self account management
 
     // Initialize default(mocktest) datas and files
     initializeSystem();
