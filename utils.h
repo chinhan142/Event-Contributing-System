@@ -7,6 +7,7 @@ void clearScreen();
 void printDivider(char *title);
 int  confirmAction(char *message);
 void toLowerStr(char *dest, const char *src);
+int stoi(char *str, int from, int to);
 void toUpperStr(char *dest, const char *src);
 
 #endif
