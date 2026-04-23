@@ -18,6 +18,7 @@ int main()
 {
     char studentId[20];
     char password[255];
+    Account currentAcc; // store the current logged in account info for later use
 
     // Initialize default(mocktest) datas and files
     initializeSystem();
@@ -44,13 +45,18 @@ int main()
         else
         {
             loginSession = true;
+            if (!findAccountById(studentId, &currentAcc))
+            {
+                printf("[ERROR] Cannot load account details.\n");
+                return 1;
+            }
             if (loginStatus == LOGIN_SUCCESS_BCN)
             {
-                bcnMenu();
+                bcnMenu(&currentAcc);
             }
             else
             {
-                staffMenu();
+                staffMenu(&currentAcc);
             }
         }
     }

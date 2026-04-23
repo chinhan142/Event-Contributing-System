@@ -4,7 +4,8 @@
 #include "utils.h"
 #include "fileio.h"
 #include "staff.h"
-void bcnMenu()
+#include "user.h"
+void bcnMenu(Account *acc)
 {
     int choice;
     do
@@ -82,7 +83,8 @@ void bcnMenu()
             printf("[TODO] Statistics\n");
             break;
         case 13:
-            printf("[TODO] View profile\n");
+            printf("View profile\n");
+            viewProfile(acc);
             break;
         case 14:
             printf("[TODO] Change password\n");
