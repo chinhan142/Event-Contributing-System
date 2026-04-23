@@ -30,18 +30,15 @@ void updateStatus(Event *event)
     int end = checkTime(endY, endM, endD);
     if (start < 0)
     {
-        event->status = STATUS_UPCOMING;
-
+        event->status = STATUS_UPCOMING; 
     }
     else if (start >= 0 && end <= 0)
     {
         event->status = STATUS_ONGOING;
-
     }
     else
     {
         event->status = STATUS_FINISHED;
-
     }
 }
 // Checks if two dates follow the YYYY-MM-DD format ensure the date is valid
@@ -117,7 +114,7 @@ int isChronological(char *start, char *end)
                 return 1;
             else
             {
-                printf(RED "Invalid date, Please try again !\n" RESET);
+                printf(RED "Invalid date, Please try again (Chronological error) !\n" RESET);
                 return 0;
             }
         }
@@ -330,4 +327,156 @@ void printEventResult()
         printf("%-12s | %-30s | %-15s | %s\n", temp.eventId, temp.name, statusStr, temp.startDate);
     }
     fclose(f);
+}
+void updateName(Event *event){
+    char newName[NAME_LENGTH];
+    printf(GREEN"Please enter new name: ");
+    inputString(newName,sizeof(newName));
+    
+    if(confirmAction("\033[31mAre you sure you want to change the name ?\033[0m")){
+        strcpy(event->name,newName);
+        printf(GREEN BOLD"[SUCCESS]"RESET);
+        printf(" Name changed successfully\n");
+    }
+}
+void updateDescription(Event *event){
+    char newDescription[DESC_LENGTH];
+    printf(GREEN"Please enter new description: ");
+    inputString(newDescription,sizeof(newDescription));
+    
+    if(confirmAction("\033[31mAre you sure you want to change the description ?\033[0m")){
+        strcpy(event->description,newDescription);
+        printf(GREEN BOLD"[SUCCESS]"RESET);
+        printf(" Description changed successfully\n");
+    }
+} 
+
+void updateLocation(Event *event){
+    char newLocation[DESC_LENGTH];
+    printf(GREEN"Please enter new location: ");
+    inputString(newLocation,sizeof(newLocation));
+    
+    if(confirmAction("\033[31mAre you sure you want to change the description ?\033[0m")){
+        strcpy(event->location,newLocation);
+        printf(GREEN BOLD"[SUCCESS]"RESET);
+        printf(" Location changed successfully\n");
+    }
+}
+void updateStartDate(Event *event){
+    char newStartDate[DESC_LENGTH];
+    printf(GREEN"Please enter new start date (YYYY-MM-DD): ");
+    do
+    {
+        inputString(newStartDate,sizeof(newStartDate));
+
+    } while (!isValidDate(newStartDate) || !isChronological(newStartDate,event->endDate));
+    Event temp = *event;
+    strcpy(temp.startDate,newStartDate);
+    updateStatus(&temp);
+    char message[1000];
+    if(temp.status != event->status){
+        strcpy(message,"\033[38;2;255;165;0mThis action will change the status. Are you sure you want to proceed?\033[0m");
+    }
+    else strcpy(message,"\033[0mAre you sure you want to change the start date ?\033[0m");
+    
+    if(confirmAction(message)){
+        strcpy(event->startDate,newStartDate);
+        updateStatus(event);
+        printf(GREEN BOLD"[SUCCESS]"RESET);
+        printf(" Start date changed successfully\n");
+    }
+}
+
+void updateEndDate(Event *event){
+    char newEndDate[DESC_LENGTH];
+    do
+    {
+        printf(GREEN"Please enter new end date (YYYY-MM-DD): ");
+        inputString(newEndDate,sizeof(newEndDate));
+
+    } while (!isValidDate(newEndDate) || !isChronological(event->startDate,newEndDate));
+    Event temp = *event;
+    strcpy(temp.endDate,newEndDate);
+    updateStatus(&temp);
+    char message[1000];
+    if(temp.status != event->status){
+        strcpy(message,"\033[38;2;255;165;0mThis action will change the status. Are you sure you want to proceed?\033[0m");
+    }
+    else strcpy(message,"\033[31mAre you sure you want to change the end date ?\033[0m");
+    
+    if(confirmAction(message)){
+        strcpy(event->endDate,newEndDate);
+        updateStatus(event);
+        printf(GREEN BOLD"[SUCCESS]"RESET);
+        printf(" End date changed successfully\n");
+    }
+}
+void updateEventDetails(){
+    
+
+    char eventID[ID_LENGTH];
+    int index;
+    Event event;
+    while(1){
+        displayAllEvent(-1);
+        do
+        {
+            printf("Enter the ID of the event you want to update (enter to exit): ");
+            inputString(eventID,sizeof(eventID));
+            if(eventID[0] == '\0') return;
+            index = findEventIndexById(eventID);
+            if(index == -1){
+                printf("\033[38;2;255;165;0mID not found, please try again!\n\033[0m");
+            }
+        } while (index == -1);
+        
+        
+        
+        
+        loadEventAt(index,&event); 
+        if(event.status == 2){
+            printf(RED"You cannot edit a finished event. Enter to continue"RESET);
+            getchar();
+            continue;
+        }
+        else if(event.status == 1){
+            if(!confirmAction("\033[31mThis event is ongoing. Are you sure you want to edit it?\033[0m")){
+                continue;
+            }
+        }
+        printf("===== Choose attribute =====\n");
+        printf(GREEN"0: Event's name\n1: Event's description\n2: Event's location\n3: Event's start date\n4: Event's end date\n"RESET);
+        int choice;
+        do
+        {
+            printf(GREEN"Enter your choice (0-4): ");
+            scanf("%d",&choice);
+            if(0 > choice || choice > 4){
+                printf(ORANGE"Invalid input. Please enter a choice from 0 to 4.\n"RESET);
+            }
+        } while (0 > choice || choice > 4);
+        
+        getchar();
+        switch (choice)
+        {
+        case 0:
+            updateName(&event);
+            break;
+        case 1:
+            updateDescription(&event);
+            break;
+        case 2:
+            updateLocation(&event);
+            break;
+        case 3:
+            updateStartDate(&event);
+            break;
+        case 4:
+            updateEndDate(&event);
+            break;
+        default:
+            break;
+        }
+        saveEventAt(index,&event);
+    }
 }

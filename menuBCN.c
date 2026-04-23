@@ -3,7 +3,8 @@
 #include "utils.h"
 #include "fileio.h"
 #include "staff.h"
-void bcnMenu()
+#include "user.h"
+void bcnMenu(Account *acc)
 {
     int choice;
     do
@@ -45,7 +46,7 @@ void bcnMenu()
             createEvent();
             break;
         case 2:
-            printf("[TODO] Edit event\n");
+            updateEventDetails();
             break;
         case 3:
             printf("[TODO] Delete event\n");
@@ -81,7 +82,8 @@ void bcnMenu()
             printf("[TODO] Statistics\n");
             break;
         case 13:
-            printf("[TODO] View profile\n");
+            printf("View profile\n");
+            viewProfile(acc);
             break;
         case 14:
             printf("[TODO] Change password\n");
