@@ -77,6 +77,7 @@ void bcnMenu(Account *acc)
             break;
         case 11:
             printf("[TODO] Staff history\n");
+            viewMemberHistory();
             break;
         case 12:
             printf("[TODO] Statistics\n");

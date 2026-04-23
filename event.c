@@ -374,6 +374,11 @@ void updateStartDate(Event *event){
     strcpy(temp.startDate,newStartDate);
     updateStatus(&temp);
     char message[1000];
+    if(event->status > temp.status){
+        printf(RED"Date change failed: This would move the event back from 'Ongoing' to 'Upcoming'! Enter to continue "RESET);
+        getchar();
+        return;
+    }
     if(temp.status != event->status){
         strcpy(message,"\033[38;2;255;165;0mThis action will change the status. Are you sure you want to proceed?\033[0m");
     }
@@ -399,6 +404,11 @@ void updateEndDate(Event *event){
     strcpy(temp.endDate,newEndDate);
     updateStatus(&temp);
     char message[1000];
+    if(event->status > temp.status){
+        printf(RED"Date change failed: This would move the event back from 'Ongoing' to 'Upcoming'! Enter to continue "RESET);
+        getchar();
+        return;
+    }
     if(temp.status != event->status){
         strcpy(message,"\033[38;2;255;165;0mThis action will change the status. Are you sure you want to proceed?\033[0m");
     }

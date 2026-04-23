@@ -27,14 +27,15 @@ void staffMenu(Account *acc)
         {
             // calling function here
         case 1:
-            printf("[TODO] Current events\n");
+            printf("View current events\n");
+            viewCurrentEvents(acc);
             break;
         case 2:
             printf("[TODO] Event detail\n");
             break;
         case 3:
             printf("View Event history\n");
-            displayEventHistory();
+            displayEventHistory(acc);
             break;
         case 4:
             printf("View profile\n");
