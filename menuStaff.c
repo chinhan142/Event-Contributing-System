@@ -2,7 +2,7 @@
 #include "menuStaff.h"
 #include "utils.h"
 #include "user.h"
-void staffMenu()
+void staffMenu(Account *acc)
 {
     int choice;
     do
@@ -37,7 +37,8 @@ void staffMenu()
             displayEventHistory();
             break;
         case 4:
-            printf("[TODO] View profile\n");
+            printf("View profile\n");
+            viewProfile(acc);
             break;
         case 5:
             printf("[TODO] Change password\n");
