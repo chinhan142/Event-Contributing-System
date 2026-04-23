@@ -29,6 +29,8 @@ typedef struct
 int findUserById(const char *id, User *result);
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count);
 void displayEventHistory(const Account *acc);
+void displayCurrentEvents(const Account *acc);
+void viewCurrentEvents(const Account *acc);
 void viewProfile(const Account *acc);
 void cleanEventData(Event *event);
 void printEventRowRole(const Event *event, StaffRole role);
