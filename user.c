@@ -2,9 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "user.h"
-#include "event.h"  // for access Event struct, StaffEntry
-#include "fileio.h" // for access getNextEventIndex(), loadEventAt()
-#include "utils.h"  // for access printDivider()
+#include "auth.h"  
+#include "event.h"  
+#include "fileio.h" 
+#include "utils.h"  
 
 // global cache
 CacheEvent *eventCache = NULL;
@@ -150,4 +151,48 @@ void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *c
         }
     }
     fclose(f);
+}
+
+void viewProfile(const Account *acc){
+    User persona;
+    int userFound = 0;
+    FILE *f = fopen("data/users.dat", "rb");
+    if (f == NULL)
+    {
+        printf("[ERROR] Cannot open users.dat file\n");
+        return;
+    }
+    printf("debug: looking for user profile with student ID: %s\n", acc->studentId);
+    while (fread(&persona, sizeof(User), 1, f) == 1)
+    {
+        if (strcmp(persona.studentId, acc->studentId) == 0)
+        {
+            userFound = 1;
+            break;
+        }
+        printf("debug: read user with student ID: %s\n", persona.studentId);
+    }
+    if (userFound == 0){
+        printf("[ERROR] Cannot find user profile.\n");
+        system("pause");
+        fclose(f);
+        return;
+    }
+    printf("================== PROFILE ==================\n");
+    if(userFound ==1){
+        printf("Student ID: %s\n", persona.studentId);
+        printf("Name: %s\n", persona.studentName);
+        printf("Email: %s\n", persona.email);
+        printf("Phone Number: %s\n", persona.phoneNumber);
+        printf("Position:%s\n", (acc->role == 1 ? "BCN" : "Member"));
+        printf("Specialize: %s\n", persona.specialize);
+        system("pause");
+    } else {
+        printf("[ERROR] How did we get here?.\n");
+        system("pause");
+    }
+    printf("============================================\n");
+   
+    fclose(f);
+    clearScreen();
 }
