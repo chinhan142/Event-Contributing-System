@@ -2,8 +2,8 @@
 #include "event.h"
 #include "menuBCN.h"
 #include "utils.h"
-#include "event.h"
 #include "fileio.h"
+#include "staff.h"
 void bcnMenu()
 {
     int choice;
