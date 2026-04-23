@@ -1,6 +1,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+
 #define ID_LENGTH 20
 #define NAME_LENGTH 255
 #define MAX_STAFF_PER_EVENT 30
@@ -26,7 +27,7 @@ typedef enum
 typedef struct
 {
     char studentId[ID_LENGTH];
-    StaffRole role;
+    StaffRole role; // Sử dụng StaffRole
     char description[DESC_LENGTH];
 } StaffEntry;
 
@@ -43,7 +44,11 @@ typedef struct
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
 void printEventResult();
-
+int isValidDate(char *date);
+int isChronological(char *start, char *end);
+int checkTime(int year, int mon, int day);
+void createEvent();
+void updateStatus(Event *event);
 // Case 5: View all events Function
 int inputEventStatus();
 void displayAllEvent(int filterStatus);
