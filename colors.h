@@ -8,6 +8,7 @@
 #define MAGENTA "\033[35m"
 #define CYAN    "\033[36m"
 #define WHITE   "\033[37m"
+#define ORANGE  "\033[38;2;255;165;0m"
 
 #define BOLD    "\033[1m"
 #define DIM     "\033[2m"
