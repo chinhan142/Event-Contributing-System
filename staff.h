@@ -18,4 +18,5 @@ int isStaffInEvent(Event *e, const char *studentId);
 // Helper: check if staff in event can be modified (only if status is UPCOMING)
 int canModifyStaff(Event *e);
 
+void viewMemberHistory();
 #endif

@@ -53,12 +53,40 @@ void toUpperStr(char *dest, const char *src)
         dest[i] = toupper(src[i]); 
     dest[strlen(src)] = '\0';
 }
-int compareDates(const char *date1, const char *date2)
+
+
+void quicksortByDate(MatchedEvent *arr, int low, int high)
 {
-    int y1, m1, d1 ,y2, m2, d2;
-    sscanf(date1, "%d-%d-%d", &y1, &m1, &d1);
-    sscanf(date2, "%d-%d-%d", &y2, &m2, &d2);
-    if (y1 != y2) return y1 - y2;
-    if (m1 != m2) return m1 - m2;
-    return d1 - d2;
+    if (low < high)
+    {
+        int pi = partitionByDate(arr, low, high);
+        quicksortByDate(arr, low, pi - 1);
+        quicksortByDate(arr, pi + 1, high);
+    }
+}
+
+int partitionByDate(MatchedEvent *arr, int low, int high)
+{
+    // Chọn pivot là phần tử cuối cùng
+    MatchedEvent pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++)
+    {
+        // So sánh theo ngày (descending)
+        if (strcmp(arr[j].event.startDate, pivot.event.startDate) > 0)
+        {
+            i++;
+            // Swap arr[i] và arr[j]
+            MatchedEvent temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    // Swap arr[i+1] và arr[high]
+    MatchedEvent temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    
+    return i + 1;
 }
