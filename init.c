@@ -57,11 +57,11 @@ static void initUserPersonaData()
     }
 
     User samples[] = {
-        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn"},
-        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn"},
-        {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn"},
-        {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn"},
-        {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn"}};
+        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", ""},
+        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", ""},
+        {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn", "0123456789", "SoftwareDeveloper"},
+        {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn", "", ""},
+        {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn", "", ""}};
 
     fwrite(samples, sizeof(User), sizeof(samples) / sizeof(samples[0]), f);
     fclose(f);
