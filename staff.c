@@ -315,3 +315,17 @@ int canModifyStaff(Event *e)
 {
     return (e->status == STATUS_UPCOMING);
 }
+void viewMemberHistory(){
+    char targetStudentId[ID_LENGTH];
+    printf("Enter Student ID to view history: ");
+    inputString(targetStudentId, sizeof(targetStudentId));
+    FILE *f = fopen("data/events.dat", "rb");
+    if (f == NULL)
+    {
+        printf("\nNo events available in the system.\n");
+        printf("Press Enter to continue...");
+        getchar();
+        return;
+    }
+    
+}

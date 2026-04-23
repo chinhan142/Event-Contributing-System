@@ -1,5 +1,6 @@
 #ifndef USER_H
 #define USER_H
+#include <stddef.h>
 #include "event.h" // for access Event struct, StaffRole
 typedef struct Account Account;  // Forward declaration to avoid circular includes
 #define ID_LENGTH 20
@@ -18,21 +19,22 @@ typedef struct
     char specialize[specialize_LENGTH];
 } User;
 
-// Struct for In-memory cache + sort once time
 typedef struct
 {
     Event event;
     StaffRole studentRole; // curent user role in this event
-} CacheEvent;
+} MatchedEvent;
 
-// Extern global cache
-extern CacheEvent *eventCache;
-extern int cacheSize;
-extern int cacheCapacity;
-extern int cacheInitialized;
-void initializeEventCache();
+
 int findUserById(const char *id, User *result);
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count);
-void displayEventHistory();
+void displayEventHistory(const Account *acc);
+void displayCurrentEvents(const Account *acc);
+void viewCurrentEvents(const Account *acc);
 void viewProfile(const Account *acc);
+void cleanEventData(Event *event);
+void printEventRowRole(const Event *event, StaffRole role);
+void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *foundCount);
+int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role);
+
 #endif
