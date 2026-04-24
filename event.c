@@ -155,7 +155,10 @@ void createEvent()
     newEvent.staffCount = 0;
     updateStatus(&newEvent);
 
-    int actualIndex = getNextEventIndex();
+    int index = getNextEventIndex();
+    Event temp;
+    loadEventAt(index - 1,&temp);
+    int actualIndex = stoi(temp.eventId,2,7);
     int tempID = actualIndex + 1;
 
     strcpy(newEvent.eventId, "EV000000");
@@ -167,13 +170,15 @@ void createEvent()
         tempID /= 10;
     }
 
-    if (saveEventAt(actualIndex, &newEvent))
+    if (saveEventAt(index, &newEvent))
     {
-        printf("\033[1;32m[SUCCESS] Event created successfully with ID: %s\033[0m\n", newEvent.eventId);
+        printf("\033[1;32m[SUCCESS] Event created successfully with ID: %s\033[0m (enter to continue) ", newEvent.eventId);
+        getchar();
     }
     else
     {
-        printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
+        printf("\033[1;31m[ERROR] Could not save event data!\033[0m (enter to continue)");
+        getchar();
     }
 }
 // Define format for row in case 5
@@ -229,6 +234,7 @@ int inputEventStatus()
         if (choice >= 0 && choice <= 3)
         {
             // remapping choice
+            getchar();
             return choice - 1;
         }
         printf("[!] Out of range. Please choose 0 to 3.\n");
@@ -267,7 +273,8 @@ void displayAllEvent(int filterStatus)
     {
         printf(" Total: %d event(s) listed.\n", count);
     }
-    printf("\n");
+    printf("Enter to continue ");
+    getchar();
 }
 
 // Search event with user input
@@ -470,6 +477,7 @@ void updateEventDetails(){
             if (choice >= 0 && choice <= 3)
             {
                 // remapping choice
+                getchar();
                 break;
             }
             printf("[!] Out of range. Please choose 0 to 4.\n");
@@ -497,7 +505,12 @@ void updateEventDetails(){
         saveEventAt(index,&event);
     }
 }
+void printTable(int len){
 
+    printf("+");
+    for(int i = 0;i < len + 2;i++) printf("-");
+    printf("+--------------+\n");
+}
 void deleteEvent(){
     
     char id[ID_LENGTH];
@@ -525,14 +538,17 @@ void deleteEvent(){
         }
         int length = strlen(event.name);
         char name[NAME_LENGTH];strcpy(name,event.name);
-        printf("========== Information ==========\n");
-        printf("| %-*s | %-15s |\n", length, "Name", "Staff count");
-        printf("+--------------+---------------+\n");
-        printf("| %-*s | %-15d |\n",length, event.name, event.staffCount);
+        printf(BLUE"=============== Information ===============\n"RESET);
+        printTable(length);
+        printf("| %-*s | %-12s |\n", length, "Name", "Staff count");
+        printTable(length);
+        printf("| %-*s | %-12d |\n",length, event.name, event.staffCount);
+        printTable(length);
         if(confirmAction("Do you want to delete this event ?")){
             if(confirmAction(RED"Are you sure? This event will be permanently deleted"RESET)){
                 deleteEventById(event.eventId);
                 printf(GREEN"[SUCCESS]"RESET " The event \033[1m%s\033[0m has been successfully deleted (enter to continue)",name);
+                getchar();
             }
         }
     }
