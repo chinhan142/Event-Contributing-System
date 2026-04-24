@@ -315,17 +315,192 @@ int canModifyStaff(Event *e)
 {
     return (e->status == STATUS_UPCOMING);
 }
-void viewMemberHistory(){
-    char targetStudentId[ID_LENGTH];
-    printf("Enter Student ID to view history: ");
-    inputString(targetStudentId, sizeof(targetStudentId));
-    FILE *f = fopen("data/events.dat", "rb");
-    if (f == NULL)
+void cleanEventData(Event *event)
+{
+    event->eventId[sizeof(event->eventId) - 1] = '\0';
+    event->eventId[strcspn(event->eventId, "\r\n ")] = '\0';
+}
+
+void printEventRowRole(const Event *event, StaffRole role)
+{
+    // 1. Chuyển Role (từ số/enum) thành chuỗi
+    const char *roleName;
+    switch (role)
     {
-        printf("\nNo events available in the system.\n");
-        printf("Press Enter to continue...");
-        getchar();
-        return;
+        case STAFF_LEADER: roleName = "Leader"; break;
+        case STAFF_MEMBER: roleName = "Member"; break;
+        case STAFF_SUPPORT: roleName = "Support"; break;
+        default: roleName = "Unknown"; break;
+    }
+
+    // 2. Chuyển Status (từ số/enum) thành chuỗi
+    const char *statusName;
+    switch (event->status) 
+    {
+        // LƯU Ý: Hãy thay 0, 1, 2 bằng đúng tên Enum/Số mà bạn định nghĩa trong struct Event
+        case 0: statusName = "Upcoming"; break; 
+        case 1: statusName = "Ongoing"; break;
+        case 2: statusName = "Finished"; break; // Đây là trạng thái bạn đang cần lọc nè
+        default: statusName = "Unknown"; break;
+    }
+
+    // 3. In ra màn hình (Dùng biến chuỗi statusName thay vì event->status)
+    printf("%-30.30s | %-10s | %-12s\n",          
+           event->name,
+           roleName,
+           statusName 
+          );
+}
+
+
+int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
+{
+    for (int i = 0; i < event->staffCount; i++)
+    {
+        if (strcmp(event->staffList[i].studentId, studentId) == 0)
+        {
+            *role = event->staffList[i].role;
+            return 1; // Found
+        }
+    }
+    return 0; // Not found
+}
+
+#include <stdlib.h>
+#include <string.h>
+
+char *StudentIDInput() {
+    char studentId[ID_LENGTH];
+    printf("Enter Student ID (or press Enter to skip): ");
+    
+    // Giả sử inputString đã xử lý việc xóa ký tự '\n' ở cuối
+    inputString(studentId, sizeof(studentId));
+
+    if (strlen(studentId) == 0) {
+        return NULL;
+    }
+
+    // Tự cấp phát và copy thay vì dùng strdup
+    char *copy = (char *)malloc((strlen(studentId) + 1) * sizeof(char));
+    if (copy == NULL) {
+        printf("Memory allocation failed!\n");
+        return NULL;
     }
     
+    strcpy(copy, studentId);
+    return copy;
+}
+void printEventList(MatchedEvent *list, int count, const char *studentId) 
+{
+    printf("\nEvent History for Member MSSV: %s\n", studentId);
+    printf("----------------------------------------------------------\n");
+    // total 58 chars
+    printf("%-30s | %-10s | %-12s\n", "Event Name", "Role", "Status");
+    printf("----------------------------------------------------------\n");
+    
+    for (int i = 0; i < count; i++)
+    {
+        printEventRowRole(&list[i].event, list[i].studentRole);
+    }
+    printf("----------------------------------------------------------\n");
+    printf("Total: %d event(s) found.\n", count);
+}
+void displayEventHistory(const char *studentId) {
+    int count = 0;
+    
+   //get events by studentId
+    MatchedEvent *historyList = getEventsByStudentId(studentId, &count);
+    
+    // print results or message if not found
+    if (count > 0 && historyList != NULL) {
+        printEventList(historyList, count, studentId);
+    } else {
+        printf("No events found for this student.\n");
+    }
+    
+    //release memory
+    if (historyList != NULL) {
+        free(historyList);
+    }
+}
+MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount) 
+{
+    *outFoundCount = 0; // Initialize output count to 0
+
+    // Mở file
+    FILE *f = fopen("data/events.dat", "rb");
+    if (f == NULL) {
+        return NULL; //check if file opened successfully
+    }
+
+    // allocate memory cho chunk
+    Event *eventChunk = (Event *)malloc(CHUNK_SIZE * sizeof(Event));
+    if (eventChunk == NULL) {
+        fclose(f);
+        return NULL; //check if memory allocated successfully
+    }
+
+   //allocate memory cho result array
+    int capacity = 10;
+    int foundCount = 0; 
+    MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));
+    if (matchedList == NULL) {
+        free(eventChunk);
+        fclose(f);
+        return NULL;
+    }
+
+    size_t eventsRead;
+    StaffRole role;
+
+    // read file in chunks and process
+    while ((eventsRead = fread(eventChunk, sizeof(Event), CHUNK_SIZE, f)) > 0)
+    {
+        for (size_t i = 0; i < eventsRead; i++)
+        {
+            cleanEventData(&eventChunk[i]); // remove garbage characters from eventId and other string fields
+            
+            //if there is a joined student
+            if (findStaffInEvent(&eventChunk[i], studentId, &role))
+            {
+                // auto resize array if needed
+                if (foundCount >= capacity) {
+                    capacity *= 2;
+                    MatchedEvent *temp = (MatchedEvent *)realloc(matchedList, capacity * sizeof(MatchedEvent));
+                    if (temp == NULL) {
+                        // If realloc fails, we should free existing resources and return NULL
+                        printf("Warning: Memory limit reached. Results may be incomplete.\n");
+                        goto finish_reading; 
+                        /*
+                        Reason I used goto here instead of break or return:
+                        - exit the loop immediately without trying to continue processing more events, which could lead to more realloc attempts and more memory issues.
+                        - jump to the cleanup section to free allocated memory and close the file before returning, ensuring we don't leak resources even in this error case.
+                        - make sure the memory absolutely safe, avoid forget to free the resource when the program get error                        
+                        */                      
+                    }
+                    matchedList = temp;
+                }
+                
+                // add to result array
+                matchedList[foundCount].event = eventChunk[i];
+                matchedList[foundCount].studentRole = role;
+                foundCount++;
+            } 
+        }
+    }finish_reading:
+
+    //release resources 
+    free(eventChunk);
+    fclose(f);
+
+    // record found count to output parameter
+    *outFoundCount = foundCount;
+
+    //if no events found, free matchedList and return NULL
+    if (foundCount == 0) {
+        free(matchedList);
+        return NULL;
+    }
+
+    return matchedList; //return pointer to array of matched events (caller is responsible for freeing this memory)
 }
