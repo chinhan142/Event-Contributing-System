@@ -89,7 +89,6 @@ void deleteEventById(char *id){
     }
     fclose(f);
     fclose(temp);
-    getchar();
     remove("data/events.dat");
     rename("data/temp.dat", "data/events.dat");
 }

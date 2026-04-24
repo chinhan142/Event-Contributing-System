@@ -118,9 +118,12 @@ int isChronological(char *start, char *end)
                 return 0;
             }
         }
-        else
+        else{
+            printf(RED "Invalid date, Please try again (Chronological error) !\n" RESET);
             return 0;
+        }
     }
+    printf(RED "Invalid date, Please try again (Chronological error) !\n" RESET);
     return 0;
 }
 // Collects information to initialize a new Event and save it.
@@ -273,8 +276,7 @@ void displayAllEvent(int filterStatus)
     {
         printf(" Total: %d event(s) listed.\n", count);
     }
-    printf("Enter to continue ");
-    getchar();
+    
 }
 
 // Search event with user input
