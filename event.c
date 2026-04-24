@@ -457,16 +457,23 @@ void updateEventDetails(){
         printf("===== Choose attribute =====\n");
         printf(GREEN"0: Event's name\n1: Event's description\n2: Event's location\n3: Event's start date\n4: Event's end date\n"RESET);
         int choice;
-        do
-        {
-            printf(GREEN"Enter your choice (0-4): ");
-            scanf("%d",&choice);
-            if(0 > choice || choice > 4){
-                printf(ORANGE"Invalid input. Please enter a choice from 0 to 4.\n"RESET);
+        while (1){
+
+            // If user input something is not integer, these line helps clearing the buffer and continue the loop, avoiding wrong logic
+            if (scanf("%d", &choice) != 1)
+            {
+                while (getchar() != '\n');
+                printf("[!] Invalid input. Please enter a number.\n");
+                continue;
             }
-        } while (0 > choice || choice > 4);
-        
-        getchar();
+
+            if (choice >= 0 && choice <= 3)
+            {
+                // remapping choice
+                break;
+            }
+            printf("[!] Out of range. Please choose 0 to 4.\n");
+        }
         switch (choice)
         {
         case 0:
@@ -488,5 +495,45 @@ void updateEventDetails(){
             break;
         }
         saveEventAt(index,&event);
+    }
+}
+
+void deleteEvent(){
+    
+    char id[ID_LENGTH];
+    int index;
+    while(1){
+        displayAllEvent(-1);
+        do{
+            printf("Enter event's id you want to delete (enter to exit): ");
+            inputString(id,sizeof(id));
+            if(id[0] == '\0') return;
+            
+            index = findEventIndexById(id);
+            if(index == -1){
+                printf(ORANGE"cannot find event with id %s, please try again!!\n"RESET,id);
+            }
+        } while(index == -1);
+        Event event;
+        
+        loadEventAt(index, &event);
+        
+        if(event.status == STATUS_ONGOING){
+            printf(ORANGE"You cannot delete an ongoing event\033[0m! (Enter to continue)");
+            getchar();
+            continue;
+        }
+        int length = strlen(event.name);
+        char name[NAME_LENGTH];strcpy(name,event.name);
+        printf("========== Information ==========\n");
+        printf("| %-*s | %-15s |\n", length, "Name", "Staff count");
+        printf("+--------------+---------------+\n");
+        printf("| %-*s | %-15d |\n",length, event.name, event.staffCount);
+        if(confirmAction("Do you want to delete this event ?")){
+            if(confirmAction(RED"Are you sure? This event will be permanently deleted"RESET)){
+                deleteEventById(event.eventId);
+                printf(GREEN"[SUCCESS]"RESET " The event \033[1m%s\033[0m has been successfully deleted (enter to continue)",name);
+            }
+        }
     }
 }

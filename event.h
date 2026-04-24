@@ -58,4 +58,5 @@ void updateLocation(Event *event);
 void updateStartDate(Event *event);
 void updateEndDate(Event *event);
 Event chooseEvent();
+void deleteEvent();
 #endif

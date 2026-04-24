@@ -3,6 +3,7 @@
 #include "fileio.h"
 #include "auth.h"
 #include "user.h"
+#include "event.h"
 // Get the index of the next event record in the events.dat file
 int getNextEventIndex()
 {
@@ -71,5 +72,25 @@ int findEventIndexById(const char *id)
     }
     fclose(f);
     return -1;
+}
+void deleteEventById(char *id){
+    FILE *f = fopen("data/events.dat", "rb");
+    if (f == NULL){
+        return;
+    }
+    FILE *temp = fopen("data/temp.dat", "wb");
+    if (temp == NULL){
+        return;
+    }
+    Event event;
+    while(fread(&event,sizeof(Event),1,f)){
+        if(strcmp(event.eventId,id) == 0) continue;
+        fwrite(&event,sizeof(Event),1,temp);
+    }
+    fclose(f);
+    fclose(temp);
+
+    remove("data/events.dat");
+    rename("data/temp.dat", "data/events.dat");
 }
 
