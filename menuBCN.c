@@ -58,6 +58,8 @@ void bcnMenu(Account *acc)
             printf("View all events\n");
             int filterStatus = inputEventStatus();
             displayAllEvent(filterStatus);
+            printf("Enter to continue ");
+            getchar();
             break;
         case 6:
             printf("[TODO] View event detail\n");
