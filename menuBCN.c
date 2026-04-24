@@ -4,6 +4,7 @@
 #include "fileio.h"
 #include "staff.h"
 #include "user.h"
+#include <stdlib.h>
 void bcnMenu(Account *acc)
 {
     int choice;
@@ -66,7 +67,7 @@ void bcnMenu(Account *acc)
             break;
         case 7:
             printf("Search event\n");
-            printEventResult();
+            printEventResult(); // còn tình trạng WET
             break;
         case 8:
             addStaffToEvent();
@@ -79,7 +80,9 @@ void bcnMenu(Account *acc)
             break;
         case 11:
             printf("[TODO] Staff history\n");
-            viewMemberHistory();
+            char *studentId = StudentIDInput();
+            displayEventHistory(studentId);
+            free(studentId);
             break;
         case 12:
             printf("[TODO] Statistics\n");
