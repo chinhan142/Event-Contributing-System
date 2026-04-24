@@ -49,7 +49,7 @@ void bcnMenu(Account *acc)
             updateEventDetails();
             break;
         case 3:
-            printf("[TODO] Delete event\n");
+            deleteEvent();
             break;
         case 4:
             printf("[TODO] Update status\n");
