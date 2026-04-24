@@ -1,8 +1,8 @@
 #ifndef STAFF_H
 #define STAFF_H
-
+#include "user.h"
 #include "event.h"
-
+#include <stddef.h>
 // Case 8: logic + ui add staff to event
 void addStaffToEvent();
 
@@ -18,5 +18,18 @@ int isStaffInEvent(Event *e, const char *studentId);
 // Helper: check if staff in event can be modified (only if status is UPCOMING)
 int canModifyStaff(Event *e);
 
-void viewMemberHistory();
+void cleanEventData(Event *event);
+
+void printEventRowRole(const Event *event, StaffRole role);
+
+void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *foundCount);
+
+int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role);
+
+char *StudentIDInput();
+
+void printEventList(MatchedEvent *list, int count, const char *studentId);
+
+void displayEventHistory(const char *studentId);
+MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount) ;
 #endif

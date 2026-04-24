@@ -2,21 +2,41 @@
 #include <string.h>
 #include <stdlib.h>
 #include "user.h"
+#include "staff.h"
 #include "auth.h"  
 #include "event.h"  
 #include "fileio.h" 
 #include "utils.h"  
 #define CHUNK_SIZE 1000
 
+void printUserFinishedList(MatchedEvent *list, int count) 
+{
+    printf("\n--- FINISHED EVENTS HISTORY ---\n");
+    printf("----------------------------------------------------------\n");
+    printf("%-35s | %-15s\n", "Event Name", "Role");
+    printf("----------------------------------------------------------\n");
+    
+    for (int i = 0; i < count; i++)
+    {
+        const char *roleName;
+        switch (list[i].studentRole) {
+            case STAFF_LEADER: roleName = "Leader"; break;
+            case STAFF_MEMBER: roleName = "Member"; break;
+            case STAFF_SUPPORT: roleName = "Support"; break;
+            default: roleName = "Unknown"; break;
+        }
+        printf("%-35.35s | %-15s\n", list[i].event.name, roleName);
+    }
+    printf("----------------------------------------------------------\n");
+}
 
-
-void cleanEventData(Event *event)
+void cleanUserEventData(Event *event)
 {
     event->eventId[sizeof(event->eventId) - 1] = '\0';
     event->eventId[strcspn(event->eventId, "\r\n ")] = '\0';
 }
 
-void printEventRowRole(const Event *event, StaffRole role)
+void printUserEventRowRole(const Event *event, StaffRole role)
 {
 
     const char *roleName;
@@ -49,18 +69,18 @@ void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *f
     StaffRole role;
     for (size_t i = 0; i < eventsRead; i++)
     {
-        cleanEventData(&chunk[i]);
+        cleanUserEventData(&chunk[i]);
 
         // Nếu tìm thấy sinh viên trong event này
         if (findStaffInEvent(&chunk[i], studentId, &role))
         {
-            printEventRowRole(&chunk[i], role);
+            printUserEventRowRole(&chunk[i], role);
             (*foundCount)++; // Tăng biến đếm số lượng tìm thấy
         }
     }
 }
 
-int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
+int findStaffInEventUser(const Event *event, const char *studentId, StaffRole *role)
 {
     for (int i = 0; i < event->staffCount; i++)
     {
@@ -73,91 +93,48 @@ int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
     return 0; // Not found
 }
 
-void displayEventHistory(const Account *acc)
+void displayCurrentUserEventHistory(const Account *acc)
 {   
-    //open file
-    FILE *f = fopen("data/events.dat", "rb");
-    if (f == NULL)
-    {
-        printf("\nNo events available in the system.\n");
+    if (acc == NULL) {
+        printf("[ERROR] Cannot find event history.\n");
+        return;
+    }
+    int rawFoundCount = 0;
+    MatchedEvent *rawList = getEventsByStudentId(acc->studentId, &rawFoundCount);
+    if (rawList == NULL || rawFoundCount == 0) {
+        printf("No events found for this student.\n");
         printf("Press Enter to continue...");
         getchar();
         return;
     }
-
-    // allocate memory for chunk
-    Event *eventChunk = (Event *)malloc(CHUNK_SIZE * sizeof(Event));
-    if (eventChunk == NULL)
-    {
-        printf("Error: Out of memory. Cannot allocate chunk.\n");
-        fclose(f);
+    int finishedCount = 0;
+    MatchedEvent *finishedList = (MatchedEvent *)malloc(rawFoundCount * sizeof(MatchedEvent));
+    if (finishedList == NULL) {
+        printf("Error: Out of memory. Cannot allocate finished list.\n");
+        free(rawList);
         return;
     }
-// array for get the total results
-    int capacity = 10;
-    int foundCount = 0;
-    MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));
-    size_t eventsRead;
-    StaffRole role;
-    while ((eventsRead = fread(eventChunk, sizeof(Event), CHUNK_SIZE, f)) > 0)
-    {
-        for (size_t i = 0; i < eventsRead; i++)
-        {
-            cleanEventData(&eventChunk[i]); // remove garbage 
-            
-            // if there is a joined student
-            if (findStaffInEvent(&eventChunk[i], acc->studentId, &role))
-            {
-                // auto resize array if needed
-                if (foundCount >= capacity) {
-                    capacity *= 2;
-                    matchedList = (MatchedEvent *)realloc(matchedList, capacity * sizeof(MatchedEvent));
-                }
-                
-                // insert to result array 
-                matchedList[foundCount].event = eventChunk[i];
-                matchedList[foundCount].studentRole = role;
-                foundCount++;
-            }
+    for(int i = 0; i<rawFoundCount;i++){
+        if (rawList[i].event.status == STATUS_FINISHED){
+            finishedList[finishedCount] = rawList[i];
+            finishedCount++;
         }
     }
-    free(eventChunk);
-    fclose(f);
-    printDivider("EVENT HISTORY");
-    printf("%-10s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Your Role", "Start Date");
-    printf("-------------------------------------------------------------------------------\n");
-
-    // 5. SẮP XẾP VÀ IN RA (Đã gom đủ rồi thì mới in)
-    if (foundCount > 0)
-    {
-        // Gọi hàm Sort
-        quicksortByDate(matchedList, 0, foundCount - 1);
-
-        // In lần lượt từ mảng đã sort
-        for (int i = 0; i < foundCount; i++)
-        {
-            printEventRowRole(&matchedList[i].event, matchedList[i].studentRole);
-        }
+    if (finishedCount > 1) {
+        quicksortByDate(finishedList, 0, finishedCount - 1);
     }
-
-    // Giải phóng mảng gom sau khi xài xong
-    free(matchedList);
-
-    // 6. IN FOOTER
-    printf("-------------------------------------------------------------------------------\n");
-    if (foundCount == 0)
-    {
-        printf("You have not participated in any events yet.\n");
+    if(finishedCount > 0){
+        printUserFinishedList(finishedList, finishedCount);
+    }else{
+        printf("No finished events found for this student.\n");
     }
-    else
-    {
-        printf("Total: %d event(s) found in your history.\n", foundCount);
+    free(rawList);
+    if(finishedList != NULL){
+        free(finishedList);
     }
-    
-    printf("\nPress Enter to continue...");
+    printf("Press Enter to continue...");
     getchar();
 }
-
 int findUserById(const char *id, User *result)
 {
     FILE *f = fopen("data/users.dat", "rb");
@@ -273,7 +250,7 @@ void viewCurrentEvents(const Account *acc)
     {
         for (size_t i = 0; i < eventsRead; i++)
         {
-            cleanEventData(&eventChunk[i]); // remove garbage 
+            cleanUserEventData(&eventChunk[i]); // remove garbage 
             
             // if there is a joined student and event is ongoing
             if (findStaffInEvent(&eventChunk[i], acc->studentId, &role) && eventChunk[i].status == STATUS_ONGOING)
@@ -297,23 +274,23 @@ void viewCurrentEvents(const Account *acc)
     printf("%-10s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Your Role", "Start Date");
     printf("-------------------------------------------------------------------------------\n");
 
-    // 5. SẮP XẾP VÀ IN RA (Đã gom đủ rồi thì mới in)
+    // sort and print results if found
     if (foundCount > 0)
     {
-        // Gọi hàm Sort
+        // call sort function
         quicksortByDate(matchedList, 0, foundCount - 1);
 
-        // In lần lượt từ mảng đã sort
+        // print sorted results
         for (int i = 0; i < foundCount; i++)
         {
-            printEventRowRole(&matchedList[i].event, matchedList[i].studentRole);
+            printUserEventRowRole(&matchedList[i].event, matchedList[i].studentRole);
         }
     }
 
-    // Giải phóng mảng gom sau khi xài xong
+    // release matched list memory after use
     free(matchedList);
 
-    // 6. IN FOOTER
+    // print footer
     printf("-------------------------------------------------------------------------------\n");
     if (foundCount == 0)
     {

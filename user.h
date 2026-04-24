@@ -10,6 +10,11 @@ typedef struct Account Account;  // Forward declaration to avoid circular includ
 #define MAX_SEARCH_RESULTS 50
 #define phoneNumber_LENGTH 20
 #define specialize_LENGTH 100
+#define CHUNK_SIZE 1000
+
+int findStaffInEventUser(const Event *event, const char *studentId, StaffRole *role);
+void cleanUserEventData(Event *event);
+void printUserEventRowRole(const Event *event, StaffRole role);
 typedef struct
 {
     char studentId[ID_LENGTH];
@@ -28,13 +33,10 @@ typedef struct
 
 int findUserById(const char *id, User *result);
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count);
-void displayEventHistory(const Account *acc);
-void displayCurrentEvents(const Account *acc);
+void displayEventHistory(const char *studentId);
+void displayCurrentUserEventHistory(const Account *acc);
+MatchedEvent *getEventsByStudentId(const char *studentId, int *outFoundCount);
 void viewCurrentEvents(const Account *acc);
 void viewProfile(const Account *acc);
-void cleanEventData(Event *event);
-void printEventRowRole(const Event *event, StaffRole role);
-void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *foundCount);
-int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role);
 
 #endif
