@@ -87,7 +87,6 @@ void bcnMenu(Account *acc)
             printf("[TODO] Statistics\n");
             break;
         case 13:
-            printf("View profile\n");
             viewProfile(acc);
             break;
         case 14:
