@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "event.h"
 #include "menuBCN.h"
 #include "utils.h"
 #include "fileio.h"
@@ -48,10 +47,10 @@ void bcnMenu(Account *acc)
             createEvent();
             break;
         case 2:
-            printf("[TODO] Edit event\n");
+            updateEventDetails();
             break;
         case 3:
-            printf("[TODO] Delete event\n");
+            deleteEvent();
             break;
         case 4:
             printf("[TODO] Update status\n");
@@ -60,6 +59,8 @@ void bcnMenu(Account *acc)
             printf("View all events\n");
             int filterStatus = inputEventStatus();
             displayAllEvent(filterStatus);
+            printf("Enter to continue ");
+            getchar();
             break;
         case 6:
             printf("[TODO] View event detail\n");

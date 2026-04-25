@@ -51,5 +51,12 @@ void updateStatus(Event *event);
 // Case 5: View all events Function
 int inputEventStatus();
 void displayAllEvent(int filterStatus);
-
+void updateEventDetails();
+void updateName(Event *event);
+void updateDescription(Event *event);
+void updateLocation(Event *event);
+void updateStartDate(Event *event);
+void updateEndDate(Event *event);
+Event chooseEvent();
+void deleteEvent();
 #endif
