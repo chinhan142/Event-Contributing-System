@@ -220,48 +220,55 @@ void viewProfile(const Account *acc){
     fclose(f);
     clearScreen();
 }
-void viewCurrentEvents(const Account *acc)
-{   
-    //open file
+MatchedEvent* getCurrentEventsForUser(const Account *acc, int *count)
+{
     FILE *f = fopen("data/events.dat", "rb");
     if (f == NULL)
     {
-        printf("\nNo events available in the system.\n");
-        printf("Press Enter to continue...");
-        getchar();
-        return;
+        *count = 0;
+        return NULL;
     }
 
-    // allocate memory for chunk
     Event *eventChunk = (Event *)malloc(CHUNK_SIZE * sizeof(Event));
     if (eventChunk == NULL)
     {
-        printf("Error: Out of memory. Cannot allocate chunk.\n");
         fclose(f);
-        return;
+        *count = 0;
+        return NULL;
     }
-// array for get the total results
+
     int capacity = 10;
     int foundCount = 0;
     MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));
+    if (matchedList == NULL)
+    {
+        free(eventChunk);
+        fclose(f);
+        *count = 0;
+        return NULL;
+    }
+
     size_t eventsRead;
     StaffRole role;
     while ((eventsRead = fread(eventChunk, sizeof(Event), CHUNK_SIZE, f)) > 0)
     {
         for (size_t i = 0; i < eventsRead; i++)
         {
-            cleanUserEventData(&eventChunk[i]); // remove garbage 
-            
-            // if there is a joined student and event is ongoing
+            cleanUserEventData(&eventChunk[i]);
             if (findStaffInEvent(&eventChunk[i], acc->studentId, &role) && eventChunk[i].status == STATUS_ONGOING)
             {
-                // auto resize array if needed
-                if (foundCount >= capacity) {
+                if (foundCount >= capacity)
+                {
                     capacity *= 2;
                     matchedList = (MatchedEvent *)realloc(matchedList, capacity * sizeof(MatchedEvent));
+                    if (matchedList == NULL)
+                    {
+                        free(eventChunk);
+                        fclose(f);
+                        *count = 0;
+                        return NULL;
+                    }
                 }
-                
-                // insert to result array 
                 matchedList[foundCount].event = eventChunk[i];
                 matchedList[foundCount].studentRole = role;
                 foundCount++;
@@ -270,37 +277,124 @@ void viewCurrentEvents(const Account *acc)
     }
     free(eventChunk);
     fclose(f);
+
+    if (foundCount > 1)
+    {
+        quicksortByDate(matchedList, 0, foundCount - 1);
+    }
+
+    *count = foundCount;
+    return matchedList;
+}
+
+void printCurrentEvents(MatchedEvent *events, int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        printUserEventRowRole(&events[i].event, events[i].studentRole);
+    }
+}
+
+void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print out "Press Enter to continue" to make the event details
+                                                    //view smoother when user wants to view details of one of the events in the list
+{
+    int count;
+    MatchedEvent *events = getCurrentEventsForUser(acc, &count);
+    if (events == NULL && count == 0)
+    {
+        printf("\nNo events available in the system.\n");
+        printf("Press Enter to continue...");
+        getchar();
+        return;
+    }
+
     printDivider("CURRENT EVENTS");
     printf("%-10s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Your Role", "Start Date");
     printf("-------------------------------------------------------------------------------\n");
 
-    // sort and print results if found
-    if (foundCount > 0)
+    if (count > 0)
     {
-        // call sort function
-        quicksortByDate(matchedList, 0, foundCount - 1);
-
-        // print sorted results
-        for (int i = 0; i < foundCount; i++)
-        {
-            printUserEventRowRole(&matchedList[i].event, matchedList[i].studentRole);
-        }
+        printCurrentEvents(events, count);
     }
 
-    // release matched list memory after use
-    free(matchedList);
-
-    // print footer
     printf("-------------------------------------------------------------------------------\n");
-    if (foundCount == 0)
+    if (count == 0)
     {
         printf("You have no ongoing events.\n");
     }
     else
     {
-        printf("Total: %d ongoing event(s).\n", foundCount);
+        printf("Total: %d ongoing event(s).\n", count);
     }
-    
-    printf("\nPress Enter to continue...");
-    getchar();
+
+    if (events != NULL)
+    {
+        free(events);
+    }
+    if (!wait) {
+        printf("\nPress Enter to continue...");
+        getchar();
+    }
+}
+void viewUserEventDetails(const Account *acc, const char *eventId){
+    viewCurrentEvents(acc,1);
+    printf("\nEnter the Event ID to view details (or press Enter to go back): ");
+    char inputEventId[EVENT_ID_LENGTH];
+    fgets(inputEventId, sizeof(inputEventId), stdin);
+    inputEventId[strcspn(inputEventId, "\r\n")] = '\0'; // Remove newline
+    char lowerInputEventId[EVENT_ID_LENGTH];
+    toLowerStr(lowerInputEventId, inputEventId); // ensure that the event ID inputed is casesentive
+    if (strlen(lowerInputEventId) > EVENT_ID_LENGTH || lowerInputEventId[0] != 'e' || lowerInputEventId[1] != 'v') {
+        printf("[ERROR] Invalid Event ID format. Please try again.\n");
+        return;
+    }
+    if (strlen(lowerInputEventId) == 0) {
+        return; // User chose to go back
+    }
+    userEventDetails(acc, inputEventId);
+}
+
+void userEventDetails(const Account *acc, const char *eventId)
+{
+    FILE *f = fopen("data/events.dat", "rb");
+    if (f == NULL)
+    {
+        printf("[ERROR] Cannot open events.dat file\n");
+        return;
+    }
+    Event tempEvent;
+    int found = 0;
+    while (fread(&tempEvent, sizeof(Event), 1, f) == 1)
+    {
+        cleanUserEventData(&tempEvent); 
+        char lowerTempEventId[EVENT_ID_LENGTH];
+        toLowerStr(lowerTempEventId, tempEvent.eventId); // ensure that the event ID read from file is casesentive
+        if (strcmp(lowerTempEventId, eventId) == 0)
+        {
+            StaffRole role;
+            if (findStaffInEvent(&tempEvent, acc->studentId, &role))
+            {
+                printDivider("EVENT DETAILS");
+                printf("Event ID: %s\n", tempEvent.eventId);
+                printf("Name: %s\n", tempEvent.name);
+                printf("Description: %s\n", tempEvent.description);
+                printf("Location: %s\n", tempEvent.location);
+                printf("Start Date: %s\n", tempEvent.startDate);
+                printf("End Date: %s\n", tempEvent.endDate);
+                printf("Status: %s\n", (tempEvent.status == STATUS_UPCOMING) ? "Upcoming" :(tempEvent.status == STATUS_ONGOING) ? "Ongoing" : "Finished");
+                printf("Your Role: %s\n", (role == STAFF_LEADER) ? "Leader" : (role == STAFF_MEMBER) ? "Member" : "Support");
+                found = 1;
+                 printf("========================================\n");
+                system("pause");
+                break;
+            }
+        }
+    }
+
+    if (!found)
+    {
+        printf("[ERROR] You are not a staff member of this event or event not found.\n");
+    }
+
+    fclose(f);
 }
