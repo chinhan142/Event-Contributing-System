@@ -67,23 +67,23 @@ void quicksortByDate(MatchedEvent *arr, int low, int high)
 
 int partitionByDate(MatchedEvent *arr, int low, int high)
 {
-    // Chọn pivot là phần tử cuối cùng
+    // choose last element as pivot
     MatchedEvent pivot = arr[high];
     int i = low - 1;
 
     for (int j = low; j < high; j++)
     {
-        // So sánh theo ngày (descending)
+        // compare by date (descending)
         if (strcmp(arr[j].event.startDate, pivot.event.startDate) > 0)
         {
             i++;
-            // Swap arr[i] và arr[j]
+            // change location of elements
             MatchedEvent temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
         }
     }
-    // Swap arr[i+1] và arr[high]
+    // change location of pivot to correct position
     MatchedEvent temp = arr[i + 1];
     arr[i + 1] = arr[high];
     arr[high] = temp;

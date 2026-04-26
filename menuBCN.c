@@ -67,7 +67,7 @@ void bcnMenu(Account *acc)
             break;
         case 7:
             printf("Search event\n");
-            printEventResult(); // còn tình trạng WET
+            printEventResult(); // Still Wet
             break;
         case 8:
             addStaffToEvent();

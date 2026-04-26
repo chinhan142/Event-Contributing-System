@@ -71,11 +71,11 @@ void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *f
     {
         cleanUserEventData(&chunk[i]);
 
-        // Nếu tìm thấy sinh viên trong event này
+        // check if the student is a staff member of the event and if the event is finished
         if (findStaffInEvent(&chunk[i], studentId, &role))
         {
             printUserEventRowRole(&chunk[i], role);
-            (*foundCount)++; // Tăng biến đếm số lượng tìm thấy
+            (*foundCount)++; 
         }
     }
 }

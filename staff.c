@@ -323,7 +323,7 @@ void cleanEventData(Event *event)
 
 void printEventRowRole(const Event *event, StaffRole role)
 {
-    // 1. Chuyển Role (từ số/enum) thành chuỗi
+    //change role from number to string
     const char *roleName;
     switch (role)
     {
@@ -333,18 +333,18 @@ void printEventRowRole(const Event *event, StaffRole role)
         default: roleName = "Unknown"; break;
     }
 
-    // 2. Chuyển Status (từ số/enum) thành chuỗi
+   //change status from number to string
     const char *statusName;
     switch (event->status) 
     {
-        // LƯU Ý: Hãy thay 0, 1, 2 bằng đúng tên Enum/Số mà bạn định nghĩa trong struct Event
+        // Assuming EventStatus enum has values 0,1,2 for UPCOMING, ONGOING, FINISHED
         case 0: statusName = "Upcoming"; break; 
         case 1: statusName = "Ongoing"; break;
-        case 2: statusName = "Finished"; break; // Đây là trạng thái bạn đang cần lọc nè
+        case 2: statusName = "Finished"; break; 
         default: statusName = "Unknown"; break;
     }
 
-    // 3. In ra màn hình (Dùng biến chuỗi statusName thay vì event->status)
+   //print event name, role and status in formatted way
     printf("%-30.30s | %-10s | %-12s\n",          
            event->name,
            roleName,
@@ -373,14 +373,14 @@ char *StudentIDInput() {
     char studentId[ID_LENGTH];
     printf("Enter Student ID (or press Enter to skip): ");
     
-    // Giả sử inputString đã xử lý việc xóa ký tự '\n' ở cuối
+    // Use inputString to read input safely
     inputString(studentId, sizeof(studentId));
 
     if (strlen(studentId) == 0) {
         return NULL;
     }
 
-    // Tự cấp phát và copy thay vì dùng strdup
+    // Allocate memory for the student ID string to return
     char *copy = (char *)malloc((strlen(studentId) + 1) * sizeof(char));
     if (copy == NULL) {
         printf("Memory allocation failed!\n");
@@ -427,10 +427,10 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
 {
     *outFoundCount = 0; // Initialize output count to 0
 
-    // Mở file
+    // open file for reading
     FILE *f = fopen("data/events.dat", "rb");
     if (f == NULL) {
-        return NULL; //check if file opened successfully
+        return NULL; 
     }
 
     // allocate memory cho chunk
@@ -493,7 +493,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
     free(eventChunk);
     fclose(f);
 
-    // record found count to output parameter
+    // record found count to output parameter and allocate exact memory for result array
     *outFoundCount = foundCount;
 
     //if no events found, free matchedList and return NULL

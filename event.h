@@ -26,7 +26,7 @@ typedef enum
 typedef struct
 {
     char studentId[ID_LENGTH];
-    StaffRole role; // Sử dụng StaffRole
+    StaffRole role; // use StaffRole
     char description[DESC_LENGTH];
 } StaffEntry;
 
