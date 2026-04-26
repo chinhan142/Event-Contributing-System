@@ -168,9 +168,39 @@ void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *c
 
     *count = 0;
     User temp;
+    char queryLower[NAME_LENGTH];
+    toLowerStr(queryLower, name);
     while (fread(&temp, sizeof(User), 1, f) && *count < MAX_SEARCH_RESULTS)
     {
-        if (strstr(temp.studentName, name) != NULL)
+        char nameLower[NAME_LENGTH];
+        toLowerStr(nameLower, temp.studentName);
+        if (strstr(nameLower, queryLower) != NULL)
+        {
+            results[*count] = temp;
+            (*count)++;
+        }
+    }
+    fclose(f);
+}
+
+void searchUserById(const char *id, User results[MAX_SEARCH_RESULTS], int *count)
+{
+    FILE *f = fopen("data/users.dat", "rb");
+    if (f == NULL)
+    {
+        *count = 0;
+        return;
+    }
+
+    *count = 0;
+    User temp;
+    char queryLower[ID_LENGTH];
+    toLowerStr(queryLower, id);
+    while (fread(&temp, sizeof(User), 1, f) && *count < MAX_SEARCH_RESULTS)
+    {
+        char idLower[ID_LENGTH];
+        toLowerStr(idLower, temp.studentId);
+        if (strcmp(idLower, queryLower) == 0)
         {
             results[*count] = temp;
             (*count)++;
