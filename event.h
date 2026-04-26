@@ -1,6 +1,8 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+typedef struct Account Account;
+
 #define ID_LENGTH 20
 #define NAME_LENGTH 255
 #define MAX_STAFF_PER_EVENT 30
@@ -8,7 +10,6 @@
 #define DESC_LENGTH 255
 #define LOCATION_LENGTH 255
 #define DATE_LENGTH 20
-
 typedef enum
 {
     STATUS_UPCOMING = 0,
@@ -48,7 +49,6 @@ int isChronological(char *start, char *end);
 int checkTime(int year, int mon, int day);
 void createEvent();
 void updateStatus(Event *event);
-// Case 5: View all events Function
 int inputEventStatus();
 void displayAllEvent(int filterStatus);
 void updateEventDetails();
@@ -59,4 +59,7 @@ void updateStartDate(Event *event);
 void updateEndDate(Event *event);
 Event chooseEvent();
 void deleteEvent();
+void viewEventDetails();
+void manualUpdateEventStatus();
+
 #endif

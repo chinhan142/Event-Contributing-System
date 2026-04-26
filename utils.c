@@ -7,12 +7,14 @@
 void inputString(char *str, int size)
 {
     fgets(str, size, stdin);
-    str[strcspn(str, "\n")] = '\0';
+    str[strcspn(str, "\r\n")] = '\0';
 }
 
-int stoi(char *str, int fromIndex, int toIndex){
+int stoi(char *str, int fromIndex, int toIndex)
+{
     int result = 0;
-    for(int i = fromIndex;i <= toIndex;i++){
+    for (int i = fromIndex; i <= toIndex; i++)
+    {
         result *= 10;
         result += str[i] - '0';
     }
@@ -50,10 +52,9 @@ void toLowerStr(char *dest, const char *src)
 void toUpperStr(char *dest, const char *src)
 {
     for (int i = 0; src[i]; i++)
-        dest[i] = toupper(src[i]); 
+        dest[i] = toupper(src[i]);
     dest[strlen(src)] = '\0';
 }
-
 
 void quicksortByDate(MatchedEvent *arr, int low, int high)
 {
@@ -87,6 +88,6 @@ int partitionByDate(MatchedEvent *arr, int low, int high)
     MatchedEvent temp = arr[i + 1];
     arr[i + 1] = arr[high];
     arr[high] = temp;
-    
+
     return i + 1;
 }

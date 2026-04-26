@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "auth.h"
+#include "utils.h"
 
 // This function helps updating the value of Account attribute inside the .dat file.
 // Why we need to have this function: Normally, if we perform straight update by using structName.attribute, then after the program exit, it will not save the updated value to the .dat file causing the logic of the program is wrong and does not meet the requirement of the given task.
@@ -76,7 +77,7 @@ int loginAccount(char id[], char password[])
         foundAccount.failCount = 0;
         // updateAccount implementation -> update the failCount to 0
         updateAccount(&foundAccount);
-        
+
         // Return success role
         if (foundAccount.role == ROLE_BCN)
         {
@@ -100,9 +101,65 @@ int loginAccount(char id[], char password[])
         updateAccount(&foundAccount);
         return LOGIN_FAILED;
     }
-    
+
     return LOGIN_FAILED;
 }
 
+void changeOwnPassword(Account *acc)
+{
+    char oldPass[PASSWORD_LENGTH], newPass[PASSWORD_LENGTH],
+        confirmPass[PASSWORD_LENGTH];
 
+    printDivider("CHANGE PASSWORD");
+    printf("Enter current password: ");
+    inputString(oldPass, sizeof(oldPass));
 
+    if (strcmp(acc->password, oldPass) != 0)
+    {
+        printf("\033[31m[ERROR] Wrong current password!\033[0m\n");
+        return;
+    }
+
+    printf("Enter new password: ");
+    inputString(newPass, sizeof(newPass));
+    printf("Confirm new password: ");
+    inputString(confirmPass, sizeof(confirmPass));
+
+    if (strcmp(newPass, confirmPass) != 0)
+    {
+        printf("\033[31m[ERROR] New passwords do not match!\033[0m\n");
+        return;
+    }
+
+    strcpy(acc->password, newPass);
+    updateAccount(acc);
+
+    printf("\033[32m[SUCCESS] Password changed successfully!\033[0m\n");
+}
+
+void resetMemberPassword()
+{
+    char targetId[ID_LENGTH];
+    printDivider("RESET MEMBER PASSWORD");
+    printf("Enter Member Student ID to reset: ");
+    inputString(targetId, sizeof(targetId));
+
+    Account targetAcc;
+    if (findAccountById(targetId, &targetAcc))
+    {
+        strcpy(targetAcc.password, targetAcc.studentId);
+
+        targetAcc.isLocked = ACCOUNT_UNLOCKED;
+        targetAcc.failCount = 0;
+
+        if (confirmAction("Are you sure you want to reset this password to default?"))
+        {
+            updateAccount(&targetAcc);
+            printf("\033[32m[SUCCESS] Password for %s has been reset to default.\033[0m\n", targetId);
+        }
+    }
+    else
+    {
+        printf("\033[31m[ERROR] Student ID not found!\033[0m\n");
+    }
+}
