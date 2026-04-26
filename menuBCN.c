@@ -1,10 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "menuBCN.h"
 #include "utils.h"
 #include "fileio.h"
 #include "staff.h"
 #include "user.h"
-#include <stdlib.h>
+#include "auth.h"
 void bcnMenu(Account *acc)
 {
     int choice;
@@ -53,7 +54,7 @@ void bcnMenu(Account *acc)
             deleteEvent();
             break;
         case 4:
-            printf("[TODO] Update status\n");
+            manualUpdateEventStatus();
             break;
         case 5:
             printf("View all events\n");
@@ -63,7 +64,8 @@ void bcnMenu(Account *acc)
             getchar();
             break;
         case 6:
-            printf("[TODO] View event detail\n");
+            printf("View event detail\n");
+            viewEventDetails();
             break;
         case 7:
             printf("Search event\n");
@@ -79,7 +81,7 @@ void bcnMenu(Account *acc)
             deleteStaffFromEvent();
             break;
         case 11:
-            printf("[TODO] Staff history\n");
+            printf("Staff history\n");
             char *studentId = StudentIDInput();
             displayEventHistory(studentId);
             free(studentId);
@@ -91,10 +93,12 @@ void bcnMenu(Account *acc)
             viewProfile(acc);
             break;
         case 14:
-            printf("[TODO] Change password\n");
+            printf("Change password\n");
+            changeOwnPassword(acc);
             break;
         case 15:
-            printf("[TODO] Reset password\n");
+            printf("Reset password\n");
+            resetMemberPassword();
             break;
         case 0:
             printf("Logging out...\n");
