@@ -32,6 +32,7 @@ typedef struct
 
 
 int findUserById(const char *id, User *result);
+void searchUserById(const char *id, User results[MAX_SEARCH_RESULTS], int *count);
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count);
 void displayEventHistory(const char *studentId);
 void displayCurrentUserEventHistory(const Account *acc);

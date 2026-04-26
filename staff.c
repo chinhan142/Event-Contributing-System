@@ -52,13 +52,43 @@ void addStaffToEvent()
         return;
     }
 
+    int searchMode;
+    printf("Search by:\n");
+    printf("  1. Student ID\n");
+    printf("  2. Name\n");
+    printf("Choice: ");
+    if (scanf("%d", &searchMode) != 1)
+    {
+        searchMode = 0;
+    }
+    getchar();
+
     char query[NAME_LENGTH];
-    printf("Search Member (Name or ID): ");
+    if (searchMode == 1)
+    {
+        printf("Enter Student ID: ");
+    }
+    else if (searchMode == 2)
+    {
+        printf("Enter Name: ");
+    }
+    else
+    {
+        printf("[ERROR] Invalid search mode!\n");
+        return;
+    }
     inputString(query, sizeof(query));
 
     User results[MAX_SEARCH_RESULTS];
     int count = 0;
-    searchUserByName(query, results, &count);
+    if (searchMode == 1)
+    {
+        searchUserById(query, results, &count);
+    }
+    else
+    {
+        searchUserByName(query, results, &count);
+    }
 
     if (count == 0)
     {
@@ -186,6 +216,7 @@ void editStaffInEvent()
         printf("%d. [%s] %-20s | Role: %-8s | Mission: %s\n", i + 1, e.staffList[i].studentId, name, getRoleName(e.staffList[i].role), e.staffList[i].description);
     }
 
+    printf("Enter the staff number to edit from the list above.\n");
     int choice;
     printf("\nSelect staff member to edit (1-%d) or 0 to cancel: ", e.staffCount);
     if (scanf("%d", &choice) != 1)
@@ -272,6 +303,7 @@ void deleteStaffFromEvent()
         printf("%d. [%s] %-20s | Role: %-8s | Mission: %s\n", i + 1, e.staffList[i].studentId, name, getRoleName(e.staffList[i].role), e.staffList[i].description);
     }
 
+    printf("Enter the staff number to remove from the list above.\n");
     int choice;
     printf("\nSelect staff member to delete (1-%d) or 0 to cancel: ", e.staffCount);
     if (scanf("%d", &choice) != 1)
