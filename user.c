@@ -9,12 +9,20 @@
 #include "utils.h"  
 #define CHUNK_SIZE 1000
 
-void printUserFinishedList(MatchedEvent *list, int count) 
+void printUserFinishedList(MatchedEvent *list, int count, const char *studentId) 
 {
+    const char *studentName = "Unknown";
+    User userData;
+
+    if (studentId != NULL && studentId[0] != '\0' && findUserById(studentId, &userData))
+    {
+        studentName = userData.studentName;
+    }
+
     printf("\n--- FINISHED EVENTS HISTORY ---\n");
-    printf("----------------------------------------------------------\n");
-    printf("%-35s | %-15s\n", "Event Name", "Role");
-    printf("----------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------------------\n");
+    printf("%-10s | %-30s | %-25s | %-12s\n", "Event ID", "Event Name", "Student Name", "Role");
+    printf("----------------------------------------------------------------------------------------------\n");
     
     for (int i = 0; i < count; i++)
     {
@@ -25,9 +33,13 @@ void printUserFinishedList(MatchedEvent *list, int count)
             case STAFF_SUPPORT: roleName = "Support"; break;
             default: roleName = "Unknown"; break;
         }
-        printf("%-35.35s | %-15s\n", list[i].event.name, roleName);
+        printf("%-10s | %-30.30s | %-25.25s | %-12s\n",
+               list[i].event.eventId,
+               list[i].event.name,
+               studentName,
+               roleName);
     }
-    printf("----------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------------------\n");
 }
 
 void cleanUserEventData(Event *event)
@@ -36,10 +48,11 @@ void cleanUserEventData(Event *event)
     event->eventId[strcspn(event->eventId, "\r\n ")] = '\0';
 }
 
-void printUserEventRowRole(const Event *event, StaffRole role)
+void printUserEventRowRole(const Event *event, StaffRole role, const char *studentId)
 {
-
     const char *roleName;
+    const char *studentName = "Unknown";
+    User userData;
     switch (role)
     {
         case STAFF_LEADER:
@@ -57,9 +70,15 @@ void printUserEventRowRole(const Event *event, StaffRole role)
     }
 
 
-    printf("%-10s | %-25.25s | %-12s | %s\n",
+    if (studentId != NULL && studentId[0] != '\0' && findUserById(studentId, &userData))
+    {
+        studentName = userData.studentName;
+    }
+
+    printf("%-10s | %-25.25s | %-25.25s | %-12s | %s\n",
            event->eventId,
            event->name,
+           studentName,
            roleName,          
            event->startDate);
 }
@@ -74,7 +93,7 @@ void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *f
         // Nếu tìm thấy sinh viên trong event này
         if (findStaffInEvent(&chunk[i], studentId, &role))
         {
-            printUserEventRowRole(&chunk[i], role);
+            printUserEventRowRole(&chunk[i], role, studentId);
             (*foundCount)++; // Tăng biến đếm số lượng tìm thấy
         }
     }
@@ -124,7 +143,7 @@ void displayCurrentUserEventHistory(const Account *acc)
         quicksortByDate(finishedList, 0, finishedCount - 1);
     }
     if(finishedCount > 0){
-        printUserFinishedList(finishedList, finishedCount);
+        printUserFinishedList(finishedList, finishedCount, acc->studentId);
     }else{
         printf("No finished events found for this student.\n");
     }
@@ -317,11 +336,11 @@ MatchedEvent* getCurrentEventsForUser(const Account *acc, int *count)
     return matchedList;
 }
 
-void printCurrentEvents(MatchedEvent *events, int count)
+void printCurrentEvents(MatchedEvent *events, int count, const char *studentId)
 {
     for (int i = 0; i < count; i++)
     {
-        printUserEventRowRole(&events[i].event, events[i].studentRole);
+        printUserEventRowRole(&events[i].event, events[i].studentRole, studentId);
     }
 }
 
@@ -339,15 +358,15 @@ void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print o
     }
 
     printDivider("CURRENT EVENTS");
-    printf("%-10s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Your Role", "Start Date");
-    printf("-------------------------------------------------------------------------------\n");
+    printf("%-10s | %-25s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Student Name", "Your Role", "Start Date");
+    printf("-----------------------------------------------------------------------------------------------------\n");
 
     if (count > 0)
     {
-        printCurrentEvents(events, count);
+        printCurrentEvents(events, count, acc->studentId);
     }
 
-    printf("-------------------------------------------------------------------------------\n");
+    printf("-----------------------------------------------------------------------------------------------------\n");
     if (count == 0)
     {
         printf("You have no ongoing events.\n");
