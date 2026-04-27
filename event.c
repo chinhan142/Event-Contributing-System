@@ -270,10 +270,15 @@ void displayAllEvent(int filterStatus)
 
 void printEventResult()
 {
-    clearScreen();
+    
     char inputID[EVENT_ID_LENGTH];
-    printf("Enter Event ID to search: ");
+    printf("Enter Event ID to search (or press Enter to skip): ");
     inputString(inputID, sizeof(inputID));
+    if (inputID[0] == '\0')
+    {
+        printf("[INFO] Search cancelled.\n");
+        return;
+    }
     toUpperStr(inputID, inputID);
     int index = findEventIndexById(inputID);
     if (index == -1)
@@ -291,19 +296,19 @@ void printEventResult()
         printf("No events found.\n");
         printf("Press Enter to continue");
         getchar();
-        clearScreen();
         return;
     }
 
     Event temp;
+    
+    
     printf("\n");
     printDivider("SEARCH RESULTS");
-    printf("%-12s | %-30s | %-15s | %s\n", "Event ID", "Name", "Status", "Date");
-    printf("===============================================================================\n");
+    printf("%-12s | %-25s | %-12s | %-12s | %-20s | %s\n", "Event ID", "Name", "Status", "Date", "User Name", "Role");
+    printf("=========================================================================================================\n");
     fseek(f, index * sizeof(Event), SEEK_SET);
     if (fread(&temp, sizeof(Event), 1, f))
     {
-        printf("DEBUG: ID=%s | DATE=%s\n", temp.eventId, temp.startDate);
         char statusStr[20];
         switch (temp.status)
         {
@@ -320,7 +325,31 @@ void printEventResult()
             strcpy(statusStr, "Unknown");
             break;
         }
-        printf("%-12s | %-30s | %-15s | %s\n", temp.eventId, temp.name, statusStr, temp.startDate);
+        User currentUser; 
+        char userName[50] = "Unknown";
+        char userRole[30] = "Unknown";
+        int foundUser = findUserById(temp.staffList[0].studentId, &currentUser);
+        if (foundUser) {
+            strcpy(userName, currentUser.studentName);
+
+            switch (temp.staffList[0].role) { 
+                case STAFF_LEADER:
+                    strcpy(userRole, "Leader");
+                    break;
+                case STAFF_MEMBER:
+                    strcpy(userRole, "Member");
+                    break;
+                case STAFF_SUPPORT:
+                    strcpy(userRole, "Support");
+                    break;
+                default:
+                    strcpy(userRole, "Unknown");
+                    break;
+            }
+        }
+        printf("%-12s | %-25s | %-12s | %-12s | %-20s | %s\n", 
+               temp.eventId, temp.name, statusStr, temp.startDate, userName, userRole);
+               printf("=========================================================================================================\n");
     }
     fclose(f);
 }
