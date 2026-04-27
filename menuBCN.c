@@ -69,7 +69,7 @@ void bcnMenu(Account *acc)
             break;
         case 7:
             printf("Search event\n");
-            printEventResult(); // còn tình trạng WET
+            printEventResult();
             break;
         case 8:
             addStaffToEvent();
@@ -85,6 +85,8 @@ void bcnMenu(Account *acc)
             char *studentId = StudentIDInput();
             displayEventHistory(studentId);
             free(studentId);
+            printf("Enter to continue ");
+            getchar();
             break;
         case 12:
             printf("[TODO] Statistics\n");
