@@ -353,9 +353,9 @@ void cleanEventData(Event *event)
     event->eventId[strcspn(event->eventId, "\r\n ")] = '\0';
 }
 
-void printEventRowRole(const Event *event, StaffRole role)
+void printEventRowRole(const Event *event, StaffRole role, const char *studentName)
 {
-    // 1. Chuyển Role (từ số/enum) thành chuỗi
+    // change role from number to string
     const char *roleName;
     switch (role)
     {
@@ -365,20 +365,21 @@ void printEventRowRole(const Event *event, StaffRole role)
         default: roleName = "Unknown"; break;
     }
 
-    // 2. Chuyển Status (từ số/enum) thành chuỗi
+    // change status from number to string
     const char *statusName;
     switch (event->status) 
     {
-        // LƯU Ý: Hãy thay 0, 1, 2 bằng đúng tên Enum/Số mà bạn định nghĩa trong struct Event
         case 0: statusName = "Upcoming"; break; 
         case 1: statusName = "Ongoing"; break;
-        case 2: statusName = "Finished"; break; // Đây là trạng thái bạn đang cần lọc nè
+        case 2: statusName = "Finished"; break; 
         default: statusName = "Unknown"; break;
     }
 
-    // 3. In ra màn hình (Dùng biến chuỗi statusName thay vì event->status)
-    printf("%-30.30s | %-10s | %-12s\n",          
+    // print row with formatted output
+    printf("%-10s | %-30.30s | %-25.25s | %-10s | %-12s\n",
+           event->eventId,
            event->name,
+           studentName,
            roleName,
            statusName 
           );
@@ -387,6 +388,11 @@ void printEventRowRole(const Event *event, StaffRole role)
 
 int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
 {
+    if (event == NULL || studentId == NULL || role == NULL)
+    {
+        return 0;
+    }
+
     for (int i = 0; i < event->staffCount; i++)
     {
         if (strcmp(event->staffList[i].studentId, studentId) == 0)
@@ -405,14 +411,14 @@ char *StudentIDInput() {
     char studentId[ID_LENGTH];
     printf("Enter Student ID (or press Enter to skip): ");
     
-    // Giả sử inputString đã xử lý việc xóa ký tự '\n' ở cuối
+    
     inputString(studentId, sizeof(studentId));
 
     if (strlen(studentId) == 0) {
         return NULL;
     }
 
-    // Tự cấp phát và copy thay vì dùng strdup
+    // auto allocate memory 
     char *copy = (char *)malloc((strlen(studentId) + 1) * sizeof(char));
     if (copy == NULL) {
         printf("Memory allocation failed!\n");
@@ -424,20 +430,32 @@ char *StudentIDInput() {
 }
 void printEventList(MatchedEvent *list, int count, const char *studentId) 
 {
-    printf("\nEvent History for Member MSSV: %s\n", studentId);
-    printf("----------------------------------------------------------\n");
-    // total 58 chars
-    printf("%-30s | %-10s | %-12s\n", "Event Name", "Role", "Status");
-    printf("----------------------------------------------------------\n");
+    const char *studentName = "Unknown";
+    User userData;
+    if (studentId != NULL && studentId[0] != '\0' && findUserById(studentId, &userData))
+    {
+        studentName = userData.studentName;
+    }
+
+    printf("\nEvent History for Member ID: %s\n", studentId);
+    printf("-----------------------------------------------------------------------------------------------------\n");
+    printf("%-10s | %-30s | %-25s | %-10s | %-12s\n", "Event ID", "Event Name", "Student Name", "Role", "Status");
+    printf("-----------------------------------------------------------------------------------------------------\n");
     
     for (int i = 0; i < count; i++)
     {
-        printEventRowRole(&list[i].event, list[i].studentRole);
+        printEventRowRole(&list[i].event, list[i].studentRole, studentName);
     }
-    printf("----------------------------------------------------------\n");
+    printf("-----------------------------------------------------------------------------------------------------\n");
     printf("Total: %d event(s) found.\n", count);
 }
 void displayEventHistory(const char *studentId) {
+    if (studentId == NULL || studentId[0] == '\0')
+    {
+        printf("[ERROR] Invalid Student ID.\n");
+        return;
+    }
+
     int count = 0;
     
    //get events by studentId
@@ -457,22 +475,32 @@ void displayEventHistory(const char *studentId) {
 }
 MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount) 
 {
+    if (outFoundCount == NULL)
+    {
+        return NULL;
+    }
+
     *outFoundCount = 0; // Initialize output count to 0
 
-    // Mở file
+    if (studentId == NULL || studentId[0] == '\0')
+    {
+        return NULL;
+    }
+
+    // open file for reading
     FILE *f = fopen("data/events.dat", "rb");
     if (f == NULL) {
         return NULL; //check if file opened successfully
     }
 
-    // allocate memory cho chunk
+    // allocate memory for chunk
     Event *eventChunk = (Event *)malloc(CHUNK_SIZE * sizeof(Event));
     if (eventChunk == NULL) {
         fclose(f);
         return NULL; //check if memory allocated successfully
     }
 
-   //allocate memory cho result array
+   //allocate memory for result array
     int capacity = 10;
     int foundCount = 0; 
     MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));
@@ -536,3 +564,4 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
 
     return matchedList; //return pointer to array of matched events (caller is responsible for freeing this memory)
 }
+

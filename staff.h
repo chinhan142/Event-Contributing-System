@@ -20,7 +20,7 @@ int canModifyStaff(Event *e);
 
 void cleanEventData(Event *event);
 
-void printEventRowRole(const Event *event, StaffRole role);
+void printEventRowRole(const Event *event, StaffRole role, const char *studentName);
 
 void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *foundCount);
 
