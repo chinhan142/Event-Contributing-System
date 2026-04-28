@@ -82,10 +82,11 @@ static void initMockEvents()
     FILE *check = fopen("data/events.dat", "rb");
     if (check != NULL)
     {
-        fseek(check, 0, SEEK_END);
-        if (ftell(check) > 0)
+        Event e;
+        if (fread(&e, sizeof(Event), 1, check) == 1)
         {
             fclose(check);
+
             return;
         }
         fclose(check);
