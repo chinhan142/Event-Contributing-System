@@ -45,16 +45,28 @@ void bcnMenu(Account *acc)
         {
             // calling function here
         case 1:
+            printf("Create new event\n");
             createEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 2:
+            printf("Update event details\n");
             updateEventDetails();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 3:
+            printf("Delete event\n");
             deleteEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 4:
+            printf("Manual update event status\n");
             manualUpdateEventStatus();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 5:
             printf("View all events\n");
@@ -66,19 +78,32 @@ void bcnMenu(Account *acc)
         case 6:
             printf("View event detail\n");
             viewEventDetails();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 7:
             printf("Search event\n");
             printEventResult();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 8:
+            printf("Add staff to event\n");
             addStaffToEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 9:
+            printf("Edit staff in event\n");
             editStaffInEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 10:
+            printf("Delete staff from event\n");
             deleteStaffFromEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 11:
             printf("Staff history\n");
