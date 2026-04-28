@@ -355,7 +355,7 @@ void cleanEventData(Event *event)
 
 void printEventRowRole(const Event *event, StaffRole role, const char *studentName)
 {
-    // 1. Chuyển Role (từ số/enum) thành chuỗi
+    // change role from number to string
     const char *roleName;
     switch (role)
     {
@@ -365,18 +365,17 @@ void printEventRowRole(const Event *event, StaffRole role, const char *studentNa
         default: roleName = "Unknown"; break;
     }
 
-    // 2. Chuyển Status (từ số/enum) thành chuỗi
+    // change status from number to string
     const char *statusName;
     switch (event->status) 
     {
-        // LƯU Ý: Hãy thay 0, 1, 2 bằng đúng tên Enum/Số mà bạn định nghĩa trong struct Event
         case 0: statusName = "Upcoming"; break; 
         case 1: statusName = "Ongoing"; break;
-        case 2: statusName = "Finished"; break; // Đây là trạng thái bạn đang cần lọc nè
+        case 2: statusName = "Finished"; break; 
         default: statusName = "Unknown"; break;
     }
 
-    // 3. In ra màn hình (Dùng biến chuỗi statusName thay vì event->status)
+    // print row with formatted output
     printf("%-10s | %-30.30s | %-25.25s | %-10s | %-12s\n",
            event->eventId,
            event->name,
@@ -412,14 +411,14 @@ char *StudentIDInput() {
     char studentId[ID_LENGTH];
     printf("Enter Student ID (or press Enter to skip): ");
     
-    // Giả sử inputString đã xử lý việc xóa ký tự '\n' ở cuối
+    
     inputString(studentId, sizeof(studentId));
 
     if (strlen(studentId) == 0) {
         return NULL;
     }
 
-    // Tự cấp phát và copy thay vì dùng strdup
+    // auto allocate memory 
     char *copy = (char *)malloc((strlen(studentId) + 1) * sizeof(char));
     if (copy == NULL) {
         printf("Memory allocation failed!\n");
@@ -488,20 +487,20 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
         return NULL;
     }
 
-    // Mở file
+    // open file for reading
     FILE *f = fopen("data/events.dat", "rb");
     if (f == NULL) {
         return NULL; //check if file opened successfully
     }
 
-    // allocate memory cho chunk
+    // allocate memory for chunk
     Event *eventChunk = (Event *)malloc(CHUNK_SIZE * sizeof(Event));
     if (eventChunk == NULL) {
         fclose(f);
         return NULL; //check if memory allocated successfully
     }
 
-   //allocate memory cho result array
+   //allocate memory for result array
     int capacity = 10;
     int foundCount = 0; 
     MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));

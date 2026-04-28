@@ -90,11 +90,11 @@ void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *f
     {
         cleanUserEventData(&chunk[i]);
 
-        // Nếu tìm thấy sinh viên trong event này
+        //if the student is found in the event, print out the event details
         if (findStaffInEvent(&chunk[i], studentId, &role))
         {
             printUserEventRowRole(&chunk[i], role, studentId);
-            (*foundCount)++; // Tăng biến đếm số lượng tìm thấy
+            (*foundCount)++; // increase the found count
         }
     }
 }
@@ -118,8 +118,13 @@ void displayCurrentUserEventHistory(const Account *acc)
         printf("[ERROR] Cannot find event history.\n");
         return;
     }
-    int rawFoundCount = 0;
+    int rawFoundCount = 0; //this is the variable to store the number of events that the user is involved in, including both ongoing and finished events. 
+    
     MatchedEvent *rawList = getEventsByStudentId(acc->studentId, &rawFoundCount);
+
+    /* *rawList will return a list of events that the user is involved in, including both ongoing and finished events. 
+    The function will also set the rawFoundCount variable to the number of events found. */
+   
     if (rawList == NULL || rawFoundCount == 0) {
         printf("No events found for this student.\n");
         printf("Press Enter to continue...");
@@ -127,27 +132,27 @@ void displayCurrentUserEventHistory(const Account *acc)
         return;
     }
     int finishedCount = 0;
-    MatchedEvent *finishedList = (MatchedEvent *)malloc(rawFoundCount * sizeof(MatchedEvent));
+    MatchedEvent *finishedList = (MatchedEvent *)malloc(rawFoundCount * sizeof(MatchedEvent));//allocate memory basse on the number of events found in rawList
     if (finishedList == NULL) {
         printf("Error: Out of memory. Cannot allocate finished list.\n");
         free(rawList);
         return;
     }
-    for(int i = 0; i<rawFoundCount;i++){
+    for(int i = 0; i<rawFoundCount;i++){ // loop through the raw list to filter out the finished events and store them in finishedList
         if (rawList[i].event.status == STATUS_FINISHED){
             finishedList[finishedCount] = rawList[i];
             finishedCount++;
         }
     }
-    if (finishedCount > 1) {
+    if (finishedCount > 1) {// if there are more than 1 finished events, sort them by date before printing
         quicksortByDate(finishedList, 0, finishedCount - 1);
     }
-    if(finishedCount > 0){
+    if(finishedCount > 0){// if there are finished events, print them out. Otherwise, print a message saying that there are no finished events for this student.
         printUserFinishedList(finishedList, finishedCount, acc->studentId);
     }else{
         printf("No finished events found for this student.\n");
     }
-    free(rawList);
+    free(rawList); // free the memory allocated for rawList as it is no longer needed
     if(finishedList != NULL){
         free(finishedList);
     }
