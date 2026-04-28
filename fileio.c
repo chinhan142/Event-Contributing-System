@@ -12,8 +12,8 @@ int getNextEventIndex()
     {
         return 0;
     }
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
+    _fseeki64(f, 0, SEEK_END);
+    long long size = _ftelli64(f);
     fclose(f);
     return (int)(size / sizeof(Event));
 }
@@ -30,7 +30,8 @@ int saveEventAt(int index, Event *e)
             return 0;
         }
     }
-    fseek(f, index * sizeof(Event), SEEK_SET);
+    // Ép kiểu index sang long long để đảm bảo tính toán offset 64-bit
+    _fseeki64(f, (long long)index * sizeof(Event), SEEK_SET);
     fwrite(e, sizeof(Event), 1, f);
     fclose(f);
     return 1;
@@ -44,7 +45,7 @@ int loadEventAt(int index, Event *e)
     {
         return 0;
     }
-    fseek(f, index * sizeof(Event), SEEK_SET);
+    _fseeki64(f, (long long)index * sizeof(Event), SEEK_SET);
     int readCount = fread(e, sizeof(Event), 1, f);
     fclose(f);
     return (readCount > 0);
@@ -63,6 +64,7 @@ int findEventIndexById(const char *id)
     int index = 0;
     while (fread(&temp, sizeof(Event), 1, f))
     {
+        // Dùng strcasecmp để tìm kiếm không phân biệt hoa thường
         if (strcasecmp(temp.eventId, id) == 0)
         {
             fclose(f);
@@ -73,6 +75,7 @@ int findEventIndexById(const char *id)
     fclose(f);
     return -1;
 }
+
 void deleteEventById(char *id){
     FILE *f = fopen("data/events.dat", "rb");
     if (f == NULL){
@@ -80,16 +83,20 @@ void deleteEventById(char *id){
     }
     FILE *temp = fopen("data/temp.dat", "wb");
     if (temp == NULL){
+        fclose(f);
         return;
     }
     Event event;
     while(fread(&event,sizeof(Event),1,f)){
-        if(strcmp(event.eventId,id) == 0) continue;
+        // Đã sửa: Dùng strcasecmp để đồng bộ với hàm tìm kiếm
+        if(strcasecmp(event.eventId,id) == 0) continue;
         fwrite(&event,sizeof(Event),1,temp);
     }
     fclose(f);
     fclose(temp);
-    remove("data/events.dat");
-    rename("data/temp.dat", "data/events.dat");
+    
+    if (remove("data/events.dat") == 0) {
+        rename("data/temp.dat", "data/events.dat");
+    }
 }
 
