@@ -325,26 +325,33 @@ void printEventResult()
             strcpy(statusStr, "Unknown");
             break;
         }
-        User currentUser; 
+        User currentUser;
         char userName[50] = "Unknown";
         char userRole[30] = "Unknown";
-        int foundUser = findUserById(temp.staffList[0].studentId, &currentUser);
-        if (foundUser) {
-            strcpy(userName, currentUser.studentName);
 
-            switch (temp.staffList[0].role) { 
-                case STAFF_LEADER:
-                    strcpy(userRole, "Leader");
-                    break;
-                case STAFF_MEMBER:
-                    strcpy(userRole, "Member");
-                    break;
-                case STAFF_SUPPORT:
-                    strcpy(userRole, "Support");
-                    break;
-                default:
-                    strcpy(userRole, "Unknown");
-                    break;
+        // Avoid out-of-bounds access when the event has no assigned staff.
+        if (temp.staffCount > 0)
+        {
+            int foundUser = findUserById(temp.staffList[0].studentId, &currentUser);
+            if (foundUser)
+            {
+                strcpy(userName, currentUser.studentName);
+            }
+
+            switch (temp.staffList[0].role)
+            {
+            case STAFF_LEADER:
+                strcpy(userRole, "Leader");
+                break;
+            case STAFF_MEMBER:
+                strcpy(userRole, "Member");
+                break;
+            case STAFF_SUPPORT:
+                strcpy(userRole, "Support");
+                break;
+            default:
+                strcpy(userRole, "Unknown");
+                break;
             }
         }
         printf("%-12s | %-25s | %-12s | %-12s | %-20s | %s\n", 
