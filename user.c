@@ -8,6 +8,7 @@
 #include "fileio.h" 
 #include "utils.h"  
 #define CHUNK_SIZE 1000
+#include "paths.h"
 
 void printUserFinishedList(MatchedEvent *list, int count, const char *studentId) 
 {
@@ -161,7 +162,7 @@ void displayCurrentUserEventHistory(const Account *acc)
 }
 int findUserById(const char *id, User *result)
 {
-    FILE *f = fopen("data/users.dat", "rb");
+    FILE *f = fopen(USER_DATA_PATH, "rb");
     if (f == NULL)
     {
         return 0;
@@ -183,7 +184,7 @@ int findUserById(const char *id, User *result)
 
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count)
 {
-    FILE *f = fopen("data/users.dat", "rb");
+    FILE *f = fopen(USER_DATA_PATH, "rb");
     if (f == NULL)
     {
         *count = 0;
@@ -209,7 +210,7 @@ void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *c
 
 void searchUserById(const char *id, User results[MAX_SEARCH_RESULTS], int *count)
 {
-    FILE *f = fopen("data/users.dat", "rb");
+    FILE *f = fopen(USER_DATA_PATH, "rb");
     if (f == NULL)
     {
         *count = 0;
@@ -236,7 +237,7 @@ void searchUserById(const char *id, User results[MAX_SEARCH_RESULTS], int *count
 void viewProfile(const Account *acc){
     User persona;
     int userFound = 0;
-    FILE *f = fopen("data/users.dat", "rb");
+    FILE *f = fopen(USER_DATA_PATH, "rb");
     if (f == NULL)
     {
         printf("[ERROR] Cannot open users.dat file\n");
@@ -276,7 +277,7 @@ void viewProfile(const Account *acc){
 }
 MatchedEvent* getCurrentEventsForUser(const Account *acc, int *count)
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         *count = 0;
@@ -410,7 +411,7 @@ void viewUserEventDetails(const Account *acc, const char *eventId){
 
 void userEventDetails(const Account *acc, const char *eventId)
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         printf("[ERROR] Cannot open events.dat file\n");

@@ -2,6 +2,7 @@
 #include <string.h>
 #include "auth.h"
 #include "utils.h"
+#include "paths.h"
 
 // This function helps updating the value of Account attribute inside the .dat file.
 // Why we need to have this function: Normally, if we perform straight update by using structName.attribute, then after the program exit, it will not save the updated value to the .dat file causing the logic of the program is wrong and does not meet the requirement of the given task.
@@ -9,7 +10,7 @@ void updateAccount(Account *updated)
 {
     // r+b -> read and write in binary file
     // note that we're using .dat file is in binary file format
-    FILE *f = fopen("data/accounts.dat", "r+b");
+    FILE *f = fopen(ACCOUNT_DATA_PATH, "r+b");
 
     if (f == NULL)
     {
@@ -34,7 +35,7 @@ void updateAccount(Account *updated)
 int findAccountById(char *id, Account *result)
 {
     // open file in read binary mode
-    FILE *f = fopen("data/accounts.dat", "rb");
+    FILE *f = fopen(ACCOUNT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return 0;

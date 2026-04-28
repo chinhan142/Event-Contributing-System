@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "paths.h"
 
 // Check if a staff member with the given studentId is already in the event's staffList
 int isStaffInEvent(Event *e, const char *studentId)
@@ -488,7 +489,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
     }
 
     // open file for reading
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL) {
         return NULL; //check if file opened successfully
     }

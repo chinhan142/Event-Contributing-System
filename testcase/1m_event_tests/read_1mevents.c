@@ -4,8 +4,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "../../paths.h"
 
-#define FILE_PATH "data/events_1m.dat"
+#define FILE_PATH EVENT_1M_DATA_PATH
 
 void test_search_performance_1m() {
     const char *targetId = "EV1000000";

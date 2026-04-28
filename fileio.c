@@ -4,10 +4,11 @@
 #include "auth.h"
 #include "user.h"
 #include "event.h"
+#include "paths.h"
 // Get the index of the next event record in the events.dat file
 int getNextEventIndex()
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return 0;
@@ -21,10 +22,10 @@ int getNextEventIndex()
 // Save an event struct at a specific record index
 int saveEventAt(int index, Event *e)
 {
-    FILE *f = fopen("data/events.dat", "r+b");
+    FILE *f = fopen(EVENT_DATA_PATH, "r+b");
     if (f == NULL)
     {
-        f = fopen("data/events.dat", "wb");
+        f = fopen(EVENT_DATA_PATH, "wb");
         if (f == NULL)
         {
             return 0;
@@ -40,7 +41,7 @@ int saveEventAt(int index, Event *e)
 // Load an event struct from a specific record index
 int loadEventAt(int index, Event *e)
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return 0;
@@ -54,7 +55,7 @@ int loadEventAt(int index, Event *e)
 // Find the record index of an event by its ID
 int findEventIndexById(const char *id)
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return -1;
@@ -77,11 +78,11 @@ int findEventIndexById(const char *id)
 }
 
 void deleteEventById(char *id){
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL){
         return;
     }
-    FILE *temp = fopen("data/temp.dat", "wb");
+    FILE *temp = fopen(TEMP_DATA_PATH, "wb");
     if (temp == NULL){
         fclose(f);
         return;
@@ -95,8 +96,8 @@ void deleteEventById(char *id){
     fclose(f);
     fclose(temp);
     
-    if (remove("data/events.dat") == 0) {
-        rename("data/temp.dat", "data/events.dat");
+    if (remove(EVENT_DATA_PATH) == 0) {
+        rename(TEMP_DATA_PATH, EVENT_DATA_PATH);
     }
 }
 
