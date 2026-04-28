@@ -14,7 +14,7 @@ typedef struct Account Account;  // Forward declaration to avoid circular includ
 
 int findStaffInEventUser(const Event *event, const char *studentId, StaffRole *role);
 void cleanUserEventData(Event *event);
-void printUserEventRowRole(const Event *event, StaffRole role);
+void printUserEventRowRole(const Event *event, StaffRole role, const char *studentId);
 typedef struct
 {
     char studentId[ID_LENGTH];

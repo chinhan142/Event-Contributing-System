@@ -35,8 +35,16 @@ static void initAccountData()
     user_1.isLocked = 0;
     user_1.failCount = 0;
 
+Account user_2;
+    strcpy(user_2.studentId, "SE203237");
+    strcpy(user_2.password, "SE203237");
+    user_2.role = 0;
+    user_2.isLocked = 0;
+    user_2.failCount = 0;
+
     fwrite(&bcn, sizeof(Account), 1, f);
     fwrite(&user_1, sizeof(Account), 1, f);
+    fwrite(&user_2, sizeof(Account), 1, f);
     fclose(f);
     printf("[INFO] Created default accounts successfully.\n");
 }
