@@ -4,8 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../../paths.h"
+
 #define TARGET_COUNT 1000000
-#define FILE_PATH "data/events_1m.dat"
+#define FILE_PATH EVENT_1M_DATA_PATH
 
 int main() {
     printf("Generating %d events to %s...\n", TARGET_COUNT, FILE_PATH);
@@ -19,9 +21,9 @@ int main() {
         if (file == NULL && attempts == 0) {
             printf("Could not open file. Attempting to create 'data' directory...\n");
             #ifdef _WIN32
-                system("mkdir data 2>nul");
+                system("mkdir " DATA_DIR " 2>nul");
             #else
-                system("mkdir -p data");
+                system("mkdir -p " DATA_DIR);
             #endif
         }
         attempts++;

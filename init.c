@@ -4,17 +4,18 @@
 #include "event.h"
 #include <stdio.h>
 #include <string.h>
+#include "paths.h"
 
 static void initAccountData()
 {
-    FILE *check = fopen("data/accounts.dat", "rb");
+    FILE *check = fopen(ACCOUNT_DATA_PATH, "rb");
     if (check != NULL)
     {
         fclose(check);
         return;
     }
 
-    FILE *f = fopen("data/accounts.dat", "wb");
+    FILE *f = fopen(ACCOUNT_DATA_PATH, "wb");
     if (f == NULL)
     {
         printf("[ERROR] Cannot create accounts.dat file\n");
@@ -51,14 +52,14 @@ Account user_2;
 
 static void initUserPersonaData()
 {
-    FILE *check = fopen("data/users.dat", "rb");
+    FILE *check = fopen(USER_DATA_PATH, "rb");
     if (check != NULL)
     {
         fclose(check);
         return;
     }
 
-    FILE *f = fopen("data/users.dat", "wb");
+    FILE *f = fopen(USER_DATA_PATH, "wb");
     if (f == NULL)
     {
         return;
@@ -79,7 +80,7 @@ static void initUserPersonaData()
 static void initMockEvents()
 {
     // Check to see if events.dat already have data or not
-    FILE *check = fopen("data/events.dat", "rb");
+    FILE *check = fopen(EVENT_DATA_PATH, "rb");
     if (check != NULL)
     {
         Event e;
@@ -92,7 +93,7 @@ static void initMockEvents()
         fclose(check);
     }
 
-    FILE *f = fopen("data/events.dat", "wb");
+    FILE *f = fopen(EVENT_DATA_PATH, "wb");
     if (f == NULL)
         return;
 
@@ -138,7 +139,7 @@ void initializeSystem()
     initMockEvents();
 
     // Ensure events.dat exists
-    FILE *fe = fopen("data/events.dat", "ab");
+    FILE *fe = fopen(EVENT_DATA_PATH, "ab");
     if (fe != NULL)
     {
         fclose(fe);
