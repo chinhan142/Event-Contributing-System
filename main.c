@@ -52,11 +52,21 @@ int main()
             }
             if (loginStatus == LOGIN_SUCCESS_BCN)
             {
-                bcnMenu(&currentAcc);
+                if (bcnMenu(&currentAcc))
+                {
+                    loginSession = false;
+                    printf("-- WELCOME TO EVENT CONTRIBUTING SYSTEM --\n");
+                    printf("YOU'RE NOT LOGIN! LOGIN DOWN HERE!\n");
+                }
             }
             else
             {
-                staffMenu(&currentAcc);
+                if (staffMenu(&currentAcc))
+                {
+                    loginSession = false;
+                    printf("-- WELCOME TO EVENT CONTRIBUTING SYSTEM --\n");
+                    printf("YOU'RE NOT LOGIN! LOGIN DOWN HERE!\n");
+                }
             }
         }
     }
