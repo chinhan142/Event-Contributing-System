@@ -6,7 +6,7 @@
 #include "user.h"
 #include "menuStaff.h"
 #include "auth.h"
-void staffMenu(Account *acc)
+int staffMenu(Account *acc)
 {
     int choice;
     do
@@ -51,11 +51,13 @@ void staffMenu(Account *acc)
             changeOwnPassword(acc);
             break;
         case 0:
-            printf("Logging out...\n");
+            if (logoutMain())
+                return 1;
             break;
         default:
             printf("[!] Invalid choice!\n");
             break;
         }
     } while (choice != 0);
+    return 0;
 }

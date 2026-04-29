@@ -2,6 +2,6 @@
 #define MENUSTAFF_H
 #include "auth.h"
 
-void staffMenu(Account *acc);
+int staffMenu(Account *acc);
 
 #endif
