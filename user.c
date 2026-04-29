@@ -243,15 +243,13 @@ void viewProfile(const Account *acc){
         printf("[ERROR] Cannot open users.dat file\n");
         return;
     }
-    printf("debug: looking for user profile with student ID: %s\n", acc->studentId);
     while (fread(&persona, sizeof(User), 1, f) == 1)
     {
-        if (strcmp(persona.studentId, acc->studentId) == 0)
+        if (strcmp(persona.studentId, acc->studentId) == 0) // compare the user Id with the student Id to find profile data, if the id matches, raise found flag to 1 and break or else loop till found or end of file
         {
             userFound = 1;
             break;
         }
-        printf("debug: read user with student ID: %s\n", persona.studentId);
     }
     if (userFound == 0){
         printf("[ERROR] Cannot find user profile.\n");
@@ -350,15 +348,15 @@ void printCurrentEvents(MatchedEvent *events, int count, const char *studentId)
     }
 }
 
-void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print out "Press Enter to continue" to make the event details
-                                                    //view smoother when user wants to view details of one of the events in the list
+void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print out "Press Enter to continue" to make the event details view smoother when user wants to view details of one of the events in the list
+  
 {
     int count;
     MatchedEvent *events = getCurrentEventsForUser(acc, &count);
     if (events == NULL && count == 0)
     {
         printf("\nNo events available in the system.\n");
-        printf("Press Enter to continue...");
+        printf("Press any key to continue...");
         getchar();
         return;
     }
@@ -393,20 +391,28 @@ void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print o
 }
 void viewUserEventDetails(const Account *acc, const char *eventId){
     viewCurrentEvents(acc,1);
-    printf("\nEnter the Event ID to view details (or press Enter to go back): ");
+
+    printf("Enter the Event ID to view details (or press Enter to go back): ");
+
     char inputEventId[EVENT_ID_LENGTH];
+
     fgets(inputEventId, sizeof(inputEventId), stdin);
-    inputEventId[strcspn(inputEventId, "\r\n")] = '\0'; // Remove newline
+    inputEventId[strcspn(inputEventId, "\r\n")] = '\0'; // Remove newline to avoid issues with string comparison later
+    
     char lowerInputEventId[EVENT_ID_LENGTH];
-    toLowerStr(lowerInputEventId, inputEventId); // ensure that the event ID inputed is casesentive
+
+    toLowerStr(lowerInputEventId, inputEventId); // ensure that the event ID is still valid even if the user input in casesentive
+    if (strlen(lowerInputEventId) == 0) {
+        return; // User chose to go back
+        clearScreen();
+    }
     if (strlen(lowerInputEventId) > EVENT_ID_LENGTH || lowerInputEventId[0] != 'e' || lowerInputEventId[1] != 'v') {
         printf("[ERROR] Invalid Event ID format. Please try again.\n");
         return;
     }
-    if (strlen(lowerInputEventId) == 0) {
-        return; // User chose to go back
-    }
+    
     userEventDetails(acc, inputEventId);
+    clearScreen();
 }
 
 void userEventDetails(const Account *acc, const char *eventId)
@@ -423,7 +429,7 @@ void userEventDetails(const Account *acc, const char *eventId)
     {
         cleanUserEventData(&tempEvent); 
         char lowerTempEventId[EVENT_ID_LENGTH];
-        toLowerStr(lowerTempEventId, tempEvent.eventId); // ensure that the event ID read from file is casesentive
+        toLowerStr(lowerTempEventId, tempEvent.eventId); // ensure that the event ID can be found even if the user input in casesentive
         if (strcmp(lowerTempEventId, eventId) == 0)
         {
             StaffRole role;
