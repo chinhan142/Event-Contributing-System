@@ -1,8 +1,12 @@
 #include <stdio.h>
-#include "menuStaff.h"
+#include <stdlib.h>
 #include "utils.h"
-
-void staffMenu()
+#include "fileio.h"
+#include "staff.h"
+#include "user.h"
+#include "menuStaff.h"
+#include "auth.h"
+void staffMenu(Account *acc)
 {
     int choice;
     do
@@ -27,19 +31,24 @@ void staffMenu()
         {
             // calling function here
         case 1:
-            printf("[TODO] Current events\n");
+            printf("View current events\n");
+            viewCurrentEvents(acc, 0);
             break;
         case 2:
-            printf("[TODO] Event detail\n");
+            printf("View event detail\n");
+            viewUserEventDetails(acc, NULL);
             break;
         case 3:
-            printf("[TODO] Event history\n");
+            printf("View Event history\n");
+            displayCurrentUserEventHistory(acc);
             break;
         case 4:
-            printf("[TODO] View profile\n");
+            printf("View profile\n");
+            viewProfile(acc);
             break;
         case 5:
-            printf("[TODO] Change password\n");
+            printf("Change password\n");
+            changeOwnPassword(acc);
             break;
         case 0:
             printf("Logging out...\n");

@@ -1,8 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "menuBCN.h"
 #include "utils.h"
-
-void bcnMenu()
+#include "fileio.h"
+#include "staff.h"
+#include "user.h"
+#include "auth.h"
+void bcnMenu(Account *acc)
 {
     int choice;
     do
@@ -41,49 +45,87 @@ void bcnMenu()
         {
             // calling function here
         case 1:
-            printf("[TODO] Create event\n");
+            printf("Create new event\n");
+            createEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 2:
-            printf("[TODO] Edit event\n");
+            printf("Update event details\n");
+            updateEventDetails();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 3:
-            printf("[TODO] Delete event\n");
+            printf("Delete event\n");
+            deleteEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 4:
-            printf("[TODO] Update status\n");
+            printf("Manual update event status\n");
+            manualUpdateEventStatus();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 5:
-            printf("[TODO] View all events\n");
+            printf("View all events\n");
+            int filterStatus = inputEventStatus();
+            displayAllEvent(filterStatus);
+            printf("Enter to continue ");
+            getchar();
             break;
         case 6:
-            printf("[TODO] View event detail\n");
+            printf("View event detail\n");
+            viewEventDetails();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 7:
-            printf("[TODO] Search event\n");
+            printf("Search event\n");
+            printEventResult();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 8:
-            printf("[TODO] Add staff\n");
+            printf("Add staff to event\n");
+            addStaffToEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 9:
-            printf("[TODO] Edit staff role\n");
+            printf("Edit staff in event\n");
+            editStaffInEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 10:
-            printf("[TODO] Remove staff\n");
+            printf("Delete staff from event\n");
+            deleteStaffFromEvent();
+            printf("Enter to continue ");
+            getchar();
             break;
         case 11:
-            printf("[TODO] Staff history\n");
+            printf("Staff history\n");
+            char *studentId = StudentIDInput();
+            displayEventHistory(studentId);
+            free(studentId);
+            printf("Enter to continue ");
+            getchar();
             break;
         case 12:
             printf("[TODO] Statistics\n");
             break;
         case 13:
-            printf("[TODO] View profile\n");
+            viewProfile(acc);
             break;
         case 14:
-            printf("[TODO] Change password\n");
+            printf("Change password\n");
+            changeOwnPassword(acc);
             break;
         case 15:
-            printf("[TODO] Reset password\n");
+            printf("Reset password\n");
+            resetMemberPassword();
             break;
         case 0:
             printf("Logging out...\n");

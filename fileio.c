@@ -3,17 +3,18 @@
 #include "fileio.h"
 #include "auth.h"
 #include "user.h"
-
+#include "event.h"
+#include "paths.h"
 // Get the index of the next event record in the events.dat file
 int getNextEventIndex()
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return 0;
     }
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
+    _fseeki64(f, 0, SEEK_END);
+    long long size = _ftelli64(f);
     fclose(f);
     return (int)(size / sizeof(Event));
 }
@@ -21,16 +22,17 @@ int getNextEventIndex()
 // Save an event struct at a specific record index
 int saveEventAt(int index, Event *e)
 {
-    FILE *f = fopen("data/events.dat", "r+b");
+    FILE *f = fopen(EVENT_DATA_PATH, "r+b");
     if (f == NULL)
     {
-        f = fopen("data/events.dat", "wb");
+        f = fopen(EVENT_DATA_PATH, "wb");
         if (f == NULL)
         {
             return 0;
         }
     }
-    fseek(f, index * sizeof(Event), SEEK_SET);
+    // Ép kiểu index sang long long để đảm bảo tính toán offset 64-bit
+    _fseeki64(f, (long long)index * sizeof(Event), SEEK_SET);
     fwrite(e, sizeof(Event), 1, f);
     fclose(f);
     return 1;
@@ -39,12 +41,12 @@ int saveEventAt(int index, Event *e)
 // Load an event struct from a specific record index
 int loadEventAt(int index, Event *e)
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return 0;
     }
-    fseek(f, index * sizeof(Event), SEEK_SET);
+    _fseeki64(f, (long long)index * sizeof(Event), SEEK_SET);
     int readCount = fread(e, sizeof(Event), 1, f);
     fclose(f);
     return (readCount > 0);
@@ -53,7 +55,7 @@ int loadEventAt(int index, Event *e)
 // Find the record index of an event by its ID
 int findEventIndexById(const char *id)
 {
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return -1;
@@ -63,7 +65,8 @@ int findEventIndexById(const char *id)
     int index = 0;
     while (fread(&temp, sizeof(Event), 1, f))
     {
-        if (strcmp(temp.eventId, id) == 0)
+        // Dùng strcasecmp để tìm kiếm không phân biệt hoa thường
+        if (strcasecmp(temp.eventId, id) == 0)
         {
             fclose(f);
             return index;
@@ -72,4 +75,29 @@ int findEventIndexById(const char *id)
     }
     fclose(f);
     return -1;
-}
+}
+
+void deleteEventById(char *id){
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
+    if (f == NULL){
+        return;
+    }
+    FILE *temp = fopen(TEMP_DATA_PATH, "wb");
+    if (temp == NULL){
+        fclose(f);
+        return;
+    }
+    Event event;
+    while(fread(&event,sizeof(Event),1,f)){
+        // Đã sửa: Dùng strcasecmp để đồng bộ với hàm tìm kiếm
+        if(strcasecmp(event.eventId,id) == 0) continue;
+        fwrite(&event,sizeof(Event),1,temp);
+    }
+    fclose(f);
+    fclose(temp);
+    
+    if (remove(EVENT_DATA_PATH) == 0) {
+        rename(TEMP_DATA_PATH, EVENT_DATA_PATH);
+    }
+}
+
