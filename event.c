@@ -4,6 +4,7 @@
 #include "fileio.h"
 #include "user.h"
 #include "auth.h"
+#include "paths.h"
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -290,7 +291,7 @@ void printEventResult()
         return;
     }
 
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         printf("No events found.\n");

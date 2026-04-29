@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "paths.h"
+#include "colors.h"
 
 // Check if a staff member with the given studentId is already in the event's staffList
 int isStaffInEvent(Event *e, const char *studentId)
@@ -31,7 +33,7 @@ void addStaffToEvent()
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf("\033[1;31m[ERROR] Event not found!\033[0m\n");
+        printf(BOLD RED "[ERROR] Event not found!" RESET "\n");
         return;
     }
 
@@ -41,14 +43,14 @@ void addStaffToEvent()
     // Validate Status: Cannot add if event is finished
     if (e.status == STATUS_FINISHED)
     {
-        printf("\033[1;31m[ERROR] Event has finished, cannot add staff!\033[0m\n");
+        printf(BOLD RED "[ERROR] Event has finished, cannot add staff!" RESET "\n");
         return;
     }
 
     // Validate Capacity: Max staff limit reached
     if (e.staffCount >= MAX_STAFF_PER_EVENT)
     {
-        printf("\033[1;31m[ERROR] Event has reached maximum capacity (%d people)!\033[0m\n", MAX_STAFF_PER_EVENT);
+        printf(BOLD RED "[ERROR] Event has reached maximum capacity (%d people)!" RESET "\n", MAX_STAFF_PER_EVENT);
         return;
     }
 
@@ -92,7 +94,7 @@ void addStaffToEvent()
 
     if (count == 0)
     {
-        printf("\033[1;31m[ERROR] No matching members found!\033[0m\n");
+        printf(BOLD RED "[ERROR] No matching members found!" RESET "\n");
         return;
     }
 
@@ -121,7 +123,7 @@ void addStaffToEvent()
     // Validate Duplicate: Cannot add the same MSSV twice
     if (isStaffInEvent(&e, selected.studentId))
     {
-        printf("\033[1;31m[ERROR] This member is already in the event's staff list!\033[0m\n");
+        printf(BOLD RED "[ERROR] This member is already in the event's staff list!" RESET "\n");
         return;
     }
 
@@ -149,11 +151,11 @@ void addStaffToEvent()
     // Save back to file
     if (saveEventAt(idx, &e))
     {
-        printf("\033[1;32m[SUCCESS] Staff added to event successfully!\033[0m\n");
+        printf(BOLD GREEN "[SUCCESS] Staff added to event successfully!" RESET "\n");
     }
     else
     {
-        printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
+        printf(BOLD RED "[ERROR] Could not save event data!" RESET "\n");
     }
 }
 
@@ -184,7 +186,7 @@ void editStaffInEvent()
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf("\033[1;31m[ERROR] Event not found!\033[0m\n");
+        printf(BOLD RED "[ERROR] Event not found!" RESET "\n");
         return;
     }
 
@@ -193,13 +195,13 @@ void editStaffInEvent()
 
     if (!canModifyStaff(&e))
     {
-        printf("\033[1;31m[ERROR] Only allowed to edit when event is UPCOMING!\033[0m\n");
+        printf(BOLD RED "[ERROR] Only allowed to edit when event is UPCOMING!" RESET "\n");
         return;
     }
 
     if (e.staffCount == 0)
     {
-        printf("\033[1;33m[INFO] No staff members in this event.\033[0m\n");
+        printf(BOLD YELLOW "[INFO] No staff members in this event." RESET "\n");
         return;
     }
 
@@ -252,11 +254,11 @@ void editStaffInEvent()
 
     if (saveEventAt(idx, &e))
     {
-        printf("\033[1;32m[SUCCESS] Staff information updated successfully!\033[0m\n");
+        printf(BOLD GREEN "[SUCCESS] Staff information updated successfully!" RESET "\n");
     }
     else
     {
-        printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
+        printf(BOLD RED "[ERROR] Could not save event data!" RESET "\n");
     }
 }
 
@@ -271,7 +273,7 @@ void deleteStaffFromEvent()
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf("\033[1;31m[ERROR] Event not found!\033[0m\n");
+        printf(BOLD RED "[ERROR] Event not found!" RESET "\n");
         return;
     }
 
@@ -280,13 +282,13 @@ void deleteStaffFromEvent()
 
     if (!canModifyStaff(&e))
     {
-        printf("\033[1;31m[ERROR] Only allowed to delete when event is UPCOMING!\033[0m\n");
+        printf(BOLD RED "[ERROR] Only allowed to delete when event is UPCOMING!" RESET "\n");
         return;
     }
 
     if (e.staffCount == 0)
     {
-        printf("\033[1;33m[INFO] No staff members in this event.\033[0m\n");
+        printf(BOLD YELLOW "[INFO] No staff members in this event." RESET "\n");
         return;
     }
 
@@ -321,7 +323,7 @@ void deleteStaffFromEvent()
     sprintf(msg, "Are you sure you want to remove staff member %s?", e.staffList[choice - 1].studentId);
     if (!confirmAction(msg))
     {
-        printf("[INFO] Deletion cancelled.\033[0m\n");
+        printf(BOLD YELLOW "[INFO] Deletion cancelled." RESET "\n");
         return;
     }
 
@@ -334,11 +336,11 @@ void deleteStaffFromEvent()
 
     if (saveEventAt(idx, &e))
     {
-        printf("\033[1;32m[SUCCESS] Staff removed from event successfully!\033[0m\n");
+        printf(BOLD GREEN "[SUCCESS] Staff removed from event successfully!" RESET "\n");
     }
     else
     {
-        printf("\033[1;31m[ERROR] Could not save event data!\033[0m\n");
+        printf(BOLD RED "[ERROR] Could not save event data!" RESET "\n");
     }
 }
 
@@ -488,7 +490,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
     }
 
     // open file for reading
-    FILE *f = fopen("data/events.dat", "rb");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL) {
         return NULL; //check if file opened successfully
     }
