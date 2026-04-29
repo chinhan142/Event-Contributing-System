@@ -2,6 +2,6 @@
 #define MENUBCN_H
 #include "auth.h"
 
-void bcnMenu(Account *acc);
+int bcnMenu(Account *acc);
 
 #endif
