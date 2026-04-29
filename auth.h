@@ -39,6 +39,6 @@ int findAccountById(char *id, Account *result);
 int loginAccount(char id[], char password[]);
 void changeOwnPassword(Account *acc);
 void resetMemberPassword();
-
+int logoutMain();
 
 #endif

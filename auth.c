@@ -164,3 +164,12 @@ void resetMemberPassword()
         printf("\033[31m[ERROR] Student ID not found!\033[0m\n");
     }
 }
+
+int logoutMain()
+{
+    if (confirmAction("Logging out?"))
+    {
+        return 1;
+    }
+    return 0;
+}

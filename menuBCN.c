@@ -6,7 +6,7 @@
 #include "staff.h"
 #include "user.h"
 #include "auth.h"
-void bcnMenu(Account *acc)
+int bcnMenu(Account *acc)
 {
     int choice;
     do
@@ -128,11 +128,13 @@ void bcnMenu(Account *acc)
             resetMemberPassword();
             break;
         case 0:
-            printf("Logging out...\n");
+            if (logoutMain())
+                return 1;
             break;
         default:
             printf("[!] Invalid choice!\n");
             break;
         }
     } while (choice != 0);
+    return 0;
 }
