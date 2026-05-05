@@ -61,5 +61,5 @@ Event chooseEvent();
 void deleteEvent();
 void viewEventDetails();
 void manualUpdateEventStatus();
-
+void searchEventsByStartDateRange();
 #endif
