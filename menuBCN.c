@@ -6,6 +6,7 @@
 #include "staff.h"
 #include "user.h"
 #include "auth.h"
+#include "ExtendMenu.h"
 int bcnMenu(Account *acc)
 {
     int choice;
@@ -82,10 +83,7 @@ int bcnMenu(Account *acc)
             getchar();
             break;
         case 7:
-            printf("Search event\n");
-            printEventResult();
-            printf("Enter to continue ");
-            getchar();
+            searchEventMenuBCN();
             break;
         case 8:
             printf("Add staff to event\n");
