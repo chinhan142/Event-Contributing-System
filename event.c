@@ -478,7 +478,6 @@ void updateEventDetails()
     Event event;
     while (1)
     {
-        displayAllEvent(-1);
         do
         {
             printf("Enter the ID of the event you want to update (enter to exit): ");
@@ -567,7 +566,6 @@ void deleteEvent()
     int index;
     while (1)
     {
-        displayAllEvent(-1);
         do
         {
             printf("Enter event's id you want to delete (enter to exit): ");
