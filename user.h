@@ -38,9 +38,14 @@ void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *c
 void displayEventHistory(const char *studentId);
 void displayCurrentUserEventHistory(const Account *acc);
 MatchedEvent *getEventsByStudentId(const char *studentId, int *outFoundCount);
-void viewCurrentEvents(const Account *acc, int wait);
+void viewCurrentEvents(const Account *acc);
 void viewProfile(const Account *acc);
 void viewUserEventDetails(const Account *acc, const char *eventId);
 void userEventDetails(const Account *acc, const char *eventId);
+void sortUserEventsByName(MatchedEvent *events, int count);
+void sortUserEventsByDate(MatchedEvent *events, int count);
+void sortUserEventsByIdAsc(MatchedEvent *events, int count);
+void sortUserEventsByIdDesc(MatchedEvent *events, int count);
+void currentEventsMenu(const Account *acc);
 int findUserIndex(const char *id);
 #endif

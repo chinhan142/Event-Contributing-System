@@ -3,6 +3,9 @@
 #include "ExtendMenu.h"
 #include "utils.h"
 #include "paths.h"
+#include <string.h>
+#include <stdlib.h>
+#include "colors.h"
 void searchEventMenuBCN()
 {
     int choice = -1;
@@ -61,21 +64,72 @@ void  displayStaffCountPerEvent(){
     }
     fclose(f);
 }
+int partition(User *user,int l,int r){
+    User pivot = user[r],temp;
+    int j = l - 1;
+    for(int i = l;i < r;i++){
+        if(user[i].eventCount <= pivot.eventCount){
+            j++;
+            temp = user[i];
+            user[i] = user[j];
+            user[j] = temp;
+        }
+    }
+    j++;
+    user[r] = user[j];
+    user[j] = pivot;
+    return j;
+}
+void sort(User *user,int l,int r){
+    if(l < r){
+        int x = partition(user,l,r);
+        sort(user,l,x - 1);
+        sort(user,x + 1,r);
+    }
+}
 void findTopParticipant(){
-    User temp,maxcnt;
-    maxcnt.eventCount = -1;
     FILE *f = fopen(USER_DATA_PATH, "r+b");
     if (f == NULL)
     {
         f = fopen(USER_DATA_PATH, "wb");
         if (f == NULL)
         {
-            return 0;
+            return;
         }
     }
-    // while(fread(&temp,sizeof(User),1,f)){
-    //     if(temp.eventCount >)
-    // }
+    int index = 0;
+    int size = 2;
+    User *result = (User *)malloc(size*sizeof(User));
+    if(result == NULL) return;
+    
+    while(fread(result + index,sizeof(User),1,f)){
+        index++;
+        if(index == size){
+            size *= 2;
+            result = (User *)realloc(result,size*sizeof(User));
+        } 
+    }
+    if(index > 0){
+        result = (User *)realloc(result,(index + 1)*sizeof(User));
+    }
+    sort(result,0,index - 1);
+    printf("==========TOP PARTICIPANT==========\n");
+    if(index == 0){
+        printf("There are no staff\n");
+    }
+    if(index == 1){
+        printf("1. %s : 1 event\n", result[0].studentName);
+    }
+    else{
+        for(int i = index - 1;i >= 0;i--){
+            printf("%d. %s : %d %s\n", index - i, result[i].studentName, result[i].eventCount, result[i].eventCount > 1 ? "events" : "event");
+            if (i == 0 || result[i].eventCount != result[i - 1].eventCount){
+                break;
+            }
+        }
+    }
+    free(result);
+    
 }
 void getInactiveStaffInSemester(){
 
@@ -106,7 +160,7 @@ void getStaffStatsByEvent(){
             displayStaffCountPerEvent();
             break;
         case 2:
-            
+            findTopParticipant();
             break;
         case 3:
             break;
