@@ -2,6 +2,7 @@
 #define FILEIO_H
 #include <time.h>
 #include "event.h"
+#include "user.h"
 
 int getNextEventIndex();
 int saveEventAt(int index, Event *e);

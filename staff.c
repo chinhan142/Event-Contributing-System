@@ -150,7 +150,7 @@ void addStaffToEvent()
     if(e.status != STATUS_UPCOMING){
         selected.eventCount++;
         int index = findUserIndex(selected.studentId);
-        saveUserAt(index,&selected);
+        if(index != -1) saveUserAt(index,&selected);
     } 
 
     // Save back to file

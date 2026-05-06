@@ -66,8 +66,8 @@ static void initUserPersonaData()
     }
 
     User samples[] = {
-        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", "",0},
-        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", "",0},
+        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", "",1},
+        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", "",1},
         {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn", "0123456789", "SoftwareDeveloper",0},
         {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn", "", "",0},
         {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn", "", "",0}};

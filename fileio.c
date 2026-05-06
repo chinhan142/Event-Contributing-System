@@ -50,7 +50,7 @@ int saveUserAt(int index, User *user)
     }
     // Ép kiểu index sang long long để đảm bảo tính toán offset 64-bit
     fseeko64(f, (long long)index * sizeof(User), SEEK_SET);
-    fwrite(user, sizeof(Event), 1, f);
+    fwrite(user, sizeof(User), 1, f);
     fclose(f);
     return 1;
 }
