@@ -129,10 +129,89 @@ void findTopParticipant(){
         }
     }
     free(result);
+    fclose(f);
     
 }
 void getInactiveStaffInSemester(){
+    FILE *f = fopen(USER_DATA_PATH, "r+b");
+    if (f == NULL)
+    {
+        f = fopen(USER_DATA_PATH, "wb");
+        if (f == NULL)
+        {
+            return;
+        }
+    }
+    int index = 0;
+    int size = 2;
+    User *result = (User *)malloc(size*sizeof(User));
+    if(result == NULL) return;
+    
+    while(fread(result + index,sizeof(User),1,f)){
+        index++;
+        if(index == size){
+            size *= 2;
+            result = (User *)realloc(result,size*sizeof(User));
+        } 
+    }
+    if(index > 0){
+        result = (User *)realloc(result,(index + 1)*sizeof(User));
+    }
+    int choice = -1;
 
+    while (choice != 0)
+    {
+        printDivider("Choose Semester");
+        printf("  1. Spring\n");
+        printf("  2. Summer\n");
+        printf("  3. Fall\n");
+        printf("  0. Back\n");
+        printf("Choice: ");
+
+        if (scanf("%d", &choice) != 1)
+        {
+            while (getchar() != '\n') {}
+            printf("[!] Invalid input.\n");
+            continue;
+        }
+        getchar(); /* clear '\n' */
+        int cnt = 1;
+        switch (choice)
+        {
+        case 1:
+            for(int i = 0;i < index;i++){
+                if(result[i].isSpringActive == 0){
+                    printf("%d. : %s\n", cnt, result[i].studentName);
+                    cnt++;
+                }
+            }
+            break;
+        case 2:
+            for(int i = 0;i < index;i++){
+                if(result[i].isSummerActive == 0){
+                    printf("%d. : %s\n", cnt, result[i].studentName);
+                    cnt++;
+                }
+            }
+            break;
+        case 3:
+            for(int i = 0;i < index;i++){
+                if(result[i].isFallActive == 0){
+                    printf("%d. : %s\n", cnt, result[i].studentName);
+                    cnt++;
+                }
+            }
+            break;
+        case 0:
+            break;
+        default:
+            printf("[!] Invalid choice!\n");
+            break;
+        }
+
+        printf("Enter to continue...");
+        getchar();
+    }
 }
 void getStaffStatsByEvent(){
     int choice = -1;
@@ -163,6 +242,7 @@ void getStaffStatsByEvent(){
             findTopParticipant();
             break;
         case 3:
+            getInactiveStaffInSemester();
             break;
         case 0:
             break;

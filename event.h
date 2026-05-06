@@ -39,6 +39,9 @@ typedef struct
     char location[LOCATION_LENGTH];
     char startDate[DATE_LENGTH];
     char endDate[DATE_LENGTH];
+    int belongsToSpring;
+    int belongsToSummer;
+    int belongsToFall;
     EventStatus status;
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
