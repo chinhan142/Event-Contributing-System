@@ -348,7 +348,7 @@ void printCurrentEvents(MatchedEvent *events, int count, const char *studentId)
     }
 }
 
-void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print out "Press Enter to continue" to make the event details view smoother when user wants to view details of one of the events in the list
+void viewCurrentEvents(const Account *acc) 
   
 {
     int count;
@@ -360,7 +360,6 @@ void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print o
         getchar();
         return;
     }
-
     printDivider("CURRENT EVENTS");
     printf("%-10s | %-25s | %-25s | %-12s | %s\n", "Event ID", "Event Name", "Student Name", "Your Role", "Start Date");
     printf("-----------------------------------------------------------------------------------------------------\n");
@@ -384,13 +383,93 @@ void viewCurrentEvents(const Account *acc, int wait) // wait =1 will not print o
     {
         free(events);
     }
-    if (!wait) {
-        printf("\nPress Enter to continue...");
-        getchar();
+}
+void currentEventsMenu(const Account *acc) {
+    while (1) {
+        clearScreen();
+        viewCurrentEvents(acc);
+        printf("\nOptions:\n");
+        printf("1. View Event Details\n");
+        printf("2. Sort Events\n");
+        printf("3. Refresh List\n");
+        printf("4. Back to Main Menu\n");
+        printf("Enter your choice: ");
+        
+        char choice[10];
+        fgets(choice, sizeof(choice), stdin);
+        choice[strcspn(choice, "\r\n")] = '\0'; // Remove newline
+
+        if (strcmp(choice, "1") == 0) {  //compare the input with options and call the corresponding function
+            if (acc == NULL) {
+                printf("[ERROR] Cannot find event details.\n");
+                printf("Press Enter to continue...");
+                getchar();
+                continue;
+            }
+            viewUserEventDetails(acc, NULL);
+        } else if (strcmp(choice, "2") == 0) {
+            printf("How would you like to sort the events?\n");
+            printf("1. By Name\n");
+            printf("2. By Date\n");
+            printf("3. By Event ID\n");
+            printf("Enter your choice: ");
+            
+            char sortChoice[10];
+            fgets(sortChoice, sizeof(sortChoice), stdin);
+            sortChoice[strcspn(sortChoice, "\r\n")] = '\0'; 
+
+            int count;
+            MatchedEvent *events = getCurrentEventsForUser(acc, &count);
+            if (events != NULL) {
+                if (strcmp(sortChoice, "1") == 0) {                            
+                    sortUserEventsByName(events, count);
+                } else if (strcmp(sortChoice, "2") == 0) {
+                    sortUserEventsByDate(events, count);
+                } else if (strcmp(sortChoice, "3") == 0) {
+                    printf("How would you like to sort by Event ID?\n");
+                    printf("1. Ascending\n");
+                    printf("2. Descending\n");
+                    printf("Enter your choice: ");
+
+                    char idSortChoice[10];
+                    fgets(idSortChoice, sizeof(idSortChoice), stdin);
+                    idSortChoice[strcspn(idSortChoice, "\r\n")] = '\0';
+
+                    if (strcmp(idSortChoice, "1") == 0) {
+                        sortUserEventsByIdAsc(events, count);
+                    } else if (strcmp(idSortChoice, "2") == 0) {
+                        sortUserEventsByIdDesc(events, count);
+                    } else {
+                        printf("[ERROR] Invalid sort choice. Press Enter to continue...");
+                        getchar();
+                        free(events);
+                        continue;
+                    }
+                } else {
+                    printf("[ERROR] Invalid sort choice. Press Enter to continue...");
+                    getchar();
+                    free(events);
+                    continue;
+                }
+                printCurrentEvents(events, count, acc->studentId);
+                free(events);
+            }
+        } else if (strcmp(choice, "3") == 0) {
+            continue; // Just refresh the list
+            clearScreen();
+        } else if (strcmp(choice, "4") == 0) {
+            break; // Exit to main menu
+            clearScreen();
+        } else {
+            printf("[ERROR] Invalid choice. Please try again.\n");
+            printf("Press Enter to continue...");
+            getchar();
+        }
     }
 }
+
 void viewUserEventDetails(const Account *acc, const char *eventId){
-    viewCurrentEvents(acc,1);
+    viewCurrentEvents(acc);
 
     printf("Enter the Event ID to view details (or press Enter to go back): ");
 
