@@ -22,6 +22,7 @@ typedef struct
     char email[EMAIL_LENGTH];
     char phoneNumber[phoneNumber_LENGTH];
     char specialize[specialize_LENGTH];
+    int eventCount;
 } User;
 
 typedef struct
@@ -41,4 +42,5 @@ void viewCurrentEvents(const Account *acc, int wait);
 void viewProfile(const Account *acc);
 void viewUserEventDetails(const Account *acc, const char *eventId);
 void userEventDetails(const Account *acc, const char *eventId);
+int findUserIndex(const char *id);
 #endif

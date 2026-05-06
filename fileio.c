@@ -37,6 +37,23 @@ int saveEventAt(int index, Event *e)
     fclose(f);
     return 1;
 }
+int saveUserAt(int index, User *user)
+{
+    FILE *f = fopen(USER_DATA_PATH, "r+b");
+    if (f == NULL)
+    {
+        f = fopen(USER_DATA_PATH, "wb");
+        if (f == NULL)
+        {
+            return 0;
+        }
+    }
+    // Ép kiểu index sang long long để đảm bảo tính toán offset 64-bit
+    fseeko64(f, (long long)index * sizeof(User), SEEK_SET);
+    fwrite(user, sizeof(Event), 1, f);
+    fclose(f);
+    return 1;
+}
 
 // Load an event struct from a specific record index
 int loadEventAt(int index, Event *e)

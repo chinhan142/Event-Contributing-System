@@ -112,7 +112,7 @@ int bcnMenu(Account *acc)
             getchar();
             break;
         case 12:
-            printf("[TODO] Statistics\n");
+            getStaffStatsByEvent();
             break;
         case 13:
             viewProfile(acc);
@@ -124,9 +124,6 @@ int bcnMenu(Account *acc)
         case 15:
             printf("Reset password\n");
             resetMemberPassword();
-            break;
-        case 16:
-            searchEventMenuBCN();
             break;
         case 0:
             if (logoutMain())

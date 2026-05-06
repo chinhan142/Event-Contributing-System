@@ -12,7 +12,6 @@ void searchEventMenuBCN()
         printDivider("EXTEND MENU");
         printf("  1. Search by Event ID\n");
         printf("  2. Search by Start Date Range\n");
-        printf("  3. Get staff stats\n");
         printf("  0. Back\n");
         printf("Choice: ");
 
@@ -32,9 +31,6 @@ void searchEventMenuBCN()
             break;
         case 2:
             searchEventsByStartDateRange();
-            break;
-        case 3:
-            getStaffStatsByEvent();
             break;
         case 0:
             break;
@@ -66,7 +62,20 @@ void  displayStaffCountPerEvent(){
     fclose(f);
 }
 void findTopParticipant(){
-
+    User temp,maxcnt;
+    maxcnt.eventCount = -1;
+    FILE *f = fopen(USER_DATA_PATH, "r+b");
+    if (f == NULL)
+    {
+        f = fopen(USER_DATA_PATH, "wb");
+        if (f == NULL)
+        {
+            return 0;
+        }
+    }
+    // while(fread(&temp,sizeof(User),1,f)){
+    //     if(temp.eventCount >)
+    // }
 }
 void getInactiveStaffInSemester(){
 
