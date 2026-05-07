@@ -67,11 +67,11 @@ static void initUserPersonaData()
     }
 
     User samples[] = {
-        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", "",1,0,1,0},
-        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", "",1,1,0,0},
-        {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn", "0123456789", "SoftwareDeveloper",0,0,0,0},
-        {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn", "", "",0,0,0,0},
-        {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn", "", "",0,0,0,0}};
+        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", "",1,0},
+        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", "",1,0},
+        {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn", "0123456789", "SoftwareDeveloper",0,0},
+        {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn", "", "",0,0},
+        {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn", "", "",0,0}};
 
     fwrite(samples, sizeof(User), sizeof(samples) / sizeof(samples[0]), f);
     fclose(f);
@@ -108,9 +108,6 @@ static void initMockEvents()
          .status = 0, // STATUS_UPCOMING
          .staffCount = 1,
          .staffList = {{"SE203237", 0, "Leader Workshop"}},
-         .belongsToSpring = 0,
-         .belongsToSummer = 1,
-         .belongsToFall = 0
         
         },
         {.eventId = "EV000002",
@@ -122,9 +119,6 @@ static void initMockEvents()
          .status = 1, // STATUS_ONGOING
          .staffCount = 1,
          .staffList = {{"SE200441", 1, "Hau can"}},
-         .belongsToSpring = 1,
-         .belongsToSummer = 0,
-         .belongsToFall = 0
         },
         {.eventId = "EV000003",
          .name = "R.ODE Battle 2023",
@@ -133,10 +127,7 @@ static void initMockEvents()
          .startDate = "2023-12-20",
          .endDate = "2023-12-21",
          .status = 2, // STATUS_FINISHED
-         .staffCount = 0,
-         .belongsToSpring = 0,
-         .belongsToSummer = 0,
-         .belongsToFall = 1
+         .staffCount = 0
         }};
 
     fwrite(samples, sizeof(Event), 3, f);

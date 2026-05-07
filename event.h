@@ -1,6 +1,6 @@
 #ifndef EVENT_H
 #define EVENT_H
-
+#include <time.h>
 typedef struct Account Account;
 
 #define ID_LENGTH 20
@@ -39,9 +39,6 @@ typedef struct
     char location[LOCATION_LENGTH];
     char startDate[DATE_LENGTH];
     char endDate[DATE_LENGTH];
-    int belongsToSpring;
-    int belongsToSummer;
-    int belongsToFall;
     EventStatus status;
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
@@ -65,4 +62,6 @@ void deleteEvent();
 void viewEventDetails();
 void manualUpdateEventStatus();
 void searchEventsByStartDateRange();
+int checkSemester(time_t timestampCheck);
+time_t toTimestamp(Event *event);
 #endif

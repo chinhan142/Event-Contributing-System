@@ -69,6 +69,17 @@ void updateStatus(Event *event)
         event->status = STATUS_FINISHED;
     }
 }
+time_t toTimestamp(Event *event){
+    int Y = stoi(event->startDate, 0, 3);
+    int M = stoi(event->startDate, 5, 6);
+    int D = stoi(event->startDate, 8, 9);
+    struct tm s = {0};
+    s.tm_year = Y - 1900;
+    s.tm_mon = M - 1;
+    s.tm_mday = D;
+    s.tm_isdst = -1;
+    return mktime(&s);
+}
 // Checks if two dates follow the YYYY-MM-DD format ensure the date is valid
 int isValidDate(char *date)
 {
@@ -155,36 +166,19 @@ int isChronological(char *start, char *end)
     printf(RED "Invalid date, Please try again (Chronological error) !\n" RESET);
     return 0;
 }
-int checkTime1(int eventMonth, int eventDate, int semesterMonth, int semesterDate){
-    struct tm e = {0};
-    e.tm_year = 2000 - 1900;
-    e.tm_mon = eventMonth - 1;
-    e.tm_mday = eventDate;
-    e.tm_isdst = -1;
-    time_t eventTime = mktime(&e);
-    struct tm s = {0};
-    s.tm_year = 2000 - 1900;
-    s.tm_mon = semesterMonth - 1;
-    s.tm_mday = semesterDate;
-    s.tm_isdst = -1;
-    time_t semestertime = mktime(&s);
-    return eventTime - semestertime;
-}
-void checkSemester(Event *event){
-    event->belongsToSpring = 0;
-    event->belongsToSummer = 0;
-    event->belongsToFall = 0;
-    int startM = stoi(event->startDate, 5, 6);
-    int startD = stoi(event->startDate, 8, 9);
-    int endM = stoi(event->endDate, 5, 6);
-    int endD = stoi(event->endDate, 8, 9);
-    if(checkTime1(startM,startD,1,1) >= 0 && checkTime1(startM,startD,4,30) <= 0) event->belongsToSpring = 1;
-    else if(checkTime1(startM,startD,5,1) >= 0 && checkTime1(startM,startD,9,30) <= 0) event->belongsToSummer = 1;
-    else event->belongsToFall = 1;
-    if(checkTime1(endM,endD,1,1) >= 0 && checkTime1(endM,endD,4,30) <= 0) event->belongsToSpring = 1;
-    else if(checkTime1(endM,endD,5,1) >= 0 && checkTime1(endM,endD,9,30) <= 0) event->belongsToSummer = 1;
-    else event->belongsToFall = 1;
 
+int checkSemester(time_t timestampCheck) {
+    struct tm *t = localtime(&timestampCheck);
+    int month = t->tm_mon + 1; // Tháng từ 1-12
+
+
+    if (month >= 1 && month <= 4) return 1; // Spring
+
+
+    if (month >= 5 && month <= 8) return 2; // Summer
+
+
+    return 3; // Fall
 }
 // Collects information to initialize a new Event and save it.
 void createEvent()
@@ -215,7 +209,6 @@ void createEvent()
         } while (!isValidDate(newEvent.endDate));
 
     } while (!isChronological(newEvent.startDate, newEvent.endDate));
-    checkSemester(&newEvent);
 
     printf(BOLD "Enter event's location: " RESET);
     inputString(newEvent.location, sizeof(newEvent.location));
