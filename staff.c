@@ -168,9 +168,6 @@ void addStaffToEvent()
     e.staffCount++;
     if(e.status != STATUS_UPCOMING){
         selected.eventCount++;
-        selected.isFallActive += e.belongsToFall;
-        selected.isSpringActive += e.belongsToSpring;
-        selected.isSummerActive += e.belongsToSummer;
         int index = findUserIndex(selected.studentId);
         if(index != -1) saveUserAt(index,&selected);
     } 

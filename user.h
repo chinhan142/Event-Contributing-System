@@ -23,9 +23,7 @@ typedef struct
     char phoneNumber[phoneNumber_LENGTH];
     char specialize[specialize_LENGTH];
     int eventCount;
-    int isSpringActive;
-    int isSummerActive;
-    int isFallActive;
+    int isActiveInThisSemester;
 } User;
 
 typedef struct

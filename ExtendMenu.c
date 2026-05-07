@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "colors.h"
+#include "user.h"
 void searchEventMenuBCN()
 {
     int choice = -1;
@@ -67,7 +68,7 @@ void  displayStaffCountPerEvent(){
     }
     int i = 1;
     while(fread(&e, sizeof(Event), 1, f)){
-        printf("%d : %s : %d %s\n", i, e.name, e.staffCount, e.staffCount > 1 ? "staffs" : "staff");
+        printf("%d. %s : %d %s\n", i, e.name, e.staffCount, e.staffCount > 1 ? "staffs" : "staff");
         i++;
     }
     fclose(f);
@@ -121,7 +122,6 @@ void findTopParticipant(){
         result = (User *)realloc(result,(index + 1)*sizeof(User));
     }
     sort(result,0,index - 1);
-    printf("==========TOP PARTICIPANT==========\n");
     if(index == 0){
         printf("There are no staff\n");
     }
@@ -150,76 +150,50 @@ void getInactiveStaffInSemester(){
             return;
         }
     }
-    int index = 0;
+    int index = 0,cnt;
     int size = 2;
     User *result = (User *)malloc(size*sizeof(User));
     if(result == NULL) return;
-    
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
     while(fread(result + index,sizeof(User),1,f)){
+        result[index].isActiveInThisSemester = 0;
+        MatchedEvent *list = getEventsByStudentId(result[index].studentId,&cnt);
+        for(int i = 0;i < cnt;i++){
+            char *startDate = list[i].event.startDate;
+           
+            int currentYear = t->tm_year + 1900;
+            // if(stoi(startDate,0,3) == 2026){
+            //     printf("%ld %ld",checkSemester(now), checkSemester(toTimestamp(&(list[i].event))));
+            // }
+            if(currentYear == stoi(startDate,0,3) && list[i].event.status != STATUS_UPCOMING){
+                if(checkSemester(now) == checkSemester(toTimestamp(&(list[i].event)))){
+                    result[index].isActiveInThisSemester = 1;
+                }
+            }
+        } 
+        if (list != NULL) {
+            free(list);
+        }
         index++;
         if(index == size){
             size *= 2;
             result = (User *)realloc(result,size*sizeof(User));
-        } 
+        }
     }
     if(index > 0){
         result = (User *)realloc(result,(index + 1)*sizeof(User));
     }
-    int choice = -1;
-
-    while (choice != 0)
-    {
-        printDivider("Choose Semester");
-        printf("  1. Spring\n");
-        printf("  2. Summer\n");
-        printf("  3. Fall\n");
-        printf("  0. Back\n");
-        printf("Choice: ");
-
-        if (scanf("%d", &choice) != 1)
-        {
-            while (getchar() != '\n') {}
-            printf("[!] Invalid input.\n");
-            continue;
+    int dem = 1;
+    for(int i = 0;i < index;i++){
+        if(result[i].isActiveInThisSemester == 0){
+            printf("%d. %s\n", dem, result[i].studentName);
+            dem++;
         }
-        getchar(); /* clear '\n' */
-        int cnt = 1;
-        switch (choice)
-        {
-        case 1:
-            for(int i = 0;i < index;i++){
-                if(result[i].isSpringActive == 0){
-                    printf("%d. : %s\n", cnt, result[i].studentName);
-                    cnt++;
-                }
-            }
-            break;
-        case 2:
-            for(int i = 0;i < index;i++){
-                if(result[i].isSummerActive == 0){
-                    printf("%d. : %s\n", cnt, result[i].studentName);
-                    cnt++;
-                }
-            }
-            break;
-        case 3:
-            for(int i = 0;i < index;i++){
-                if(result[i].isFallActive == 0){
-                    printf("%d. : %s\n", cnt, result[i].studentName);
-                    cnt++;
-                }
-            }
-            break;
-        case 0:
-            break;
-        default:
-            printf("[!] Invalid choice!\n");
-            break;
-        }
-
-        printf("Enter to continue...");
-        getchar();
     }
+    free(result);
+    
+    
 }
 void generateStaffStatistics(){
     printDivider("Staff Count Per Event");
@@ -228,4 +202,6 @@ void generateStaffStatistics(){
     findTopParticipant();
     printDivider("Inactive Staff In Semester");
     getInactiveStaffInSemester();
+    printf("Enter to continue");
+    getchar();
 }
