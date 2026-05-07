@@ -6,25 +6,36 @@
 #include "user.h"
 #include "menuStaff.h"
 #include "auth.h"
+#include "colors.h"
 int staffMenu(Account *acc)
 {
     int choice;
     do
     {
-        printDivider("STAFF MENU");
-        printf("  [My Events]\n");
-        printf("  1. View current events\n");
-        printf("  2. View event history\n");
+        clearScreen();
+        printDivider("MEMBER DASHBOARD");
+        
+        printf(YELLOW BOLD "  [ MY ACTIVITIES ]\n" RESET);
+        printf(GREEN "  1." RESET " View Ongoing Events\n");
+        printf(GREEN "  2." RESET " View My Participation History\n");
         printf("\n");
-        printf("  [Account]\n");
-        printf("  3. View my profile\n");
-        printf("  4. Change password\n");
+
+        printf(YELLOW BOLD "  [ ACCOUNT SETTINGS ]\n" RESET);
+        printf(GREEN "  3." RESET " View My Profile\n");
+        printf(GREEN "  4." RESET " Change My Password\n");
         printf("\n");
-        printf("  0. Logout\n");
-        printf("========================================\n");
-        printf("Choice: ");
-        scanf("%d", &choice);
-        getchar();
+
+        printf(RED BOLD "  0. Logout System\n" RESET);
+        printf(CYAN "=========================================================================================================\n" RESET);
+        printf(BOLD "Your Selection >> " RESET);
+        if (scanf("%d", &choice) != 1) {
+            // Preventing infinite loop when EOF
+            if (feof(stdin)) return 0;
+            choice = -1;
+            clearInputBuffer();
+        } else {
+            getchar();
+        }
 
         switch (choice)
         {
@@ -50,7 +61,7 @@ int staffMenu(Account *acc)
                 return 1;
             break;
         default:
-            printf("[!] Invalid choice!\n");
+            printf(RED BOLD "[!] " RESET "Invalid choice!\n");
             break;
         }
     } while (choice != 0);
