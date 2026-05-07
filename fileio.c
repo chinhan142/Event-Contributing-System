@@ -13,8 +13,8 @@ int getNextEventIndex()
     {
         return 0;
     }
-    _fseeki64(f, 0, SEEK_END);
-    long long size = _ftelli64(f);
+    fseeko64(f, 0, SEEK_END);
+    long long size = ftello64(f);
     fclose(f);
     return (int)(size / sizeof(Event));
 }
@@ -32,8 +32,25 @@ int saveEventAt(int index, Event *e)
         }
     }
     // Ép kiểu index sang long long để đảm bảo tính toán offset 64-bit
-    _fseeki64(f, (long long)index * sizeof(Event), SEEK_SET);
+    fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
     fwrite(e, sizeof(Event), 1, f);
+    fclose(f);
+    return 1;
+}
+int saveUserAt(int index, User *user)
+{
+    FILE *f = fopen(USER_DATA_PATH, "r+b");
+    if (f == NULL)
+    {
+        f = fopen(USER_DATA_PATH, "wb");
+        if (f == NULL)
+        {
+            return 0;
+        }
+    }
+    // Ép kiểu index sang long long để đảm bảo tính toán offset 64-bit
+    fseeko64(f, (long long)index * sizeof(User), SEEK_SET);
+    fwrite(user, sizeof(User), 1, f);
     fclose(f);
     return 1;
 }
@@ -46,7 +63,7 @@ int loadEventAt(int index, Event *e)
     {
         return 0;
     }
-    _fseeki64(f, (long long)index * sizeof(Event), SEEK_SET);
+    fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
     int readCount = fread(e, sizeof(Event), 1, f);
     fclose(f);
     return (readCount > 0);
