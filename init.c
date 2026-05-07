@@ -2,6 +2,7 @@
 #include "auth.h"
 #include "user.h"
 #include "event.h"
+#include "colors.h"
 #include <stdio.h>
 #include <string.h>
 #include "paths.h"
@@ -18,7 +19,7 @@ static void initAccountData()
     FILE *f = fopen(ACCOUNT_DATA_PATH, "wb");
     if (f == NULL)
     {
-        printf("[ERROR] Cannot create accounts.dat file\n");
+        printf(RED BOLD "[ERROR] " RESET "Cannot create accounts.dat file\n");
         return;
     }
 
@@ -47,7 +48,7 @@ Account user_2;
     fwrite(&user_1, sizeof(Account), 1, f);
     fwrite(&user_2, sizeof(Account), 1, f);
     fclose(f);
-    printf("[INFO] Created default accounts successfully.\n");
+    printf(YELLOW BOLD "[INFO] " RESET "Created default accounts successfully.\n");
 }
 
 static void initUserPersonaData()
@@ -74,7 +75,7 @@ static void initUserPersonaData()
 
     fwrite(samples, sizeof(User), sizeof(samples) / sizeof(samples[0]), f);
     fclose(f);
-    printf("[INFO] Created default user persona data successfully.\n");
+    printf(YELLOW BOLD "[INFO] " RESET "Created default user persona data successfully.\n");
 }
 
 static void initMockEvents()
@@ -140,7 +141,7 @@ static void initMockEvents()
 
     fwrite(samples, sizeof(Event), 3, f);
     fclose(f);
-    printf("[INFO] Created 3 mock events for testing.\n");
+    printf(YELLOW BOLD "[INFO] " RESET "Created 3 mock events for testing.\n");
 }
 
 void initializeSystem()
