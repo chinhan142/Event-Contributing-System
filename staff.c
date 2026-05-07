@@ -166,6 +166,11 @@ void addStaffToEvent()
     // Append to staff list
     e.staffList[e.staffCount] = entry;
     e.staffCount++;
+    if(e.status != STATUS_UPCOMING){
+        selected.eventCount++;
+        int index = findUserIndex(selected.studentId);
+        if(index != -1) saveUserAt(index,&selected);
+    } 
 
     // Save back to file
     if (saveEventAt(idx, &e))

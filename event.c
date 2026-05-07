@@ -69,6 +69,17 @@ void updateStatus(Event *event)
         event->status = STATUS_FINISHED;
     }
 }
+time_t toTimestamp(Event *event){
+    int Y = stoi(event->startDate, 0, 3);
+    int M = stoi(event->startDate, 5, 6);
+    int D = stoi(event->startDate, 8, 9);
+    struct tm s = {0};
+    s.tm_year = Y - 1900;
+    s.tm_mon = M - 1;
+    s.tm_mday = D;
+    s.tm_isdst = -1;
+    return mktime(&s);
+}
 // Checks if two dates follow the YYYY-MM-DD format ensure the date is valid
 int isValidDate(char *date)
 {
@@ -154,6 +165,20 @@ int isChronological(char *start, char *end)
     }
     printf(RED "Invalid date, Please try again (Chronological error) !\n" RESET);
     return 0;
+}
+
+int checkSemester(time_t timestampCheck) {
+    struct tm *t = localtime(&timestampCheck);
+    int month = t->tm_mon + 1; // Tháng từ 1-12
+
+
+    if (month >= 1 && month <= 4) return 1; // Spring
+
+
+    if (month >= 5 && month <= 8) return 2; // Summer
+
+
+    return 3; // Fall
 }
 // Collects information to initialize a new Event and save it.
 void createEvent()
@@ -294,6 +319,8 @@ void displayAllEvent(int filterStatus)
     {
         printf(" Total: %d event(s) listed.\n", count);
     }
+    printf("Enter to continue ");
+    getchar();
 }
 
 // Search event with user input
@@ -500,7 +527,6 @@ void updateEventDetails()
     Event event;
     while (1)
     {
-        displayAllEvent(-1);
         do
         {
             printf(BOLD "Enter the ID of the event you want to update (enter to exit): " RESET);
@@ -589,7 +615,6 @@ void deleteEvent()
     int index;
     while (1)
     {
-        displayAllEvent(-1);
         do
         {
             printf(BOLD "Enter event's id you want to delete (enter to exit): " RESET);

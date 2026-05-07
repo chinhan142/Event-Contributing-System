@@ -70,10 +70,11 @@ int bcnMenu(Account *acc)
         case 4: // Manual update event status
             manualUpdateEventStatus();
             break;
-        case 5: // View all events
+        case 5: { // View all events
             int filterStatus = inputEventStatus();
             displayAllEvent(filterStatus);
             break;
+        }
         case 6: // View event detail
             viewEventDetails();
             break;
@@ -89,13 +90,14 @@ int bcnMenu(Account *acc)
         case 10: // Delete staff from event
             deleteStaffFromEvent();
             break;
-        case 11: // Staff history
+        case 11: { // Staff history
             char *studentId = StudentIDInput();
             displayEventHistory(studentId);
             free(studentId);
             break;
+        }
         case 12: // Generate staff statistics
-            // generateStaffStatistics(); 
+            generateStaffStatistics(); 
             break;
         case 13: // View profile
             viewProfile(acc);

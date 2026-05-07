@@ -179,6 +179,29 @@ int findUserById(const char *id, User *result)
     return 0; // Not found
 }
 
+int findUserIndex(const char *id)
+{
+    FILE *f = fopen(USER_DATA_PATH, "rb");
+    if (f == NULL)
+    {
+        return 0;
+    }
+
+    User temp;
+    int index = 0;
+    while (fread(&temp, sizeof(User), 1, f))
+    {
+        if (strcmp(temp.studentId, id) == 0)
+        {
+            fclose(f);
+            return index; 
+        }
+        index++;
+    }
+    fclose(f);
+    return -1;
+} 
+
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count)
 {
     FILE *f = fopen(USER_DATA_PATH, "rb");
@@ -229,6 +252,7 @@ void searchUserById(const char *id, User results[MAX_SEARCH_RESULTS], int *count
         }
     }
     fclose(f);
+
 }
 
 void viewProfile(const Account *acc){

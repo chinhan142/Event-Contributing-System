@@ -67,11 +67,11 @@ static void initUserPersonaData()
     }
 
     User samples[] = {
-        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", ""},
-        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", ""},
-        {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn", "0123456789", "SoftwareDeveloper"},
-        {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn", "", ""},
-        {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn", "", ""}};
+        {"SE203237", "Bui Pham Chi Nhan", "nhanbpc@fpt.edu.vn", "", "",1,0},
+        {"SE200441", "Tran Le Anh Quan", "quanta@fpt.edu.vn", "", "",1,0},
+        {"SE210556", "Vo Le Kien Huy", "huyvlk@fpt.edu.vn", "0123456789", "SoftwareDeveloper",0,0},
+        {"SE210041", "Tran Cao Thanh", "thanhct@fpt.edu.vn", "", "",0,0},
+        {"SE211059", "Nguyen Tan Loi", "loint@fpt.edu.vn", "", "",0,0}};
 
     fwrite(samples, sizeof(User), sizeof(samples) / sizeof(samples[0]), f);
     fclose(f);
@@ -107,7 +107,9 @@ static void initMockEvents()
          .endDate = "2024-05-02",
          .status = 0, // STATUS_UPCOMING
          .staffCount = 1,
-         .staffList = {{"SE203237", 0, "Leader Workshop"}}},
+         .staffList = {{"SE203237", 0, "Leader Workshop"}},
+        
+        },
         {.eventId = "EV000002",
          .name = "F-Code Teambuilding",
          .description = "Giao luu thanh vien",
@@ -116,7 +118,8 @@ static void initMockEvents()
          .endDate = "2024-04-17",
          .status = 1, // STATUS_ONGOING
          .staffCount = 1,
-         .staffList = {{"SE200441", 1, "Hau can"}}},
+         .staffList = {{"SE200441", 1, "Hau can"}},
+        },
         {.eventId = "EV000003",
          .name = "R.ODE Battle 2023",
          .description = "Cuoc thi code",
@@ -124,7 +127,8 @@ static void initMockEvents()
          .startDate = "2023-12-20",
          .endDate = "2023-12-21",
          .status = 2, // STATUS_FINISHED
-         .staffCount = 0}};
+         .staffCount = 0
+        }};
 
     fwrite(samples, sizeof(Event), 3, f);
     fclose(f);

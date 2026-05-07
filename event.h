@@ -1,6 +1,6 @@
 #ifndef EVENT_H
 #define EVENT_H
-
+#include <time.h>
 typedef struct Account Account;
 
 #define ID_LENGTH 20
@@ -62,4 +62,6 @@ void deleteEvent();
 void viewEventDetails();
 void manualUpdateEventStatus();
 void searchEventsByStartDateRange();
+int checkSemester(time_t timestampCheck);
+time_t toTimestamp(Event *event);
 #endif

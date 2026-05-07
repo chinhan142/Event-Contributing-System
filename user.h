@@ -22,6 +22,8 @@ typedef struct
     char email[EMAIL_LENGTH];
     char phoneNumber[phoneNumber_LENGTH];
     char specialize[specialize_LENGTH];
+    int eventCount;
+    int isActiveInThisSemester;
 } User;
 
 typedef struct
@@ -46,4 +48,5 @@ void sortUserEventsByDate(MatchedEvent *events, int count);
 void sortUserEventsByIdAsc(MatchedEvent *events, int count);
 void sortUserEventsByIdDesc(MatchedEvent *events, int count);
 void currentEventsMenu(const Account *acc);
+int findUserIndex(const char *id);
 #endif
