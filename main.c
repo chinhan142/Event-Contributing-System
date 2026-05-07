@@ -11,6 +11,7 @@
 #include "menuBCN.h"
 #include "menuStaff.h"
 #include "init.h"
+#include "colors.h"
 
 bool loginSession = false;
 
@@ -23,31 +24,37 @@ int main()
     // Initialize default(mocktest) datas and files
     initializeSystem();
 
-    printf("-- WELCOME TO EVENT CONTRIBUTING SYSTEM --\n");
-    printf("YOU'RE NOT LOGIN! LOGIN DOWN HERE!\n");
+    clearScreen();
+    printAppBanner();
+    
     while (!loginSession)
     {
-        printf("\nEnter Student ID: ");
+        printf(YELLOW "\n[ LOGIN REQUIRED ]\n" RESET);
+        printf(BOLD "Username : " RESET);
         inputString(studentId, sizeof(studentId));
+        // Preventing infinite loop when EOF
+        if (feof(stdin)) return 0;
 
-        printf("Enter Password: ");
+        printf(BOLD "Password : " RESET);
         inputString(password, sizeof(password));
+        // Preventing infinite loop when EOF
+        if (feof(stdin)) return 0;
 
         int loginStatus = loginAccount(studentId, password);
         if (loginStatus == LOGIN_FAILED)
         {
-            printf("ACCOUNT NOT FOUND! REENTER!\n");
+            printf(RED BOLD "[!] " RESET "Account not found or wrong password! Please re-enter.\n");
         }
         else if (loginStatus == LOGIN_LOCKED)
         {
-            printf("THIS ACCOUNT IS LOCKED! CONTACT BCN\n");
+            printf(RED BOLD "[!] " RESET "This account is locked! Please contact BCN.\n");
         }
         else
         {
             loginSession = true;
             if (!findAccountById(studentId, &currentAcc))
             {
-                printf("[ERROR] Cannot load account details.\n");
+                printf(RED "[ERROR] Cannot load account details.\n" RESET);
                 return 1;
             }
             if (loginStatus == LOGIN_SUCCESS_BCN)
@@ -55,8 +62,8 @@ int main()
                 if (bcnMenu(&currentAcc))
                 {
                     loginSession = false;
-                    printf("-- WELCOME TO EVENT CONTRIBUTING SYSTEM --\n");
-                    printf("YOU'RE NOT LOGIN! LOGIN DOWN HERE!\n");
+                    clearScreen();
+                    printAppBanner();
                 }
             }
             else
@@ -64,8 +71,8 @@ int main()
                 if (staffMenu(&currentAcc))
                 {
                     loginSession = false;
-                    printf("-- WELCOME TO EVENT CONTRIBUTING SYSTEM --\n");
-                    printf("YOU'RE NOT LOGIN! LOGIN DOWN HERE!\n");
+                    clearScreen();
+                    printAppBanner();
                 }
             }
         }

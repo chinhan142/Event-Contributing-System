@@ -2,7 +2,7 @@
 #include "event.h"
 
 void searchEventMenuBCN();
-void getStaffStatsByEvent();
+void generateStaffStatistics();
 void  displayStaffCountPerEvent();
 void findTopParticipant();
 void getInactiveStaffInSemester();
