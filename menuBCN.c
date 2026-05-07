@@ -7,132 +7,114 @@
 #include "user.h"
 #include "auth.h"
 #include "ExtendMenu.h"
+#include "colors.h"
 int bcnMenu(Account *acc)
 {
     int choice;
     do
     {
-        printDivider("BCN MENU");
-        printf("  [Event Management]\n");
-        printf("  1. Create new event\n");
-        printf("  2. Edit event info\n");
-        printf("  3. Delete event\n");
-        printf("  4. Update event status\n");
-        printf("  5. View all events\n");
-        printf("  6. View event detail\n");
-        printf("  7. Search event\n");
+        clearScreen();
+        printDivider("BAN CHU NHIEM (BCN) DASHBOARD");
+        
+        printf(YELLOW BOLD "  [ EVENT MANAGEMENT ]\n" RESET);
+        printf(GREEN "  1." RESET " Create New Event\n");
+        printf(GREEN "  2." RESET " Edit Event Information\n");
+        printf(GREEN "  3." RESET " Delete Event\n");
+        printf(GREEN "  4." RESET " Update Event Status\n");
+        printf(GREEN "  5." RESET " View Full Event List\n");
+        printf(GREEN "  6." RESET " View Event Detailed View\n");
+        printf(GREEN "  7." RESET " Event Search\n");
         printf("\n");
-        printf("  [Staff Management]\n");
-        printf("  8.  Add staff to event\n");
-        printf("  9.  Edit staff role/task\n");
-        printf("  10. Remove staff from event\n");
-        printf("  11. View staff history\n");
+
+        printf(YELLOW BOLD "  [ STAFF MANAGEMENT ]\n" RESET);
+        printf(GREEN "  8." RESET "  Add Staff to Event\n");
+        printf(GREEN "  9." RESET "  Edit Staff Role/Task\n");
+        printf(GREEN "  10." RESET " Remove Staff from Event\n");
+        printf(GREEN "  11." RESET " View Staff Participation History\n");
         printf("\n");
-        printf("  [Reports]\n");
-        printf("  12. Staff statistics\n");
+
+        printf(YELLOW BOLD "  [ REPORTS & ANALYTICS ]\n" RESET);
+        printf(GREEN "  12." RESET " Generate Staff Statistics\n");
         printf("\n");
-        printf("  [Account]\n");
-        printf("  13. View my profile\n");
-        printf("  14. Change password\n");
-        printf("  15. Reset member password\n");
+
+        printf(YELLOW BOLD "  [ ACCOUNT SETTINGS ]\n" RESET);
+        printf(GREEN "  13." RESET " View My Profile\n");
+        printf(GREEN "  14." RESET " Change My Password\n");
+        printf(GREEN "  15." RESET " Reset Member Password\n");
         printf("\n");
-        printf("  0. Logout\n");
-        printf("========================================\n");
-        printf("Choice: ");
-        scanf("%d", &choice);
-        getchar(); // clear newline sau scanf
+
+        printf(RED BOLD "  0. Logout System\n" RESET);
+        printf(CYAN "==================================================\n" RESET);
+        printf(BOLD "Your Selection >> " RESET);
+        if (scanf("%d", &choice) != 1) {
+            // Preventing infinite loop when EOF
+            if (feof(stdin)) return 0;
+            choice = -1;
+            clearInputBuffer();
+        } else {
+            getchar(); // clear newline
+        }
 
         switch (choice)
         {
             // calling function here
-        case 1:
-            printf("Create new event\n");
+        case 1: // Create new event
             createEvent();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 2:
-            printf("Update event details\n");
+        case 2: // Update event details
             updateEventDetails();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 3:
-            printf("Delete event\n");
+        case 3: // Delete event
             deleteEvent();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 4:
-            printf("Manual update event status\n");
+        case 4: // Manual update event status
             manualUpdateEventStatus();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 5:
-            printf("View all events\n");
+        case 5: // View all events
             int filterStatus = inputEventStatus();
             displayAllEvent(filterStatus);
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 6:
-            printf("View event detail\n");
+        case 6: // View event detail
             viewEventDetails();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 7:
+        case 7: // Search event
             searchEventMenuBCN();
             break;
-        case 8:
-            printf("Add staff to event\n");
+        case 8: // Add staff to event
             addStaffToEvent();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 9:
-            printf("Edit staff in event\n");
+        case 9: // Edit staff in event
             editStaffInEvent();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 10:
-            printf("Delete staff from event\n");
+        case 10: // Delete staff from event
             deleteStaffFromEvent();
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 11:
-            printf("Staff history\n");
+        case 11: // Staff history
             char *studentId = StudentIDInput();
             displayEventHistory(studentId);
             free(studentId);
-            printf("Enter to continue ");
-            getchar();
             break;
-        case 12:
-            printf("[TODO] Statistics\n");
+        case 12: // Generate staff statistics
+            // generateStaffStatistics(); 
             break;
-        case 13:
+        case 13: // View profile
             viewProfile(acc);
             break;
-        case 14:
-            printf("Change password\n");
+        case 14: // Change password
             changeOwnPassword(acc);
             break;
-        case 15:
-            printf("Reset password\n");
+        case 15: // Reset password
             resetMemberPassword();
             break;
-        case 0:
+        case 0: // Logout
             if (logoutMain())
                 return 1;
             break;
         default:
-            printf("[!] Invalid choice!\n");
+            printf(RED BOLD "[!] " RESET "Invalid choice!\n");
             break;
         }
+
     } while (choice != 0);
     return 0;
 }

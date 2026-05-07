@@ -2,22 +2,30 @@
 #include "event.h"
 #include "ExtendMenu.h"
 #include "utils.h"
+#include "colors.h"
 void searchEventMenuBCN()
 {
     int choice = -1;
 
     while (choice != 0)
     {
-        printDivider("SEARCH EVENT");
-        printf("  1. Search by Event ID\n");
-        printf("  2. Search by Start Date Range\n");
-        printf("  0. Back\n");
-        printf("Choice: ");
+        clearScreen();
+        printDivider("EVENT SEARCH");
+        
+        printf(YELLOW BOLD "  [ SEARCH OPTIONS ]\n" RESET);
+        printf(GREEN "  1." RESET " Search by Unique Event ID\n");
+        printf(GREEN "  2." RESET " Search by Start Date Range\n");
+        printf("\n");
+        
+        printf(RED BOLD "  0. Return to Dashboard\n" RESET);
+        printf(CYAN "==================================================\n" RESET);
+        printf(BOLD "Your Selection >> " RESET);
 
         if (scanf("%d", &choice) != 1)
         {
-            while (getchar() != '\n') {}
-            printf("[!] Invalid input.\n");
+            if (feof(stdin)) return;
+            clearInputBuffer();
+            printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
             continue;
         }
         getchar(); /* clear '\n' */
@@ -25,7 +33,7 @@ void searchEventMenuBCN()
         switch (choice)
         {
         case 1:
-            printf("Search event\n");
+            // printf("Search event\n");
             printEventResult();
             break;
         case 2:
@@ -34,14 +42,15 @@ void searchEventMenuBCN()
         case 0:
             break;
         default:
-            printf("[!] Invalid choice!\n");
+            printf(RED BOLD "[!] " RESET "Invalid choice!\n");
             break;
         }
 
         if (choice == 1 || choice == 2)
         {
-            printf("Enter to continue...");
-            getchar();
+            printf(BOLD "Enter to continue..." RESET);
+            int c = getchar();
+            if (c == EOF) return;
         }
     }
 }

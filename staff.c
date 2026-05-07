@@ -27,13 +27,13 @@ void addStaffToEvent()
 {
     char eventId[EVENT_ID_LENGTH];
     printDivider("ADD STAFF TO EVENT");
-    printf("Enter Event ID (EVxxxxxx): ");
+    printf(BOLD "Enter Event ID (EVxxxxxx): " RESET);
     inputString(eventId, sizeof(eventId));
 
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf(BOLD RED "[ERROR] Event not found!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Event not found!\n");
         return;
     }
 
@@ -43,43 +43,50 @@ void addStaffToEvent()
     // Validate Status: Cannot add if event is finished
     if (e.status == STATUS_FINISHED)
     {
-        printf(BOLD RED "[ERROR] Event has finished, cannot add staff!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Event has finished, cannot add staff!\n");
         return;
     }
 
     // Validate Capacity: Max staff limit reached
     if (e.staffCount >= MAX_STAFF_PER_EVENT)
     {
-        printf(BOLD RED "[ERROR] Event has reached maximum capacity (%d people)!" RESET "\n", MAX_STAFF_PER_EVENT);
+        printf(RED BOLD "[ERROR] " RESET "Event has reached maximum capacity (%d people)!\n", MAX_STAFF_PER_EVENT);
         return;
     }
 
     int searchMode;
-    printf("Search by:\n");
-    printf("  1. Student ID\n");
-    printf("  2. Name\n");
-    printf("Choice: ");
+    printf(YELLOW BOLD "Search by:\n" RESET);
+    printf(GREEN "  1." RESET " Student ID\n");
+    printf(GREEN "  2." RESET " Name\n");
+    printf(BOLD "Choice: " RESET);
     if (scanf("%d", &searchMode) != 1)
     {
+        // Preventing infinite loop when EOF
+        if (feof(stdin)) return;
         searchMode = 0;
+        clearInputBuffer();
     }
-    getchar();
+    else
+    {
+        clearInputBuffer();
+    }
 
     char query[NAME_LENGTH];
     if (searchMode == 1)
     {
-        printf("Enter Student ID: ");
+        printf(BOLD "Enter Student ID: " RESET);
     }
     else if (searchMode == 2)
     {
-        printf("Enter Name: ");
+        printf(BOLD "Enter Name: " RESET);
     }
     else
     {
-        printf("[ERROR] Invalid search mode!\n");
+        printf(RED BOLD "[ERROR] " RESET "Invalid search mode!\n");
         return;
     }
     inputString(query, sizeof(query));
+    if (feof(stdin)) return;
 
     User results[MAX_SEARCH_RESULTS];
     int count = 0;
@@ -94,24 +101,30 @@ void addStaffToEvent()
 
     if (count == 0)
     {
-        printf(BOLD RED "[ERROR] No matching members found!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "No matching members found!\n");
         return;
     }
 
     // Display search results
-    printf("\nSearch Results:\n");
+    printf("\n" YELLOW BOLD "Search Results:\n" RESET);
     for (int i = 0; i < count; i++)
     {
-        printf("%d. [%s] %s\n", i + 1, results[i].studentId, results[i].studentName);
+        printf(GREEN "  %d." RESET " [%s] %s\n", i + 1, results[i].studentId, results[i].studentName);
     }
 
     int choice;
-    printf("\nSelect member (1-%d) or 0 to cancel: ", count);
+    printf(BOLD "\nSelect member (1-%d) or 0 to cancel: " RESET, count);
     if (scanf("%d", &choice) != 1)
     {
+        // Preventing infinite loop when EOF
+        if (feof(stdin)) return;
         choice = 0;
+        clearInputBuffer();
     }
-    getchar(); // Clear newline character from buffer
+    else
+    {
+        clearInputBuffer();
+    }
 
     if (choice < 1 || choice > count)
     {
@@ -123,7 +136,7 @@ void addStaffToEvent()
     // Validate Duplicate: Cannot add the same MSSV twice
     if (isStaffInEvent(&e, selected.studentId))
     {
-        printf(BOLD RED "[ERROR] This member is already in the event's staff list!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "This member is already in the event's staff list!\n");
         return;
     }
 
@@ -132,17 +145,23 @@ void addStaffToEvent()
 
     // Input role
     int tempRole;
-    printf("Enter Role (%d: Leader, %d: Member, %d: Support): ", STAFF_LEADER, STAFF_MEMBER, STAFF_SUPPORT);
+    printf(BOLD "Enter Role (%d: Leader, %d: Member, %d: Support): " RESET, STAFF_LEADER, STAFF_MEMBER, STAFF_SUPPORT);
     if (scanf("%d", &tempRole) != 1)
     {
+        // Preventing infinite loop when EOF
+        if (feof(stdin)) return;
         tempRole = STAFF_MEMBER;
+        clearInputBuffer();
     }
-    entry.role = (StaffRole)tempRole;
-    getchar();
+    else
+    {
+        clearInputBuffer();
+    }
 
     // Input description/mission
-    printf("Enter Mission Description: ");
+    printf(BOLD "Enter Mission Description: " RESET);
     inputString(entry.description, sizeof(entry.description));
+    if (feof(stdin)) return;
 
     // Append to staff list
     e.staffList[e.staffCount] = entry;
@@ -151,11 +170,11 @@ void addStaffToEvent()
     // Save back to file
     if (saveEventAt(idx, &e))
     {
-        printf(BOLD GREEN "[SUCCESS] Staff added to event successfully!" RESET "\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Staff added to event successfully!\n");
     }
     else
     {
-        printf(BOLD RED "[ERROR] Could not save event data!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Could not save event data!\n");
     }
 }
 
@@ -180,13 +199,13 @@ void editStaffInEvent()
 {
     char eventId[EVENT_ID_LENGTH];
     printDivider("EDIT STAFF ROLE/MISSION");
-    printf("Enter Event ID (EVxxxxxx): ");
+    printf(BOLD "Enter Event ID (EVxxxxxx): " RESET);
     inputString(eventId, sizeof(eventId));
 
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf(BOLD RED "[ERROR] Event not found!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Event not found!\n");
         return;
     }
 
@@ -195,18 +214,18 @@ void editStaffInEvent()
 
     if (!canModifyStaff(&e))
     {
-        printf(BOLD RED "[ERROR] Only allowed to edit when event is UPCOMING!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Only allowed to edit when event is UPCOMING!\n");
         return;
     }
 
     if (e.staffCount == 0)
     {
-        printf(BOLD YELLOW "[INFO] No staff members in this event." RESET "\n");
+        printf(YELLOW BOLD "[INFO] " RESET "No staff members in this event.\n");
         return;
     }
 
     // Display current staff
-    printf("\nCurrent Staff List:\n");
+    printf("\n" YELLOW BOLD "Current Staff List:\n" RESET);
     for (int i = 0; i < e.staffCount; i++)
     {
         User u;
@@ -215,12 +234,12 @@ void editStaffInEvent()
         {
             strcpy(name, u.studentName);
         }
-        printf("%d. [%s] %-20s | Role: %-8s | Mission: %s\n", i + 1, e.staffList[i].studentId, name, getRoleName(e.staffList[i].role), e.staffList[i].description);
+        printf(GREEN "  %d." RESET " [%s] %-20s | Role: " CYAN "%-8s" RESET " | Mission: %s\n", i + 1, e.staffList[i].studentId, name, getRoleName(e.staffList[i].role), e.staffList[i].description);
     }
 
-    printf("Enter the staff number to edit from the list above.\n");
+    printf(YELLOW "Enter the staff number to edit from the list above.\n" RESET);
     int choice;
-    printf("\nSelect staff member to edit (1-%d) or 0 to cancel: ", e.staffCount);
+    printf(BOLD "\nSelect staff member to edit (1-%d) or 0 to cancel: " RESET, e.staffCount);
     if (scanf("%d", &choice) != 1)
     {
         choice = 0;
@@ -236,7 +255,7 @@ void editStaffInEvent()
 
     // Update Role
     int tempRole;
-    printf("New Role (%d: Leader, %d: Member, %d: Support) [%s]: ", STAFF_LEADER, STAFF_MEMBER, STAFF_SUPPORT, getRoleName(entry->role));
+    printf(BOLD "New Role (%d: Leader, %d: Member, %d: Support) [%s]: " RESET, STAFF_LEADER, STAFF_MEMBER, STAFF_SUPPORT, getRoleName(entry->role));
     if (scanf("%d", &tempRole) == 1)
     {
         entry->role = (StaffRole)tempRole;
@@ -244,7 +263,7 @@ void editStaffInEvent()
     getchar();
 
     // Update Mission
-    printf("New Mission Description [%s]: ", entry->description);
+    printf(BOLD "New Mission Description [%s]: " RESET, entry->description);
     char newDesc[DESC_LENGTH];
     inputString(newDesc, sizeof(newDesc));
     if (strlen(newDesc) > 0)
@@ -254,11 +273,11 @@ void editStaffInEvent()
 
     if (saveEventAt(idx, &e))
     {
-        printf(BOLD GREEN "[SUCCESS] Staff information updated successfully!" RESET "\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Staff information updated successfully!\n");
     }
     else
     {
-        printf(BOLD RED "[ERROR] Could not save event data!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Could not save event data!\n");
     }
 }
 
@@ -267,7 +286,7 @@ void deleteStaffFromEvent()
 {
     char eventId[EVENT_ID_LENGTH];
     printDivider("DELETE STAFF FROM EVENT");
-    printf("Enter Event ID (EVxxxxxx): ");
+    printf(BOLD "Enter Event ID (EVxxxxxx): " RESET);
     inputString(eventId, sizeof(eventId));
 
     int idx = findEventIndexById(eventId);
@@ -282,18 +301,18 @@ void deleteStaffFromEvent()
 
     if (!canModifyStaff(&e))
     {
-        printf(BOLD RED "[ERROR] Only allowed to delete when event is UPCOMING!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Only allowed to delete when event is UPCOMING!\n");
         return;
     }
 
     if (e.staffCount == 0)
     {
-        printf(BOLD YELLOW "[INFO] No staff members in this event." RESET "\n");
+        printf(YELLOW BOLD "[INFO] " RESET "No staff members in this event.\n");
         return;
     }
 
     // Display current staff
-    printf("\nCurrent Staff List:\n");
+    printf("\n" YELLOW BOLD "Current Staff List:\n" RESET);
     for (int i = 0; i < e.staffCount; i++)
     {
         User u;
@@ -302,12 +321,12 @@ void deleteStaffFromEvent()
         {
             strcpy(name, u.studentName);
         }
-        printf("%d. [%s] %-20s | Role: %-8s | Mission: %s\n", i + 1, e.staffList[i].studentId, name, getRoleName(e.staffList[i].role), e.staffList[i].description);
+        printf(GREEN "  %d." RESET " [%s] %-20s | Role: " CYAN "%-8s" RESET " | Mission: %s\n", i + 1, e.staffList[i].studentId, name, getRoleName(e.staffList[i].role), e.staffList[i].description);
     }
 
-    printf("Enter the staff number to remove from the list above.\n");
+    printf(YELLOW "Enter the staff number to remove from the list above.\n" RESET);
     int choice;
-    printf("\nSelect staff member to delete (1-%d) or 0 to cancel: ", e.staffCount);
+    printf(BOLD "\nSelect staff member to delete (1-%d) or 0 to cancel: " RESET, e.staffCount);
     if (scanf("%d", &choice) != 1)
     {
         choice = 0;
@@ -323,7 +342,7 @@ void deleteStaffFromEvent()
     sprintf(msg, "Are you sure you want to remove staff member %s?", e.staffList[choice - 1].studentId);
     if (!confirmAction(msg))
     {
-        printf(BOLD YELLOW "[INFO] Deletion cancelled." RESET "\n");
+        printf(YELLOW BOLD "[INFO] " RESET "Deletion cancelled.\n");
         return;
     }
 
@@ -336,11 +355,11 @@ void deleteStaffFromEvent()
 
     if (saveEventAt(idx, &e))
     {
-        printf(BOLD GREEN "[SUCCESS] Staff removed from event successfully!" RESET "\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Staff removed from event successfully!\n");
     }
     else
     {
-        printf(BOLD RED "[ERROR] Could not save event data!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Could not save event data!\n");
     }
 }
 
@@ -357,33 +376,32 @@ void cleanEventData(Event *event)
 
 void printEventRowRole(const Event *event, StaffRole role, const char *studentName)
 {
-    // change role from number to string
     const char *roleName;
+    const char *roleColor = RESET;
     switch (role)
     {
-        case STAFF_LEADER: roleName = "Leader"; break;
-        case STAFF_MEMBER: roleName = "Member"; break;
-        case STAFF_SUPPORT: roleName = "Support"; break;
+        case STAFF_LEADER: roleName = "Leader"; roleColor = CYAN; break;
+        case STAFF_MEMBER: roleName = "Member"; roleColor = GREEN; break;
+        case STAFF_SUPPORT: roleName = "Support"; roleColor = YELLOW; break;
         default: roleName = "Unknown"; break;
     }
 
-    // change status from number to string
     const char *statusName;
+    const char *statusColor = RESET;
     switch (event->status) 
     {
-        case 0: statusName = "Upcoming"; break; 
-        case 1: statusName = "Ongoing"; break;
-        case 2: statusName = "Finished"; break; 
+        case 0: statusName = "Upcoming"; statusColor = YELLOW; break; 
+        case 1: statusName = "Ongoing"; statusColor = GREEN; break;
+        case 2: statusName = "Finished"; statusColor = RED; break; 
         default: statusName = "Unknown"; break;
     }
 
-    // print row with formatted output
-    printf("%-10s | %-30.30s | %-25.25s | %-10s | %-12s\n",
+    printf(CYAN "|" RESET " %-10s " CYAN "|" RESET " %-30.30s " CYAN "|" RESET " %-25.25s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%s%-12s" RESET CYAN "|\n" RESET,
            event->eventId,
            event->name,
            studentName,
-           roleName,
-           statusName 
+           roleColor, roleName,
+           statusColor, statusName 
           );
 }
 
@@ -411,7 +429,7 @@ int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
 
 char *StudentIDInput() {
     char studentId[ID_LENGTH];
-    printf("Enter Student ID (or press Enter to skip): ");
+    printf(BOLD "Enter Student ID (or press Enter to skip): " RESET);
     
     
     inputString(studentId, sizeof(studentId));
@@ -423,7 +441,7 @@ char *StudentIDInput() {
     // auto allocate memory 
     char *copy = (char *)malloc((strlen(studentId) + 1) * sizeof(char));
     if (copy == NULL) {
-        printf("Memory allocation failed!\n");
+        printf(RED BOLD "[ERROR] " RESET "Memory allocation failed!\n");
         return NULL;
     }
     
@@ -439,22 +457,22 @@ void printEventList(MatchedEvent *list, int count, const char *studentId)
         studentName = userData.studentName;
     }
 
-    printf("\nEvent History for Member ID: %s\n", studentId);
-    printf("-----------------------------------------------------------------------------------------------------\n");
-    printf("%-10s | %-30s | %-25s | %-10s | %-12s\n", "Event ID", "Event Name", "Student Name", "Role", "Status");
-    printf("-----------------------------------------------------------------------------------------------------\n");
+    printf("\n" YELLOW BOLD "Event History for Member ID: %s\n" RESET, studentId);
+    printf(CYAN "+------------+--------------------------------+---------------------------+------------+--------------+\n" RESET);
+    printf(CYAN "| " BOLD "%-10s" RESET CYAN " | " BOLD "%-30s" RESET CYAN " | " BOLD "%-25s" RESET CYAN " | " BOLD "%-10s" RESET CYAN " | " BOLD "%-12s" RESET CYAN " |\n" RESET, "Event ID", "Event Name", "Student Name", "Role", "Status");
+    printf(CYAN "+------------+--------------------------------+---------------------------+------------+--------------+\n" RESET);
     
     for (int i = 0; i < count; i++)
     {
         printEventRowRole(&list[i].event, list[i].studentRole, studentName);
     }
-    printf("-----------------------------------------------------------------------------------------------------\n");
-    printf("Total: %d event(s) found.\n", count);
+    printf(CYAN "+------------+--------------------------------+---------------------------+------------+--------------+\n" RESET);
+    printf(CYAN BOLD " Total: %d event(s) found.\n" RESET, count);
 }
 void displayEventHistory(const char *studentId) {
     if (studentId == NULL || studentId[0] == '\0')
     {
-        printf("[ERROR] Invalid Student ID.\n");
+        printf(RED BOLD "[ERROR] " RESET "Invalid Student ID.\n");
         return;
     }
 
@@ -467,7 +485,7 @@ void displayEventHistory(const char *studentId) {
     if (count > 0 && historyList != NULL) {
         printEventList(historyList, count, studentId);
     } else {
-        printf("No events found for this student.\n");
+        printf(YELLOW BOLD "[INFO] " RESET "No events found for this student.\n");
     }
     
     //release memory
@@ -507,7 +525,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
     int foundCount = 0; 
     MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));
     if (matchedList == NULL) {
-        free(eventChunk);
+        printf(YELLOW BOLD "[INFO] " RESET "No events found.\n");
         fclose(f);
         return NULL;
     }
@@ -531,7 +549,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
                     MatchedEvent *temp = (MatchedEvent *)realloc(matchedList, capacity * sizeof(MatchedEvent));
                     if (temp == NULL) {
                         // If realloc fails, we should free existing resources and return NULL
-                        printf("Warning: Memory limit reached. Results may be incomplete.\n");
+                        printf(YELLOW BOLD "[WARNING] " RESET "Memory limit reached. Results may be incomplete.\n");
                         goto finish_reading; 
                         /*
                         Reason I used goto here instead of break or return:
