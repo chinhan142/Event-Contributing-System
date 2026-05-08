@@ -25,14 +25,13 @@ void searchEventMenuBCN()
         printf(CYAN "==================================================\n" RESET);
         printf(BOLD "Your Selection >> " RESET);
 
-        if (scanf("%d", &choice) != 1)
+        int res = scanf("%d", &choice);
+        clearInputBuffer();
+        if (res != 1)
         {
-            if (feof(stdin)) return;
-            clearInputBuffer();
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
             continue;
         }
-        getchar(); /* clear '\n' */
 
         switch (choice)
         {
@@ -52,9 +51,7 @@ void searchEventMenuBCN()
 
         if (choice == 1 || choice == 2)
         {
-            printf(BOLD "Enter to continue..." RESET);
-            int c = getchar();
-            if (c == EOF) return;
+            pressEnterToContinue();
         }
     }
 }
@@ -202,6 +199,5 @@ void generateStaffStatistics(){
     findTopParticipant();
     printDivider("Inactive Staff In Semester");
     getInactiveStaffInSemester();
-    printf("Enter to continue");
-    getchar();
+    pressEnterToContinue();
 }
