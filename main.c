@@ -54,7 +54,7 @@ int main()
             loginSession = true;
             if (!findAccountById(studentId, &currentAcc))
             {
-                printf(RED "[ERROR] Cannot load account details.\n" RESET);
+                printf(RED BOLD "[!] " RESET "Cannot load account details.\n");
                 return 1;
             }
             if (loginStatus == LOGIN_SUCCESS_BCN)
