@@ -57,7 +57,6 @@ int bcnMenu(Account *acc)
             // calling function here
         case 1: // Create new event
             createEvent();
-            pressEnterToContinue();
             break;
         case 2: // Update event details
             updateEventDetails();
