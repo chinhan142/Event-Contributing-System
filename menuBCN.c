@@ -46,13 +46,10 @@ int bcnMenu(Account *acc)
         printf(RED BOLD "  0. Logout System\n" RESET);
         printf(CYAN "==================================================\n" RESET);
         printf(BOLD "Your Selection >> " RESET);
-        if (scanf("%d", &choice) != 1) {
-            // Preventing infinite loop when EOF
-            if (feof(stdin)) return 0;
+        int res = scanf("%d", &choice);
+        clearInputBuffer();
+        if (res != 1) {
             choice = -1;
-            clearInputBuffer();
-        } else {
-            getchar(); // clear newline
         }
 
         switch (choice)

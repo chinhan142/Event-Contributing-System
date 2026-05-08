@@ -32,13 +32,9 @@ int main()
         printf(YELLOW "\n[ LOGIN REQUIRED ]\n" RESET);
         printf(BOLD "Username : " RESET);
         inputString(studentId, sizeof(studentId));
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return 0;
 
         printf(BOLD "Password : " RESET);
         inputString(password, sizeof(password));
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return 0;
 
         int loginStatus = loginAccount(studentId, password);
         if (loginStatus == LOGIN_FAILED)

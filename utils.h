@@ -24,4 +24,5 @@ void sortUserEventsByIdAsc(MatchedEvent *events, int count);
 void sortUserEventsByIdDesc(MatchedEvent *events, int count);
 int partitionByName(MatchedEvent *arr, int low, int high);
 void quicksortByName(MatchedEvent *arr, int low, int high);
+void pressEnterToContinue();
 #endif
