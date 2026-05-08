@@ -40,10 +40,12 @@ int main()
         if (loginStatus == LOGIN_FAILED)
         {
             printf(RED BOLD "[!] " RESET "Account not found or wrong password! Please re-enter.\n");
+            pressEnterToContinue();
         }
         else if (loginStatus == LOGIN_LOCKED)
         {
             printf(RED BOLD "[!] " RESET "This account is locked! Please contact BCN.\n");
+            pressEnterToContinue();
         }
         else
         {

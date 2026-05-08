@@ -30,6 +30,7 @@ void searchEventMenuBCN()
         if (res != 1)
         {
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
+            pressEnterToContinue();
             continue;
         }
 
@@ -46,6 +47,7 @@ void searchEventMenuBCN()
             break;
         default:
             printf(RED BOLD "[!] " RESET "Invalid choice!\n");
+            pressEnterToContinue();
             break;
         }
 
@@ -65,7 +67,7 @@ void  displayStaffCountPerEvent(){
     }
     int i = 1;
     while(fread(&e, sizeof(Event), 1, f)){
-        printf("%d. %s : %d %s\n", i, e.name, e.staffCount, e.staffCount > 1 ? "staffs" : "staff");
+        printf(GREEN "  %d." RESET " %-25s : " CYAN BOLD "%d" RESET " %s\n", i, e.name, e.staffCount, e.staffCount > 1 ? "staffs" : "staff");
         i++;
     }
     fclose(f);
@@ -120,14 +122,14 @@ void findTopParticipant(){
     }
     sort(result,0,index - 1);
     if(index == 0){
-        printf("There are no staff\n");
+        printf(YELLOW BOLD "[INFO] " RESET "There are no staff members assigned to any events yet.\n");
     }
     if(index == 1){
-        printf("1. %s : 1 event\n", result[0].studentName);
+        printf(GREEN "  1." RESET " %-25s : " CYAN BOLD "1" RESET " event\n", result[0].studentName);
     }
     else{
         for(int i = index - 1;i >= 0;i--){
-            printf("%d. %s : %d %s\n", index - i, result[i].studentName, result[i].eventCount, result[i].eventCount > 1 ? "events" : "event");
+            printf(GREEN "  %d." RESET " %-25s : " CYAN BOLD "%d" RESET " %s\n", index - i, result[i].studentName, result[i].eventCount, result[i].eventCount > 1 ? "events" : "event");
             if (i == 0 || result[i].eventCount != result[i - 1].eventCount){
                 break;
             }
@@ -184,7 +186,7 @@ void getInactiveStaffInSemester(){
     int dem = 1;
     for(int i = 0;i < index;i++){
         if(result[i].isActiveInThisSemester == 0){
-            printf("%d. %s\n", dem, result[i].studentName);
+            printf(GREEN "  %d." RESET " %s\n", dem, result[i].studentName);
             dem++;
         }
     }
@@ -199,5 +201,4 @@ void generateStaffStatistics(){
     findTopParticipant();
     printDivider("Inactive Staff In Semester");
     getInactiveStaffInSemester();
-    pressEnterToContinue();
 }

@@ -114,6 +114,10 @@ int bcnMenu(Account *acc)
             break;
         }
 
+        if (choice != 0 && choice != 7) {
+            pressEnterToContinue();
+        }
+
     } while (choice != 0);
     return 0;
 }
