@@ -21,6 +21,12 @@ void clearInputBuffer()
     while ((c = getchar()) != '\n');
 }
 
+void pressEnterToContinue()
+{
+    printf(BOLD "\nPress Enter to continue..." RESET);
+    clearInputBuffer();
+}
+
 int stoi(char *str, int fromIndex, int toIndex)
 {
     int result = 0;
