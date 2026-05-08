@@ -3,6 +3,9 @@
 #include "user.h"
 #include "event.h"
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 // Case 8: logic + ui add staff to event
 void addStaffToEvent();
 

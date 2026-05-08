@@ -79,5 +79,5 @@ void searchEventsByStartDateRange();
 
 //others
 time_t toTimestamp(Event *event);
-void printEventResult();
+void printEventByName();
 #endif
