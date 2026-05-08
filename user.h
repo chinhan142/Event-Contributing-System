@@ -12,7 +12,7 @@ typedef struct Account Account;  // Forward declaration to avoid circular includ
 #define specialize_LENGTH 100
 #define CHUNK_SIZE 1000
 
-int findStaffInEventUser(const Event *event, const char *studentId, StaffRole *role);
+// helper functions for user events
 void cleanUserEventData(Event *event);
 void printUserEventRowRole(const Event *event, StaffRole role, const char *studentId);
 typedef struct
@@ -32,21 +32,31 @@ typedef struct
     StaffRole studentRole; // curent user role in this event
 } MatchedEvent;
 
+void userEventDetails(const Account *acc, const char *eventId);
 
+// find user functions
 int findUserById(const char *id, User *result);
+int findUserIndex(const char *id);
+int findStaffInEventUser(const Event *event, const char *studentId, StaffRole *role);
+
+//search and display functions
 void searchUserById(const char *id, User results[MAX_SEARCH_RESULTS], int *count);
 void searchUserByName(const char *name, User results[MAX_SEARCH_RESULTS], int *count);
 void displayEventHistory(const char *studentId);
 void displayCurrentUserEventHistory(const Account *acc);
+
 MatchedEvent *getEventsByStudentId(const char *studentId, int *outFoundCount);
+
+//view functions
 void viewCurrentEvents(const Account *acc);
 void viewProfile(const Account *acc);
 void viewUserEventDetails(const Account *acc, const char *eventId);
-void userEventDetails(const Account *acc, const char *eventId);
+
+//sorting functions for user events
 void sortUserEventsByName(MatchedEvent *events, int count);
 void sortUserEventsByDate(MatchedEvent *events, int count);
 void sortUserEventsByIdAsc(MatchedEvent *events, int count);
 void sortUserEventsByIdDesc(MatchedEvent *events, int count);
 void currentEventsMenu(const Account *acc);
-int findUserIndex(const char *id);
+
 #endif
