@@ -54,7 +54,16 @@ int saveUserAt(int index, User *user)
     fclose(f);
     return 1;
 }
-
+int loadEventWithFile(FILE *f, int index, Event *e)
+{
+    if (f == NULL) return 0;
+    
+    //jump to the position of the record
+    fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
+    int readCount = fread(e, sizeof(Event), 1, f);
+    
+    return (readCount > 0);
+}
 // Load an event struct from a specific record index
 int loadEventAt(int index, Event *e)
 {
