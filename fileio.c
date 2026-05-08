@@ -72,24 +72,54 @@ int loadEventAt(int index, Event *e)
 // Find the record index of an event by its ID
 int findEventIndexById(const char *id)
 {
+    if (id == NULL || id[0] == '\0')
+    {
+        return -1;
+    }
+
     FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {
         return -1;
     }
-    
+
+    _fseeki64(f, 0, SEEK_END);
+    long long size = _ftelli64(f);
+    int total = (int)(size / sizeof(Event));
+
+    int left = 0;
+    int right = total - 1;
     Event temp;
-    int index = 0;
-    while (fread(&temp, sizeof(Event), 1, f))
+
+    while (left <= right)
     {
-        // Dùng strcasecmp để tìm kiếm không phân biệt hoa thường
-        if (strcasecmp(temp.eventId, id) == 0)
+        int mid = left + (right - left) / 2;
+
+        _fseeki64(f, (long long)mid * sizeof(Event), SEEK_SET);
+        if (fread(&temp, sizeof(Event), 1, f) != 1)
         {
             fclose(f);
-            return index;
+            return -1;
         }
-        index++;
+
+        int cmp = strcasecmp(temp.eventId, id);
+
+        if (cmp == 0)
+        {
+            fclose(f);
+            return mid;
+        }
+
+        if (cmp < 0)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
+        }
     }
+
     fclose(f);
     return -1;
 }

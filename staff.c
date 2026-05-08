@@ -33,7 +33,7 @@ void addStaffToEvent()
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf(RED BOLD "[ERROR] " RESET "Event not found!\n");
+        printf(RED BOLD "[ERROR] " RESET "Event not found!\n");    
         return;
     }
 
@@ -400,13 +400,22 @@ int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
     {
         return 0;
     }
-
-    for (int i = 0; i < event->staffCount; i++)
-    {
-        if (strcmp(event->staffList[i].studentId, studentId) == 0)
+    int left = 0, right = event->staffCount - 1;
+    while (left <= right)    {
+        int mid = left + (right - left) / 2;
+        int cmp = strcmp(event->staffList[mid].studentId, studentId);
+        if (cmp == 0)
         {
-            *role = event->staffList[i].role;
+            *role = event->staffList[mid].role;
             return 1; // Found
+        }
+        else if (cmp < 0)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
         }
     }
     return 0; // Not found
@@ -460,15 +469,23 @@ void displayEventHistory(const char *studentId) {
         printf(RED BOLD "[ERROR] " RESET "Invalid Student ID.\n");
         return;
     }
+    //case-insensitive handling: convert input studentId to uppercase for consistent searching
+    char upperStudentId[50]; 
+    strncpy(upperStudentId, studentId, sizeof(upperStudentId) - 1);
+    upperStudentId[sizeof(upperStudentId) - 1] = '\0'; 
+
+    for (int i = 0; upperStudentId[i] != '\0'; i++) {
+        upperStudentId[i] = toupper((unsigned char)upperStudentId[i]);
+    }
 
     int count = 0;
     
    //get events by studentId
-    MatchedEvent *historyList = getEventsByStudentId(studentId, &count);
+    MatchedEvent *historyList = getEventsByStudentId(upperStudentId, &count);
     
     // print results or message if not found
     if (count > 0 && historyList != NULL) {
-        printEventList(historyList, count, studentId);
+        printEventList(historyList, count, upperStudentId);
     } else {
         printf(YELLOW BOLD "[INFO] " RESET "No events found for this student.\n");
     }
