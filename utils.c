@@ -9,12 +9,8 @@ void inputString(char *str, int size)
 {
     if (fgets(str, size, stdin) == NULL)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin))
-        {
-            str[0] = '\0';
-            return;
-        }
+        str[0] = '\0';
+        return;
     }
     str[strcspn(str, "\r\n")] = '\0';
 }

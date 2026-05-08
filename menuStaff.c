@@ -30,7 +30,7 @@ int staffMenu(Account *acc)
         printf(BOLD "Your Selection >> " RESET);
         if (scanf("%d", &choice) != 1) {
             // Preventing infinite loop when EOF
-            if (feof(stdin)) return 0;
+
             choice = -1;
             clearInputBuffer();
         } else {

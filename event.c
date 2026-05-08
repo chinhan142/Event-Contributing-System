@@ -196,16 +196,12 @@ void createEvent()
         {
             printf(BOLD "Enter event's start date (YYYY-MM-DD): " RESET);
             inputString(newEvent.startDate, sizeof(newEvent.startDate));
-            // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         } while (!isValidDate(newEvent.startDate));
 
         do
         {
             printf(BOLD "Enter event's end date (YYYY-MM-DD): " RESET);
             inputString(newEvent.endDate, sizeof(newEvent.endDate));
-            // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         } while (!isValidDate(newEvent.endDate));
 
     } while (!isChronological(newEvent.startDate, newEvent.endDate));
@@ -255,8 +251,6 @@ int inputEventStatus()
 
         if (scanf("%d", &choice) != 1)
         {
-            // Preventing infinite loop when EOF
-            if (feof(stdin)) return -1;
             clearInputBuffer();
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
             continue;
@@ -457,9 +451,6 @@ void updateStartDate(Event *event)
     do
     {
         inputString(newStartDate, sizeof(newStartDate));
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
-
     } while (!isValidDate(newStartDate) || !isChronological(newStartDate, event->endDate));
     Event temp = *event;
     strcpy(temp.startDate, newStartDate);
@@ -492,9 +483,6 @@ void updateEndDate(Event *event)
     {
         printf(GREEN "Please enter new end date (YYYY-MM-DD): ");
         inputString(newEndDate, sizeof(newEndDate));
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
-
     } while (!isValidDate(newEndDate) || !isChronological(event->startDate, newEndDate));
     Event temp = *event;
     strcpy(temp.endDate, newEndDate);
@@ -562,8 +550,6 @@ void updateEventDetails()
             // If user input something is not integer, these line helps clearing the buffer and continue the loop, avoiding wrong logic
             if (scanf("%d", &choice) != 1)
             {
-                // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
                 clearInputBuffer();
                 printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
                 continue;
@@ -751,8 +737,6 @@ void manualUpdateEventStatus()
     int choice;
     if (scanf("%d", &choice) != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         clearInputBuffer();
         return;
     }
@@ -801,15 +785,11 @@ void searchEventsByStartDateRange()
         {
             printf(BOLD "Enter from date (YYYY-MM-DD): " RESET);
             inputString(fromDate,sizeof(fromDate));
-            // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         } while (!isValidDate(fromDate));
         do
         {
             printf(BOLD "Enter to date (YYYY-MM-DD): " RESET);
             inputString(toDate,sizeof(toDate));
-            // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         } while (!isValidDate(toDate));
         
     } while (!isChronological(fromDate, toDate));
