@@ -27,17 +27,7 @@ void pressEnterToContinue()
     clearInputBuffer();
 }
 
-int stoi(char *str, int fromIndex, int toIndex)
-{
-    int result = 0;
-    for (int i = fromIndex; i <= toIndex; i++)
-    {
-        result *= 10;
-        result += str[i] - '0';
-    }
-    return result;
-}
-
+// Function to clear the console screen
 void clearScreen()
 {
     system("cls || clear");
@@ -58,6 +48,7 @@ void printAppBanner()
     printf(RESET "\n");
 }
 
+// Function to print a divider with an optional title
 void printDivider(char *title)
 {
     printf(CYAN BOLD);
@@ -68,6 +59,7 @@ void printDivider(char *title)
     printf(RESET);
 }
 
+// Function to confirm an action with the user
 int confirmAction(char *message)
 {
     char choice[5];
@@ -76,6 +68,19 @@ int confirmAction(char *message)
     return (choice[0] == 'Y' || choice[0] == 'y');
 }
 
+// Utility function to convert numbers in a string to an integer
+int stoi(char *str, int fromIndex, int toIndex)
+{
+    int result = 0;
+    for (int i = fromIndex; i <= toIndex; i++)
+    {
+        result *= 10;
+        result += str[i] - '0';
+    }
+    return result;
+}
+
+// Function to convert a string to lowercase
 void toLowerStr(char *dest, const char *src)
 {
     for (int i = 0; src[i]; i++)
@@ -83,6 +88,7 @@ void toLowerStr(char *dest, const char *src)
     dest[strlen(src)] = '\0';
 }
 
+// Function to convert a string to uppercase
 void toUpperStr(char *dest, const char *src)
 {
     for (int i = 0; src[i]; i++)
@@ -90,37 +96,8 @@ void toUpperStr(char *dest, const char *src)
     dest[strlen(src)] = '\0';
 }
 
-void quicksortByDate(MatchedEvent *arr, int low, int high)
-{
-    if (low < high)
-    {
-        int pi = partitionByDate(arr, low, high);
-        quicksortByDate(arr, low, pi - 1);
-        quicksortByDate(arr, pi + 1, high);
-    }
-}
-
-void quicksortByIdDesc(MatchedEvent *arr, int low, int high)
-{
-    if (low < high)
-    {
-        int pi = partitionByIdDesc(arr, low, high);
-        quicksortByIdDesc(arr, low, pi - 1);
-        quicksortByIdDesc(arr, pi + 1, high);
-    }
-}
-
-void quicksortByIdAsc(MatchedEvent *arr, int low, int high)
-{
-    if (low < high)
-    {
-        int pi = partitionByIdAsc(arr, low, high);
-        quicksortByIdAsc(arr, low, pi - 1);
-        quicksortByIdAsc(arr, pi + 1, high);
-    }
-}
-
-int partitionByIdAsc(MatchedEvent *arr, int low, int high)
+// Partition functions for quicksort
+int partitionByIdDesc(MatchedEvent *arr, int low, int high)
 {
     // choose the last element as the pivot
     MatchedEvent pivot = arr[high];
@@ -128,8 +105,8 @@ int partitionByIdAsc(MatchedEvent *arr, int low, int high)
 
     for (int j = low; j < high; j++)
     {
-        // compare the ID (ascending)
-        if (strcmp(arr[j].event.eventId, pivot.event.eventId) < 0)
+        // compare the ID (descending)
+        if (strcmp(arr[j].event.eventId, pivot.event.eventId) > 0)
         {
             i++;
             // swap arr[i] and arr[j]
@@ -146,7 +123,7 @@ int partitionByIdAsc(MatchedEvent *arr, int low, int high)
     return i + 1;
 }
 
-int partitionByIdDesc(MatchedEvent *arr, int low, int high)
+int partitionByDateAsc(MatchedEvent *arr, int low, int high)
 {
     // choose the last element as the pivot
     MatchedEvent pivot = arr[high];
@@ -154,8 +131,8 @@ int partitionByIdDesc(MatchedEvent *arr, int low, int high)
 
     for (int j = low; j < high; j++)
     {
-        // compare the ID (descending)
-        if (strcmp(arr[j].event.eventId, pivot.event.eventId) > 0)
+        // compare the date (ascending)
+        if (strcmp(arr[j].event.startDate, pivot.event.startDate) < 0)
         {
             i++;
             // swap arr[i] and arr[j]
@@ -220,6 +197,33 @@ int partitionByName(MatchedEvent *arr, int low, int high)
     return i + 1;
 }
 
+int partitionByIdAsc(MatchedEvent *arr, int low, int high)
+{
+    // choose the last element as the pivot
+    MatchedEvent pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++)
+    {
+        // compare the ID (ascending)
+        if (strcmp(arr[j].event.eventId, pivot.event.eventId) < 0)
+        {
+            i++;
+            // swap arr[i] and arr[j]
+            MatchedEvent temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    // swap arr[i+1] and arr[high]
+    MatchedEvent temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+
+    return i + 1;
+}
+
+//sorting functions
 void quicksortByName(MatchedEvent *arr, int low, int high)
 {
     if (low < high)
@@ -230,7 +234,47 @@ void quicksortByName(MatchedEvent *arr, int low, int high)
     }
 }
 
+void quicksortByDateAsc(MatchedEvent *arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partitionByDateAsc(arr, low, high);
+        quicksortByDateAsc(arr, low, pi - 1);
+        quicksortByDateAsc(arr, pi + 1, high);
+    }
+}
 
+void quicksortByDate(MatchedEvent *arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partitionByDate(arr, low, high);
+        quicksortByDate(arr, low, pi - 1);
+        quicksortByDate(arr, pi + 1, high);
+    }
+}
+
+void quicksortByIdDesc(MatchedEvent *arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partitionByIdDesc(arr, low, high);
+        quicksortByIdDesc(arr, low, pi - 1);
+        quicksortByIdDesc(arr, pi + 1, high);
+    }
+}
+
+void quicksortByIdAsc(MatchedEvent *arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partitionByIdAsc(arr, low, high);
+        quicksortByIdAsc(arr, low, pi - 1);
+        quicksortByIdAsc(arr, pi + 1, high);
+    }
+}
+
+// Wrapper functions for convenience calls
 
 void sortUserEventsByName(MatchedEvent *events, int count)
 {
@@ -261,5 +305,13 @@ void sortUserEventsByIdDesc(MatchedEvent *events, int count)
     if (count > 1)
     {
         quicksortByIdDesc(events, 0, count - 1);
+    }
+}
+
+void sortUserEventsByDateAsc(MatchedEvent *events, int count)
+{
+    if (count > 1)
+    {
+        quicksortByDateAsc(events, 0, count - 1);
     }
 }

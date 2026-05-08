@@ -442,6 +442,7 @@ char *StudentIDInput() {
     strcpy(copy, studentId);
     return copy;
 }
+
 void printEventList(MatchedEvent *list, int count, const char *studentId) 
 {
     const char *studentName = "Unknown";
@@ -495,6 +496,7 @@ void displayEventHistory(const char *studentId) {
         free(historyList);
     }
 }
+
 MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount) 
 {
     if (outFoundCount == NULL)
