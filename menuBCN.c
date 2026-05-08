@@ -114,7 +114,7 @@ int bcnMenu(Account *acc)
             break;
         }
 
-        if (choice != 0) {
+        if (choice != 0 && choice != 7) {
             pressEnterToContinue();
         }
 
