@@ -58,7 +58,7 @@ void addStaffToEvent()
     printf(YELLOW BOLD "Search by:\n" RESET);
     printf(GREEN "  1." RESET " Student ID\n");
     printf(GREEN "  2." RESET " Name\n");
-    printf(BOLD "Choice: " RESET);
+    printf(BOLD "Your Selection >> " RESET);
     int resS = scanf("%d", &searchMode);
     clearInputBuffer();
     if (resS != 1)
@@ -107,7 +107,7 @@ void addStaffToEvent()
     }
 
     int choice;
-    printf(BOLD "\nSelect member (1-%d) or 0 to cancel: " RESET, count);
+    printf(BOLD "\nYour Selection (1-%d, 0 to cancel) >> " RESET, count);
     int resC = scanf("%d", &choice);
     clearInputBuffer();
     if (resC != 1)
@@ -227,7 +227,7 @@ void editStaffInEvent()
 
     printf(YELLOW "Enter the staff number to edit from the list above.\n" RESET);
     int choice;
-    printf(BOLD "\nSelect staff member to edit (1-%d) or 0 to cancel: " RESET, e.staffCount);
+    printf(BOLD "\nYour Selection (1-%d, 0 to cancel) >> " RESET, e.staffCount);
     if (scanf("%d", &choice) != 1)
     {
         choice = 0;
@@ -280,7 +280,7 @@ void deleteStaffFromEvent()
     int idx = findEventIndexById(eventId);
     if (idx == -1)
     {
-        printf(BOLD RED "[ERROR] Event not found!" RESET "\n");
+        printf(RED BOLD "[ERROR] " RESET "Event not found!\n");
         return;
     }
 
@@ -314,7 +314,7 @@ void deleteStaffFromEvent()
 
     printf(YELLOW "Enter the staff number to remove from the list above.\n" RESET);
     int choice;
-    printf(BOLD "\nSelect staff member to delete (1-%d) or 0 to cancel: " RESET, e.staffCount);
+    printf(BOLD "\nYour Selection (1-%d, 0 to cancel) >> " RESET, e.staffCount);
     if (scanf("%d", &choice) != 1)
     {
         choice = 0;
@@ -326,8 +326,8 @@ void deleteStaffFromEvent()
         return;
     }
 
-    char msg[100];
-    sprintf(msg, "Are you sure you want to remove staff member %s?", e.staffList[choice - 1].studentId);
+    char msg[150];
+    sprintf(msg, RED "Are you sure you want to remove staff member %s?" RESET, e.staffList[choice - 1].studentId);
     if (!confirmAction(msg))
     {
         printf(YELLOW BOLD "[INFO] " RESET "Deletion cancelled.\n");
@@ -368,9 +368,9 @@ void printEventRowRole(const Event *event, StaffRole role, const char *studentNa
     const char *roleColor = RESET;
     switch (role)
     {
-        case STAFF_LEADER: roleName = "Leader"; roleColor = CYAN; break;
+        case STAFF_LEADER: roleName = "Leader"; roleColor = RED; break;
         case STAFF_MEMBER: roleName = "Member"; roleColor = GREEN; break;
-        case STAFF_SUPPORT: roleName = "Support"; roleColor = YELLOW; break;
+        case STAFF_SUPPORT: roleName = "Support"; roleColor = CYAN; break;
         default: roleName = "Unknown"; break;
     }
 
@@ -380,11 +380,11 @@ void printEventRowRole(const Event *event, StaffRole role, const char *studentNa
     {
         case 0: statusName = "Upcoming"; statusColor = YELLOW; break; 
         case 1: statusName = "Ongoing"; statusColor = GREEN; break;
-        case 2: statusName = "Finished"; statusColor = RED; break; 
+        case 2: statusName = "Finished"; statusColor = BLUE; break; 
         default: statusName = "Unknown"; break;
     }
 
-    printf(CYAN "|" RESET " %-10s " CYAN "|" RESET " %-30.30s " CYAN "|" RESET " %-25.25s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%s%-12s" RESET CYAN "|\n" RESET,
+    printf(CYAN "|" RESET " %-10s " CYAN "|" RESET " %-30.30s " CYAN "|" RESET " %-25.25s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%s%-12s" RESET " " CYAN "|\n" RESET,
            event->eventId,
            event->name,
            studentName,
@@ -411,9 +411,6 @@ int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
     }
     return 0; // Not found
 }
-
-#include <stdlib.h>
-#include <string.h>
 
 char *StudentIDInput() {
     char studentId[ID_LENGTH];
