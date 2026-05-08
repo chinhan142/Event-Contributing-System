@@ -421,7 +421,7 @@ void currentEventsMenu(const Account *acc) {
             if (acc == NULL) {
                 printf(RED BOLD "[ERROR] " RESET "Cannot find event details.\n");
                 
-                getchar();
+                clearInputBuffer();
                 continue;
             }
             viewUserEventDetails(acc, NULL);
