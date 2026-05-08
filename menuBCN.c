@@ -90,7 +90,7 @@ int bcnMenu(Account *acc)
         case 11: { // Staff history
             char *studentId = StudentIDInput();
             displayEventHistory(studentId);
-            free(studentId);
+            free(studentId);            
             break;
         }
         case 12: // Generate staff statistics

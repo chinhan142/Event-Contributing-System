@@ -64,4 +64,5 @@ void manualUpdateEventStatus();
 void searchEventsByStartDateRange();
 int checkSemester(time_t timestampCheck);
 time_t toTimestamp(Event *event);
+void printEventByName();
 #endif
