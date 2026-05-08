@@ -446,7 +446,7 @@ void currentEventsMenu(const Account *acc) {
                     printf(YELLOW BOLD "\n--- ID SORTING ---\n" RESET);
                     printf(GREEN "  1." RESET " Ascending\n");
                     printf(GREEN "  2." RESET " Descending\n");
-                    printf(BOLD "Enter your choice: " RESET);
+                    printf(BOLD "Your Selection >> " RESET);
 
                     char idSortChoice[10];
                     fgets(idSortChoice, sizeof(idSortChoice), stdin);
@@ -467,6 +467,7 @@ void currentEventsMenu(const Account *acc) {
                     continue;
                 }
                 printCurrentEvents(events, count, acc->studentId);
+                pressEnterToContinue();
                 free(events);
             }
         } else if (strcmp(choice, "3") == 0) {
@@ -477,6 +478,7 @@ void currentEventsMenu(const Account *acc) {
             clearScreen();
         } else {
             printf(RED BOLD "[ERROR] " RESET "Invalid choice. Please try again.\n");
+            pressEnterToContinue();
         }
     }
 }
@@ -539,19 +541,20 @@ void userEventDetails(const Account *acc, const char *eventId)
                 const char *stColor = RESET;
                 if (tempEvent.status == STATUS_UPCOMING) { stName = "Upcoming"; stColor = YELLOW; }
                 else if (tempEvent.status == STATUS_ONGOING) { stName = "Ongoing"; stColor = GREEN; }
-                else if (tempEvent.status == STATUS_FINISHED) { stName = "Finished"; stColor = RED; }
+                else if (tempEvent.status == STATUS_FINISHED) { stName = "Finished"; stColor = BLUE; }
                 
                 printf(BOLD "  Status       : " RESET "%s%s" RESET "\n", stColor, stName);
                 
                 const char *rName = "Unknown";
                 const char *rColor = RESET;
-                if (role == STAFF_LEADER) { rName = "Leader"; rColor = CYAN; }
+                if (role == STAFF_LEADER) { rName = "Leader"; rColor = RED; }
                 else if (role == STAFF_MEMBER) { rName = "Member"; rColor = GREEN; }
-                else if (role == STAFF_SUPPORT) { rName = "Support"; rColor = YELLOW; }
+                else if (role == STAFF_SUPPORT) { rName = "Support"; rColor = CYAN; }
                 
                 printf(BOLD "  Your Role    : " RESET "%s%s" RESET "\n", rColor, rName);
                 found = 1;
                 printf(YELLOW BOLD "========================================\n" RESET);
+                pressEnterToContinue();
                 break;
             }
         }
@@ -560,6 +563,7 @@ void userEventDetails(const Account *acc, const char *eventId)
     if (!found)
     {
         printf(RED BOLD "[ERROR] " RESET "You are not a staff member of this event or event not found.\n");
+        pressEnterToContinue();
     }
 
     fclose(f);

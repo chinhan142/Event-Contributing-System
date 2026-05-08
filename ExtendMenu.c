@@ -30,6 +30,7 @@ void searchEventMenuBCN()
         if (res != 1)
         {
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
+            pressEnterToContinue();
             continue;
         }
 
@@ -46,6 +47,7 @@ void searchEventMenuBCN()
             break;
         default:
             printf(RED BOLD "[!] " RESET "Invalid choice!\n");
+            pressEnterToContinue();
             break;
         }
 
@@ -120,7 +122,7 @@ void findTopParticipant(){
     }
     sort(result,0,index - 1);
     if(index == 0){
-        printf("There are no staff\n");
+        printf(YELLOW BOLD "[INFO] " RESET "There are no staff members assigned to any events yet.\n");
     }
     if(index == 1){
         printf(GREEN "  1." RESET " %-25s : " CYAN BOLD "1" RESET " event\n", result[0].studentName);

@@ -38,19 +38,15 @@ int staffMenu(Account *acc)
         {
             // calling function here
         case 1:
-            printf("View event menu\n");
             currentEventsMenu(acc);
             break;
         case 2:
-            printf("View Event history\n");
             displayCurrentUserEventHistory(acc);
             break;
         case 3:
-            printf("View profile\n");
             viewProfile(acc);
             break;
         case 4:
-            printf("Change password\n");
             changeOwnPassword(acc);
             break;
         case 0:
