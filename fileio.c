@@ -22,6 +22,7 @@ int getNextEventIndex()
 // Save an event struct at a specific record index
 int saveEventAt(int index, Event *e)
 {
+    if (index < 0) return 0;
     FILE *f = fopen(EVENT_DATA_PATH, "r+b");
     if (f == NULL)
     {
@@ -39,6 +40,7 @@ int saveEventAt(int index, Event *e)
 }
 int saveUserAt(int index, User *user)
 {
+    if (index < 0) return 0;
     FILE *f = fopen(USER_DATA_PATH, "r+b");
     if (f == NULL)
     {
@@ -58,6 +60,7 @@ int saveUserAt(int index, User *user)
 // Load an event struct from a specific record index
 int loadEventAt(int index, Event *e)
 {
+    if (index < 0) return 0;
     FILE *f = fopen(EVENT_DATA_PATH, "rb");
     if (f == NULL)
     {

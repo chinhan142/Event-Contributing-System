@@ -45,7 +45,9 @@ int main()
         else if (loginStatus == LOGIN_LOCKED)
         {
             printf(RED BOLD "[!] " RESET "This account is locked! Please contact BCN.\n");
+            printf(RED BOLD "[!] " RESET "The program will now terminate for security reasons.\n");
             pressEnterToContinue();
+            return 0; // Rule STT 0.1: Exit program
         }
         else
         {
