@@ -384,7 +384,7 @@ void printEventRowRole(const Event *event, StaffRole role, const char *studentNa
         default: statusName = "Unknown"; break;
     }
 
-    printf(CYAN "|" RESET " %-10s " CYAN "|" RESET " %-30.30s " CYAN "|" RESET " %-25.25s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%s%-12s" RESET " " CYAN "|\n" RESET,
+    printf(CYAN "|" RESET " %-10s " CYAN "|" RESET " %-30.30s " CYAN "|" RESET " %-25.25s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%s%-12s" RESET CYAN "|\n" RESET,
            event->eventId,
            event->name,
            studentName,
