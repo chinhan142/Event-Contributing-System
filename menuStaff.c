@@ -62,7 +62,7 @@ int staffMenu(Account *acc)
             break;
         }
 
-        if (choice != 0) {
+        if (choice != 0 && choice != 1) {
             pressEnterToContinue();
         }
     } while (choice != 0);

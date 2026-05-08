@@ -199,5 +199,4 @@ void generateStaffStatistics(){
     findTopParticipant();
     printDivider("Inactive Staff In Semester");
     getInactiveStaffInSemester();
-    pressEnterToContinue();
 }

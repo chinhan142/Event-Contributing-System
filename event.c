@@ -313,7 +313,6 @@ void displayAllEvent(int filterStatus)
     {
         printf(" Total: %d event(s) listed.\n", count);
     }
-    pressEnterToContinue();
 }
 
 // Search event with user input
