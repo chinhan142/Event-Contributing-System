@@ -363,7 +363,7 @@ void printEventResult()
     printDivider("SEARCH RESULTS");
     printf(CYAN BOLD "%-12s | %-25s | %-12s | %-12s | %-20s | %s\n" RESET, "Event ID", "Name", "Status", "Date", "User Name", "Role");
     printf(CYAN "=========================================================================================================\n" RESET);
-    fseek(f, index * sizeof(Event), SEEK_SET);
+    fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
     if (fread(&temp, sizeof(Event), 1, f))
     {
         char statusStr[20];
