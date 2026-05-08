@@ -17,7 +17,7 @@ void searchEventMenuBCN()
         printDivider("EVENT SEARCH");
         
         printf(YELLOW BOLD "  [ SEARCH OPTIONS ]\n" RESET);
-        printf(GREEN "  1." RESET " Search by Unique Event ID\n");
+        printf(GREEN "  1." RESET " Search by Unique Event ID or name\n");
         printf(GREEN "  2." RESET " Search by Start Date Range\n");
         printf("\n");
         
@@ -37,11 +37,49 @@ void searchEventMenuBCN()
         switch (choice)
         {
         case 1:
-            // printf("Search event\n");
-            printEventResult();
+            searchChoice();          
             break;
         case 2:
             searchEventsByStartDateRange();
+            
+            break;
+        case 0:
+            return;
+        default:
+            printf(RED BOLD "[!] " RESET "Invalid choice!\n");
+            break;
+        }
+
+      
+    }
+}
+
+void searchChoice(){
+    int choice = -1;
+    while (choice != 0)
+    {
+        printf(YELLOW BOLD "Search by:\n" RESET);
+        printf(GREEN "  1." RESET " Unique Event ID \n");
+        printf(GREEN "  2." RESET " Name\n");
+        printf(GREEN "  0." RESET " Return to Search Menu\n");
+        printf(BOLD "Your Selection >> " RESET);
+
+        if (scanf("%d", &choice) != 1)
+        {
+            if (feof(stdin)) return;
+            clearInputBuffer();
+            printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
+            continue;
+        }
+        getchar(); /* clear '\n' */
+
+        switch (choice)
+        {
+        case 1:
+            printEventResult();
+            break;
+        case 2:
+            printEventByName();
             break;
         case 0:
             break;
