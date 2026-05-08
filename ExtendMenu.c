@@ -41,7 +41,7 @@ void searchEventMenuBCN()
             break;
         case 2:
             searchEventsByStartDateRange();
-            
+            getchar(); // Wait for user to press Enter before clearing screen
             break;
         case 0:
             return;

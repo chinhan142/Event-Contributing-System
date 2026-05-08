@@ -151,7 +151,14 @@ int partitionByDateAsc(MatchedEvent *arr, int low, int high)
 
 int partitionByDate(MatchedEvent *arr, int low, int high)
 {
-    // choose the last element as the pivot
+    
+    int mid = low + (high - low) / 2;
+
+    MatchedEvent tempMid = arr[mid];
+    arr[mid] = arr[high];
+    arr[high] = tempMid;
+
+    
     MatchedEvent pivot = arr[high];
     int i = low - 1;
 

@@ -10,29 +10,29 @@
 #include <time.h>
 #include <stdlib.h>
 /* first index has date <= toDate */
-static int firstIdxLE_ToDateDesc(const MatchedEvent *arr, int n, const char *toDate){
-    int l = 0, r = n;
-    while(l < r){
-        int m = l + (r - l)/2;
-        if (strcmp(arr[m].event.startDate, toDate) > 0)
-            l = m + 1;        
-        else
-            r = m;       
-    }
-    return l;
-}
+// static int firstIdxLE_ToDateDesc(const MatchedEvent *arr, int n, const char *toDate){
+//     int l = 0, r = n;
+//     while(l < r){
+//         int m = l + (r - l)/2;
+//         if (strcmp(arr[m].event.startDate, toDate) > 0)
+//             l = m + 1;        
+//         else
+//             r = m;       
+//     }
+//     return l;
+// }
 /* first index has date < fromDate */
-static int firstIdxLT_FromDateDesc(const MatchedEvent *arr, int n, const char *fromDate){
-    int l = 0, r = n;
-    while(l < r){
-        int m = l + (r - l)/2;
-        if (strcmp(arr[m].event.startDate, fromDate) >= 0)
-            l = m + 1;
-        else
-            r = m;
-    }
-    return l;
-}
+// static int firstIdxLT_FromDateDesc(const MatchedEvent *arr, int n, const char *fromDate){
+//     int l = 0, r = n;
+//     while(l < r){
+//         int m = l + (r - l)/2;
+//         if (strcmp(arr[m].event.startDate, fromDate) >= 0)
+//             l = m + 1;
+//         else
+//             r = m;
+//     }
+//     return l;
+// }
 
 // Returns the difference in seconds between now and the specified date (start date and end date)
 int checkTime(int year, int mon, int day)
@@ -334,9 +334,6 @@ void printEventResult()
     if (index == -1)
     {
         printf("Event not found.\n");
-        printf("Press Enter to continue");
-        getchar();
-        clearScreen();
         return;
     }
 
@@ -356,8 +353,8 @@ void printEventResult()
     printDivider("SEARCH RESULTS");
     printf("%-12s | %-25s | %-12s | %-12s | %-20s | %s\n", "Event ID", "Name", "Status", "Date", "User Name", "Role");
     printf("=========================================================================================================\n");
-    fseek(f, index * sizeof(Event), SEEK_SET);
-    if (fread(&temp, sizeof(Event), 1, f))
+    
+    if (loadEventWithFile(f, index, &temp))
     {
         char statusStr[20];
         switch (temp.status)
@@ -821,55 +818,64 @@ void searchEventsByStartDateRange()
 
     int n = 0;
     Event e;
-    for (int i = 0; i < total; i++)
-    {
-        if (loadEventAt(i, &e))
-        {
-            arr[n].event = e;
-            arr[n].studentRole = STAFF_MEMBER; /* placeholder */
-            n++;
+
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
+    if (f) {
+        while (fread(&e, sizeof(Event), 1, f) == 1) {
+            if (filterStatus != -1 && (int)e.status != filterStatus) {
+                continue; 
+            }
+
+            if (strcmp(e.startDate, fromDate) >= 0 && strcmp(e.startDate, toDate) <= 0) {
+                arr[n].event = e;
+                arr[n].studentRole = STAFF_MEMBER;
+                n++; // Chỉ đưa vào mảng những event đúng khoảng thời gian
+            }
         }
-    }
-    if (n == 0) {
+        fclose(f);
+
+    } else {
+        printf(RED BOLD "[ERROR] " RESET "Cannot open file.\n");
         free(arr);
-        printf(YELLOW BOLD "[INFO] " RESET "No readable events.\n");
         return;
     }
 
-    if (n > 1) quicksortByDate(arr, 0, n - 1); //reuse the quicksort function to sort events by start date in descending order
+    if (n == 0) {
+        free(arr);
+        printf(YELLOW BOLD "[INFO] " RESET "No events found with current filters.\n");
+        return;
+    }
 
-    int L = firstIdxLE_ToDateDesc(arr, n, toDate);
-    int R = firstIdxLT_FromDateDesc(arr, n, fromDate);
-    printDivider("EVENTS IN DATE RANGE (BINARY SEARCH + STATUS)");
+    if (n > 1) {
+            quicksortByDate(arr, 0, n - 1); 
+        }
+
+printDivider("EVENTS IN DATE RANGE");
     printf("%s", line);
     printf(headerFmt, "ID", "Event Name", "Start", "End", "Location", "Staff", "Status");
     printf("%s", line);
-    int count = 0;
-    for (int i = L; i < R; i++)
+    
+    for (int i = 0; i < n; i++)
     {
-        Event *ev = &arr[i].event; /* matchedEvent -> event */
-
-        if (filterStatus != -1 && (int)ev->status != filterStatus) continue;
-
+        Event *ev = &arr[i].event;
         const char *st = "Unknown";
         const char *stColor = RESET;
         if ((int)ev->status >= STATUS_UPCOMING && (int)ev->status <= STATUS_FINISHED) {
             st = statusNames[ev->status];
             stColor = statusColors[ev->status];
         }
-
         printf(rowFmt, ev->eventId, ev->name, ev->startDate, ev->endDate, ev->location, ev->staffCount, stColor, st);
-        count++;
     }
 
     printf("%s", line);
-    if (count == 0) printf(YELLOW BOLD "[INFO] " RESET "No events found with current filters.\n");
-    else printf(CYAN BOLD "Total: %d event(s) found.\n" RESET, count);
+    printf(CYAN BOLD "Total: %d event(s) found.\n" RESET, n);
 
     free(arr);
 }
+        
 
-void printEventByName(){
+void printEventByName()
+{
     char name[NAME_LENGTH];
     printf("Enter event name to search (or press Enter to skip): ");
     inputString(name, sizeof(name));
@@ -878,34 +884,12 @@ void printEventByName(){
         printf("[INFO] Search cancelled.\n");
         return;
     }
+    // transfer input to uppercase for case-insensitive search
     toUpperStr(name, name);
-    int total = getNextEventIndex();
-    if (total <= 0){
-        printf("No events found.\n");
-        printf("Press Enter to continue");
-        getchar();
-        return;
-    }
-    MatchedEvent *arr = (MatchedEvent *)calloc((size_t)total, sizeof(MatchedEvent));
-    if (!arr) {
-        printf("[ERROR] Out of memory.\n");
-        return;
-    }
 
-    int n = 0;
-    Event e;
-    for (int i = 0; i < total; i++)
-    {
-        if (loadEventAt(i, &e))
-        {
-            arr[n].event = e;
-            arr[n].studentRole = STAFF_MEMBER; /* placeholder */
-            n++;
-        }
-    }
-    if (n == 0) {
-        free(arr);
-        printf("[!] No readable events.\n");
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
+    if (!f) {
+        printf("[ERROR] Cannot open file.\n");
         return;
     }
 
@@ -920,27 +904,33 @@ void printEventByName(){
     printf("%s", line);
 
     int count = 0;
-    for (int i = 0; i < n; i++)
-    {
-        Event *ev = &arr[i].event;
+    Event ev;
 
+   
+    while (fread(&ev, sizeof(Event), 1, f) == 1)
+    {
         char evNameUpper[NAME_LENGTH];
-        strcpy(evNameUpper, ev->name);
+        strcpy(evNameUpper, ev.name);
         toUpperStr(evNameUpper, evNameUpper);
 
         if (strstr(evNameUpper, name) != NULL)
         {
             const char *st = "Unknown";
-            if ((int)ev->status >= STATUS_UPCOMING && (int)ev->status <= STATUS_FINISHED)
-                st = statusNames[ev->status];
+            if ((int)ev.status >= STATUS_UPCOMING && (int)ev.status <= STATUS_FINISHED) {
+                st = statusNames[ev.status];
+            }
 
-            printf(rowFmt, ev->eventId, ev->name, ev->startDate, ev->endDate, ev->location, ev->staffCount, st);
+            printf(rowFmt, ev.eventId, ev.name, ev.startDate, ev.endDate, ev.location, ev.staffCount, st);
             count++;
         }
     }
-    printf("%s", line);
-    if (count == 0) printf("[!] No events found with current filters.\n");
-    else printf("Total: %d event(s) found.\n", count);
+    
+    fclose(f); 
 
-    free(arr);
+    printf("%s", line);
+    if (count == 0) {
+        printf("[!] No events found with current filters.\n");
+    } else {
+        printf("Total: %d event(s) found.\n", count);
+    }
 }
