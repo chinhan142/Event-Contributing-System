@@ -249,16 +249,16 @@ int inputEventStatus()
         printf(GREEN "3." RESET " Finished\n");
         printf(BOLD "Enter your choice (0-3): " RESET);
 
-        if (scanf("%d", &choice) != 1)
+        int res = scanf("%d", &choice);
+        clearInputBuffer();
+        if (res != 1)
         {
-            clearInputBuffer();
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
             continue;
         }
 
         if (choice >= 0 && choice <= 3)
         {
-            getchar();
             return choice - 1;
         }
         printf(RED BOLD "[!] " RESET "Out of range. Please choose 0 to 3.\n");
@@ -314,7 +314,7 @@ void displayAllEvent(int filterStatus)
         printf(" Total: %d event(s) listed.\n", count);
     }
     printf("Enter to continue ");
-    getchar();
+    clearInputBuffer();
 }
 
 // Search event with user input
@@ -558,7 +558,7 @@ void updateEventDetails()
             if (choice >= 0 && choice <= 4)
             {
                 // remapping choice
-                getchar();
+                clearInputBuffer();
                 break;
             }
             printf(RED BOLD "[!] " RESET "Out of range. Please choose 0 to 4.\n");
@@ -740,7 +740,7 @@ void manualUpdateEventStatus()
         clearInputBuffer();
         return;
     }
-    getchar();
+    clearInputBuffer();
 
     if (choice == 0)
         return;
@@ -797,7 +797,7 @@ void searchEventsByStartDateRange()
     int total = getNextEventIndex();
     if (total <= 0){
         printf(YELLOW BOLD "[INFO] " RESET "No events found.\n");
-        getchar();
+        clearInputBuffer();
         return;
     }
     MatchedEvent *arr = (MatchedEvent *)calloc((size_t)total, sizeof(MatchedEvent));

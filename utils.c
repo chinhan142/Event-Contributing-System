@@ -18,7 +18,7 @@ void inputString(char *str, int size)
 void clearInputBuffer()
 {
     int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+    while ((c = getchar()) != '\n');
 }
 
 int stoi(char *str, int fromIndex, int toIndex)
