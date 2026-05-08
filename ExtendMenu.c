@@ -65,9 +65,10 @@ void searchChoice(){
         printf(GREEN "  0." RESET " Return to Search Menu\n");
         printf(BOLD "Your Selection >> " RESET);
 
-        if (scanf("%d", &choice) != 1)
+        int res = scanf("%d", &choice);
+        if (res == EOF) return;
+        if (res != 1)
         {
-            if (feof(stdin)) return;
             clearInputBuffer();
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
             continue;
