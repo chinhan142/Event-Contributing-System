@@ -213,18 +213,30 @@ void createEvent()
     updateStatus(&newEvent);
 
     int index = getNextEventIndex();
-    Event temp;
-    loadEventAt(index - 1, &temp);
-    int actualIndex = stoi(temp.eventId, 2, 7);
-    int tempID = actualIndex + 1;
+    if (index >= 1000000)
+    {
+        printf(RED BOLD "[ERROR] " RESET "System capacity reached (1,000,000 events). Cannot create more!\n");
+        return;
+    }
+
+    int tempID = 1;
+    if (index > 0)
+    {
+        Event lastEvent;
+        if (loadEventAt(index - 1, &lastEvent))
+        {
+            int actualIndex = stoi(lastEvent.eventId, 2, 7);
+            tempID = actualIndex + 1;
+        }
+    }
 
     strcpy(newEvent.eventId, "EV000000");
-
     int pos = 7;
-    while (tempID > 0 && pos > 1)
+    int backupID = tempID;
+    while (backupID > 0 && pos > 1)
     {
-        newEvent.eventId[pos--] = (tempID % 10) + '0';
-        tempID /= 10;
+        newEvent.eventId[pos--] = (backupID % 10) + '0';
+        backupID /= 10;
     }
 
     if (saveEventAt(index, &newEvent))
