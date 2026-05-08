@@ -393,7 +393,7 @@ void viewCurrentEvents(const Account *acc)
     }
     else
     {
-        printf("Total: %d ongoing event(s).\n", count);
+        printf(CYAN BOLD "Total: " RESET "%d ongoing event(s).\n", count);
     }
 
     if (events != NULL)
@@ -425,11 +425,11 @@ void currentEventsMenu(const Account *acc) {
             }
             viewUserEventDetails(acc, NULL);
         } else if (strcmp(choice, "2") == 0) {
-            printf("How would you like to sort the events?\n");
-            printf("1. By Name\n");
-            printf("2. By Date\n");
-            printf("3. By Event ID\n");
-            printf("Enter your choice: ");
+            printf(YELLOW BOLD "\n--- SORTING OPTIONS ---\n" RESET);
+            printf(GREEN "  1." RESET " By Name\n");
+            printf(GREEN "  2." RESET " By Date\n");
+            printf(GREEN "  3." RESET " By Event ID\n");
+            printf(BOLD "Enter your choice: " RESET);
             
             char sortChoice[10];
             fgets(sortChoice, sizeof(sortChoice), stdin);
@@ -443,10 +443,10 @@ void currentEventsMenu(const Account *acc) {
                 } else if (strcmp(sortChoice, "2") == 0) {
                     sortUserEventsByDate(events, count);
                 } else if (strcmp(sortChoice, "3") == 0) {
-                    printf("How would you like to sort by Event ID?\n");
-                    printf("1. Ascending\n");
-                    printf("2. Descending\n");
-                    printf("Enter your choice: ");
+                    printf(YELLOW BOLD "\n--- ID SORTING ---\n" RESET);
+                    printf(GREEN "  1." RESET " Ascending\n");
+                    printf(GREEN "  2." RESET " Descending\n");
+                    printf(BOLD "Enter your choice: " RESET);
 
                     char idSortChoice[10];
                     fgets(idSortChoice, sizeof(idSortChoice), stdin);

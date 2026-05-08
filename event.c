@@ -229,7 +229,7 @@ void createEvent()
 
     if (saveEventAt(index, &newEvent))
     {
-        printf(GREEN BOLD "[SUCCESS] Event created successfully with ID: %s\n" RESET, newEvent.eventId);
+        printf(GREEN BOLD "[SUCCESS] " RESET "Event created successfully with ID: %s\n", newEvent.eventId);
     }
     else
     {
@@ -311,7 +311,7 @@ void displayAllEvent(int filterStatus)
     }
     else
     {
-        printf(" Total: %d event(s) listed.\n", count);
+        printf(CYAN BOLD " Total: " RESET "%d event(s) listed.\n", count);
     }
 }
 
@@ -539,8 +539,13 @@ void updateEventDetails()
                 return;
             }
         }
-        printf("===== Choose attribute =====\n");
-        printf(GREEN "0: Event's name\n1: Event's description\n2: Event's location\n3: Event's start date\n4: Event's end date\n" RESET);
+        printf(YELLOW BOLD "\n===== CHOOSE ATTRIBUTE TO UPDATE =====\n" RESET);
+        printf(GREEN "0." RESET " Event's Name\n");
+        printf(GREEN "1." RESET " Event's Description\n");
+        printf(GREEN "2." RESET " Event's Location\n");
+        printf(GREEN "3." RESET " Event's Start Date\n");
+        printf(GREEN "4." RESET " Event's End Date\n");
+        printf(BOLD "Enter your choice (0-4): " RESET);
         int choice;
         while (1)
         {
@@ -724,13 +729,13 @@ void manualUpdateEventStatus()
     printf(YELLOW BOLD "Change status to:\n" RESET);
     if (e.status == STATUS_UPCOMING)
     {
-        printf("  1. Ongoing\n  2. Finished\n");
+        printf(GREEN "  1." RESET " Ongoing\n" GREEN "  2." RESET " Finished\n");
     }
     else if (e.status == STATUS_ONGOING)
     {
-        printf("  2. Finished\n");
+        printf(GREEN "  2." RESET " Finished\n");
     }
-    printf(BOLD "  0. Cancel\nChoice: " RESET);
+    printf(RED BOLD "  0." RESET BOLD " Cancel\n" BOLD "Choice: " RESET);
 
     int choice;
     if (scanf("%d", &choice) != 1)
