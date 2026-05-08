@@ -51,8 +51,7 @@ void searchEventMenuBCN()
 
         if (choice == 1 || choice == 2)
         {
-            printf(BOLD "Enter to continue..." RESET);
-            clearInputBuffer();
+            pressEnterToContinue();
         }
     }
 }
@@ -200,6 +199,5 @@ void generateStaffStatistics(){
     findTopParticipant();
     printDivider("Inactive Staff In Semester");
     getInactiveStaffInSemester();
-    printf("Enter to continue");
-    clearInputBuffer();
+    pressEnterToContinue();
 }
