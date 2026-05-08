@@ -57,6 +57,7 @@ int bcnMenu(Account *acc)
             // calling function here
         case 1: // Create new event
             createEvent();
+            pressEnterToContinue();
             break;
         case 2: // Update event details
             updateEventDetails();
@@ -112,6 +113,10 @@ int bcnMenu(Account *acc)
         default:
             printf(RED BOLD "[!] " RESET "Invalid choice!\n");
             break;
+        }
+
+        if (choice != 0) {
+            pressEnterToContinue();
         }
 
     } while (choice != 0);

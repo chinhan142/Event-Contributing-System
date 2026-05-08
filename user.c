@@ -291,7 +291,6 @@ void viewProfile(const Account *acc){
     }
     printf(YELLOW BOLD "============================================\n" RESET);
     fclose(f);
-    clearScreen();
 }
 MatchedEvent* getCurrentEventsForUser(const Account *acc, int *count)
 {

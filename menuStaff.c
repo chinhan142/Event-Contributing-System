@@ -61,6 +61,10 @@ int staffMenu(Account *acc)
             printf(RED BOLD "[!] " RESET "Invalid choice!\n");
             break;
         }
+
+        if (choice != 0) {
+            pressEnterToContinue();
+        }
     } while (choice != 0);
     return 0;
 }
