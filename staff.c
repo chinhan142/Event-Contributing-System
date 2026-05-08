@@ -59,16 +59,11 @@ void addStaffToEvent()
     printf(GREEN "  1." RESET " Student ID\n");
     printf(GREEN "  2." RESET " Name\n");
     printf(BOLD "Choice: " RESET);
-    if (scanf("%d", &searchMode) != 1)
+    int resS = scanf("%d", &searchMode);
+    clearInputBuffer();
+    if (resS != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         searchMode = 0;
-        clearInputBuffer();
-    }
-    else
-    {
-        clearInputBuffer();
     }
 
     char query[NAME_LENGTH];
@@ -86,7 +81,6 @@ void addStaffToEvent()
         return;
     }
     inputString(query, sizeof(query));
-    if (feof(stdin)) return;
 
     User results[MAX_SEARCH_RESULTS];
     int count = 0;
@@ -114,16 +108,11 @@ void addStaffToEvent()
 
     int choice;
     printf(BOLD "\nSelect member (1-%d) or 0 to cancel: " RESET, count);
-    if (scanf("%d", &choice) != 1)
+    int resC = scanf("%d", &choice);
+    clearInputBuffer();
+    if (resC != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         choice = 0;
-        clearInputBuffer();
-    }
-    else
-    {
-        clearInputBuffer();
     }
 
     if (choice < 1 || choice > count)
@@ -146,22 +135,16 @@ void addStaffToEvent()
     // Input role
     int tempRole;
     printf(BOLD "Enter Role (%d: Leader, %d: Member, %d: Support): " RESET, STAFF_LEADER, STAFF_MEMBER, STAFF_SUPPORT);
-    if (scanf("%d", &tempRole) != 1)
+    int resR = scanf("%d", &tempRole);
+    clearInputBuffer();
+    if (resR != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         tempRole = STAFF_MEMBER;
-        clearInputBuffer();
-    }
-    else
-    {
-        clearInputBuffer();
     }
 
     // Input description/mission
     printf(BOLD "Enter Mission Description: " RESET);
     inputString(entry.description, sizeof(entry.description));
-    if (feof(stdin)) return;
 
     // Append to staff list
     e.staffList[e.staffCount] = entry;
@@ -249,7 +232,7 @@ void editStaffInEvent()
     {
         choice = 0;
     }
-    getchar();
+    clearInputBuffer();
 
     if (choice < 1 || choice > e.staffCount)
     {
@@ -265,7 +248,7 @@ void editStaffInEvent()
     {
         entry->role = (StaffRole)tempRole;
     }
-    getchar();
+    clearInputBuffer();
 
     // Update Mission
     printf(BOLD "New Mission Description [%s]: " RESET, entry->description);
@@ -336,7 +319,7 @@ void deleteStaffFromEvent()
     {
         choice = 0;
     }
-    getchar();
+    clearInputBuffer();
 
     if (choice < 1 || choice > e.staffCount)
     {
