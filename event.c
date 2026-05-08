@@ -185,28 +185,28 @@ void createEvent()
 {
     Event newEvent;
 
-    printf(BOLD "Enter event's name: " RESET);
+    printf(BOLD "  %-20s : " RESET, "Event Name");
     inputString(newEvent.name, sizeof(newEvent.name));
 
-    printf(BOLD "Enter event's description: " RESET);
+    printf(BOLD "  %-20s : " RESET, "Description");
     inputString(newEvent.description, sizeof(newEvent.description));
     do
     {
         do
         {
-            printf(BOLD "Enter event's start date (YYYY-MM-DD): " RESET);
+            printf(BOLD "  %-20s : " RESET, "Start Date (YYYY-MM-DD)");
             inputString(newEvent.startDate, sizeof(newEvent.startDate));
         } while (!isValidDate(newEvent.startDate));
 
         do
         {
-            printf(BOLD "Enter event's end date (YYYY-MM-DD): " RESET);
+            printf(BOLD "  %-20s : " RESET, "End Date (YYYY-MM-DD)");
             inputString(newEvent.endDate, sizeof(newEvent.endDate));
         } while (!isValidDate(newEvent.endDate));
 
     } while (!isChronological(newEvent.startDate, newEvent.endDate));
 
-    printf(BOLD "Enter event's location: " RESET);
+    printf(BOLD "  %-20s : " RESET, "Location");
     inputString(newEvent.location, sizeof(newEvent.location));
 
     newEvent.staffCount = 0;
@@ -241,7 +241,7 @@ void createEvent()
 
     if (saveEventAt(index, &newEvent))
     {
-        printf(GREEN BOLD "[SUCCESS] " RESET "Event created successfully with ID: %s\n", newEvent.eventId);
+        printf(GREEN BOLD "\n[SUCCESS] " RESET "Event created successfully with ID: " YELLOW "%s" RESET "\n", newEvent.eventId);
     }
     else
     {
@@ -254,12 +254,12 @@ int inputEventStatus()
     int choice;
     while (1)
     {
-        printf(YELLOW BOLD "\n===== FILTER EVENTS BY STATUS =====\n" RESET);
-        printf(GREEN "0." RESET " View All\n");
-        printf(GREEN "1." RESET " Upcoming\n");
-        printf(GREEN "2." RESET " Ongoing\n");
-        printf(GREEN "3." RESET " Finished\n");
-        printf(BOLD "Enter your choice (0-3): " RESET);
+        printf("\n" YELLOW BOLD "===== FILTER EVENTS BY STATUS =====" RESET "\n");
+        printf(GREEN "  0." RESET " View All\n");
+        printf(GREEN "  1." RESET " Upcoming\n");
+        printf(GREEN "  2." RESET " Ongoing\n");
+        printf(GREEN "  3." RESET " Finished\n");
+        printf(BOLD "Your Selection >> " RESET);
 
         int res = scanf("%d", &choice);
         clearInputBuffer();
@@ -345,7 +345,6 @@ void printEventResult()
     if (index == -1)
     {
         printf(RED BOLD "[ERROR] " RESET "Event not found.\n");
-        clearScreen();
         return;
     }
 
@@ -353,6 +352,7 @@ void printEventResult()
     if (f == NULL)
     {
         printf(YELLOW BOLD "[INFO] " RESET "No events found.\n");
+        pressEnterToContinue();
         return;
     }
 
@@ -363,8 +363,8 @@ void printEventResult()
     printDivider("SEARCH RESULTS");
     printf(CYAN BOLD "%-12s | %-25s | %-12s | %-12s | %-20s | %s\n" RESET, "Event ID", "Name", "Status", "Date", "User Name", "Role");
     printf(CYAN "=========================================================================================================\n" RESET);
-    fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
-    if (fread(&temp, sizeof(Event), 1, f))
+    
+    if (loadEventWithFile(f, index, &temp))
     {
         char statusStr[20];
         switch (temp.status)
@@ -423,10 +423,10 @@ void updateName(Event *event)
     printf(GREEN "Please enter new name: " RESET);
     inputString(newName, sizeof(newName));
 
-    if (confirmAction(RED "Are you sure you want to change the name ?" RESET))
+    if (confirmAction(RED "Are you sure you want to change the name?" RESET))
     {
         strcpy(event->name, newName);
-        printf(GREEN BOLD "[SUCCESS]" RESET " Name changed successfully\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Name changed successfully\n");
     }
 }
 void updateDescription(Event *event)
@@ -435,10 +435,10 @@ void updateDescription(Event *event)
     printf(GREEN "Please enter new description: "  RESET);
     inputString(newDescription, sizeof(newDescription));
 
-    if (confirmAction(RED "Are you sure you want to change the description ?" RESET))
+    if (confirmAction(RED "Are you sure you want to change the description?" RESET))
     {
         strcpy(event->description, newDescription);
-        printf(GREEN BOLD "[SUCCESS]" RESET " Description changed successfully\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Description changed successfully\n");
     }
 }
 
@@ -448,10 +448,10 @@ void updateLocation(Event *event)
     printf(GREEN "Please enter new location: " RESET);
     inputString(newLocation, sizeof(newLocation));
 
-    if (confirmAction(RED "Are you sure you want to change the location ?" RESET))
+    if (confirmAction(RED "Are you sure you want to change the location?" RESET))
     {
         strcpy(event->location, newLocation);
-        printf(GREEN BOLD "[SUCCESS]" RESET " Location changed successfully\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Location changed successfully\n");
     }
 }
 void updateStartDate(Event *event)
@@ -468,7 +468,7 @@ void updateStartDate(Event *event)
     char message[1000];
     if (event->status > temp.status)
     {
-        printf(RED "Date change failed: This would move the event back from 'Ongoing' to 'Upcoming'!\n" RESET);
+        printf(RED BOLD "[ERROR] " RESET "Date change failed: Event cannot move back to 'Upcoming'!\n");
         return;
     }
     if (temp.status != event->status)
@@ -476,13 +476,13 @@ void updateStartDate(Event *event)
         strcpy(message, YELLOW "This action will change the status. Are you sure you want to proceed?" RESET);
     }
     else
-        strcpy(message, RESET "Are you sure you want to change the start date ?" RESET);
+        strcpy(message, RED "Are you sure you want to change the start date?" RESET);
 
     if (confirmAction(message))
     {
         strcpy(event->startDate, newStartDate);
         updateStatus(event);
-        printf(GREEN BOLD "[SUCCESS]" RESET " Start date changed successfully\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "Start date changed successfully\n");
     }
 }
 
@@ -500,7 +500,7 @@ void updateEndDate(Event *event)
     char message[1000];
     if (event->status > temp.status)
     {
-        printf(RED "Date change failed: This would move the event back from 'Ongoing' to 'Upcoming'!\n" RESET);
+        printf(RED BOLD "[ERROR] " RESET "Date change failed: Event cannot move back to 'Upcoming'!\n");
         return;
     }
     if (temp.status != event->status)
@@ -508,13 +508,13 @@ void updateEndDate(Event *event)
         strcpy(message, YELLOW "This action will change the status. Are you sure you want to proceed?" RESET);
     }
     else
-        strcpy(message, RED "Are you sure you want to change the end date ?" RESET);
+        strcpy(message, RED "Are you sure you want to change the end date?" RESET);
 
     if (confirmAction(message))
     {
         strcpy(event->endDate, newEndDate);
         updateStatus(event);
-        printf(GREEN BOLD "[SUCCESS]" RESET " End date changed successfully\n");
+        printf(GREEN BOLD "[SUCCESS] " RESET "End date changed successfully\n");
     }
 }
 void updateEventDetails()
@@ -539,16 +539,16 @@ void updateEventDetails()
         } while (index == -1);
 
         loadEventAt(index, &event);
-        if (event.status == STATUS_FINISHED)
+        if (event.status == 2)
         {
-            printf(RED "You cannot edit a finished event.\n" RESET);
-            return;
+            printf(RED BOLD "[ERROR] " RESET "You cannot edit a finished event.\n");
+            continue;
         }
-        if (event.status == STATUS_ONGOING)
+        else if (event.status == 1)
         {
             if (!confirmAction(RED "This event is ongoing. Are you sure you want to edit it?" RESET))
             {
-                return;
+                continue;
             }
         }
         printf(YELLOW BOLD "\n===== CHOOSE ATTRIBUTE TO UPDATE =====\n" RESET);
@@ -576,7 +576,7 @@ void updateEventDetails()
                 clearInputBuffer();
                 break;
             }
-            printf(RED BOLD "[!] " RESET "Out of range. Please choose 0 to 4.\n");
+            printf("[!] Out of range. Please choose 0 to 4.\n");
         }
         switch (choice)
         {
@@ -641,9 +641,9 @@ void deleteEvent()
         char *statusColors[] = {YELLOW, GREEN, BLUE};
 
         printDivider("CONFIRM DELETION");
-        printf(BOLD "  Event Name   : " RESET CYAN "%-30s" RESET "\n", event.name);
-        printf(BOLD "  Staff Count  : " RESET YELLOW "%-15d" RESET "\n", event.staffCount);
-        printf(BOLD "  Status       : " RESET "%s%-15s" RESET "\n\n", statusColors[event.status], statusNames[event.status]);
+        printf(BOLD "  %-15s : " RESET CYAN "%s" RESET "\n", "Event Name", event.name);
+        printf(BOLD "  %-15s : " RESET YELLOW "%d" RESET "\n", "Staff Count", event.staffCount);
+        printf(BOLD "  %-15s : " RESET "%s%s" RESET "\n\n", "Status", statusColors[event.status], statusNames[event.status]);
         
         if (confirmAction("Do you want to delete this event?"))
         {
@@ -668,23 +668,23 @@ void viewEventDetails()
     if (loadEventAt(eventIndex, &event))
     {
         printDivider("EVENT DETAILS");
-        printf(BOLD "  Event ID     : " RESET YELLOW "%s" RESET "\n", event.eventId);
-        printf(BOLD "  Name         : " RESET CYAN "%s" RESET "\n", event.name);
-        printf(BOLD "  Location     : " RESET "%s" RESET "\n", event.location);
+        printf(BOLD "  %-15s : " RESET YELLOW "%s" RESET "\n", "Event ID", event.eventId);
+        printf(BOLD "  %-15s : " RESET CYAN "%s" RESET "\n", "Name", event.name);
+        printf(BOLD "  %-15s : " RESET "%s" RESET "\n", "Location", event.location);
         
         char *stStr[] = {"Upcoming", "Ongoing", "Finished"};
         char *stColors[] = {YELLOW, GREEN, BLUE};
-        printf(BOLD "  Status       : " RESET "%s%s" RESET "\n", stColors[event.status], stStr[event.status]);
+        printf(BOLD "  %-15s : " RESET "%s%s" RESET "\n", "Status", stColors[event.status], stStr[event.status]);
         
-        printf(BOLD "  Time         : " RESET GREEN "%s" RESET " to " RED "%s" RESET "\n", event.startDate, event.endDate);
-        printf(BOLD "  Description  : " RESET "%s" RESET "\n", event.description);
+        printf(BOLD "  %-15s : " RESET GREEN "%s" RESET " to " RED "%s" RESET "\n", "Time Range", event.startDate, event.endDate);
+        printf(BOLD "  %-15s : " RESET "%s" RESET "\n", "Description", event.description);
 
-        printf("\n" YELLOW BOLD "--- ASSIGNED STAFF LIST ---\n" RESET);
-        char *sLine = CYAN "+--------------+----------------------+------------+--------------------------------+\n" RESET;
-        char *sHead = CYAN "| " BOLD "%-12s" RESET CYAN " | " BOLD "%-20s" RESET CYAN " | " BOLD "%-10s" RESET CYAN " | " BOLD "%-30s" RESET CYAN " |\n" RESET;
-        char *sRow = CYAN "|" RESET " %-12s " CYAN "|" RESET " %-20.20s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%-30.30s " CYAN "|\n" RESET;
+        printf("\n" YELLOW BOLD "  [ ASSIGNED STAFF LIST ]" RESET "\n");
+        char *sLine = CYAN "  +--------------+----------------------+------------+--------------------------------+\n" RESET;
+        char *sHead = CYAN "  | " BOLD "%-12s" RESET CYAN " | " BOLD "%-20s" RESET CYAN " | " BOLD "%-10s" RESET CYAN " | " BOLD "%-30s" RESET CYAN " |\n" RESET;
+        char *sRow = CYAN "  |" RESET " %-12s " CYAN "|" RESET " %-20.20s " CYAN "|" RESET " %s%-10s" RESET CYAN " | " RESET "%-30.30s " CYAN "|\n" RESET;
         char *roleNames[] = {"Leader", "Member", "Support"};
-    char *roleColors[] = {RED, GREEN, CYAN};
+        char *roleColors[] = {RED, GREEN, CYAN};
 
         printf("%s", sLine);
         printf(sHead, "MSSV", "Full Name", "Role", "Mission");
@@ -714,7 +714,7 @@ void viewEventDetails()
 void manualUpdateEventStatus()
 {
     char eventId[EVENT_ID_LENGTH];
-    printf(BOLD "ENTER EVENT ID TO UPDATE STATUS: " RESET);
+    printf("ENTER EVENT ID TO UPDATE STATUS: ");
     inputString(eventId, sizeof(eventId));
 
     int idx = findEventIndexById(eventId);
@@ -736,7 +736,7 @@ void manualUpdateEventStatus()
         return;
     }
 
-    printf(YELLOW BOLD "Change status to:\n" RESET);
+    printf("Change status to:\n");
     if (e.status == STATUS_UPCOMING)
     {
         printf(GREEN "  1." RESET " Ongoing\n" GREEN "  2." RESET " Finished\n");
@@ -780,7 +780,7 @@ void manualUpdateEventStatus()
         e.status = targetStatus;
         if (saveEventAt(idx, &e))
         {
-            printf(GREEN "[SUCCESS]" RESET " Event status updated to %s!\n", stNames[targetStatus]);
+            printf(GREEN BOLD "[SUCCESS] " RESET "Event status updated to " CYAN "%s" RESET "!\n", stNames[targetStatus]);
         }
     }
 }
@@ -835,19 +835,20 @@ void searchEventsByStartDateRange()
         return;
     }
 
-    if (n > 1) quicksortByDate(arr, 0, n - 1); //reuse the quicksort function to sort events by start date in descending order
+    if (n > 1) quicksortByDate(arr, 0, n - 1); // sorting events by start date in descending order
 
     int L = firstIdxLE_ToDateDesc(arr, n, toDate);
     int R = firstIdxLT_FromDateDesc(arr, n, fromDate);
-    printDivider("EVENTS IN DATE RANGE (BINARY SEARCH + STATUS)");
+
+    printDivider("EVENTS IN DATE RANGE (BINARY SEARCH)");
     printf("%s", line);
     printf(headerFmt, "ID", "Event Name", "Start", "End", "Location", "Staff", "Status");
     printf("%s", line);
+    
     int count = 0;
     for (int i = L; i < R; i++)
     {
-        Event *ev = &arr[i].event; /* matchedEvent -> event */
-
+        Event *ev = &arr[i].event;
         if (filterStatus != -1 && (int)ev->status != filterStatus) continue;
 
         const char *st = "Unknown";
@@ -856,7 +857,6 @@ void searchEventsByStartDateRange()
             st = statusNames[ev->status];
             stColor = statusColors[ev->status];
         }
-
         printf(rowFmt, ev->eventId, ev->name, ev->startDate, ev->endDate, ev->location, ev->staffCount, stColor, st);
         count++;
     }
@@ -866,4 +866,68 @@ void searchEventsByStartDateRange()
     else printf(CYAN BOLD "Total: %d event(s) found.\n" RESET, count);
 
     free(arr);
+}
+        
+
+void printEventByName()
+{
+    char name[NAME_LENGTH];
+    printf(BOLD "Enter event name to search (or press Enter to skip): " RESET);
+    inputString(name, sizeof(name));
+    if (name[0] == '\0')
+    {
+        printf(YELLOW BOLD "[INFO] " RESET "Search cancelled.\n");
+        return;
+    }
+    // transfer input to uppercase for case-insensitive search
+    toUpperStr(name, name);
+
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
+    if (!f) {
+        printf(RED BOLD "[ERROR] " RESET "Cannot open file.\n");
+        return;
+    }
+
+    printDivider("SEARCH RESULTS BY NAME");
+    char *line = CYAN "+------------+---------------------------+-------------+-------------+-----------------+-------+------------+\n" RESET;
+    char *headerFmt = CYAN "| " BOLD "%-10s" RESET CYAN " | " BOLD "%-25s" RESET CYAN " | " BOLD "%-11s" RESET CYAN " | " BOLD "%-11s" RESET CYAN " | " BOLD "%-15s" RESET CYAN " | " BOLD "%-5s" RESET CYAN " | " BOLD "%-10s" RESET CYAN " |\n" RESET;
+    char *rowFmt = CYAN "|" RESET " %-10s " CYAN "|" RESET " %-25.25s " CYAN "|" RESET " %-11s " CYAN "|" RESET " %-11s " CYAN "|" RESET " %-15.15s " CYAN "|" RESET " %-5d " CYAN "|" RESET " %s%-10s" RESET CYAN " |\n" RESET;
+    char *statusNames[] = {"Upcoming", "Ongoing", "Finished"};
+    char *statusColors[] = {YELLOW, GREEN, BLUE};
+
+    printf("%s", line);
+    printf(headerFmt, "ID", "Event Name", "Start", "End", "Location", "Staff", "Status");
+    printf("%s", line);
+
+    int count = 0;
+    Event ev;
+
+    while (fread(&ev, sizeof(Event), 1, f) == 1)
+    {
+        char evNameUpper[NAME_LENGTH];
+        strcpy(evNameUpper, ev.name);
+        toUpperStr(evNameUpper, evNameUpper);
+
+        if (strstr(evNameUpper, name) != NULL)
+        {
+            const char *st = "Unknown";
+            const char *stColor = RESET;
+            if ((int)ev.status >= STATUS_UPCOMING && (int)ev.status <= STATUS_FINISHED) {
+                st = statusNames[ev.status];
+                stColor = statusColors[ev.status];
+            }
+
+            printf(rowFmt, ev.eventId, ev.name, ev.startDate, ev.endDate, ev.location, ev.staffCount, stColor, st);
+            count++;
+        }
+    }
+    
+    fclose(f); 
+
+    printf("%s", line);
+    if (count == 0) {
+        printf(YELLOW BOLD "[INFO] " RESET "No events found with current filters.\n");
+    } else {
+        printf(CYAN BOLD "Total: " RESET "%d event(s) found.\n", count);
+    }
 }

@@ -137,7 +137,7 @@ void changeOwnPassword(Account *acc)
     strcpy(acc->password, newPass);
     updateAccount(acc);
 
-    printf(GREEN "[SUCCESS] " RESET "Password changed successfully!\n");
+    printf(GREEN BOLD "[SUCCESS] " RESET "Password changed successfully!\n");
 }
 
 void resetMemberPassword()

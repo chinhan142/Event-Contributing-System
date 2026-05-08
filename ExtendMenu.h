@@ -6,3 +6,4 @@ void generateStaffStatistics();
 void  displayStaffCountPerEvent();
 void findTopParticipant();
 void getInactiveStaffInSemester();
+void searchChoice();
