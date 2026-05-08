@@ -530,6 +530,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
     MatchedEvent *matchedList = (MatchedEvent *)malloc(capacity * sizeof(MatchedEvent));
     if (matchedList == NULL) {
         printf(YELLOW BOLD "[INFO] " RESET "No events found.\n");
+        free(eventChunk);
         fclose(f);
         return NULL;
     }

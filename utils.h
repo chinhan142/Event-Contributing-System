@@ -3,11 +3,13 @@
 #include "user.h"
 // helper group
 void inputString(char *str, int size);
-
+void pressEnterToContinue();
 void clearInputBuffer();
 void clearScreen();
 void printAppBanner();
 void printDivider(char *title);
+void printEventResult();
+
 
 int  confirmAction(char *message);
 void toLowerStr(char *dest, const char *src);
