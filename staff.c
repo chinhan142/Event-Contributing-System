@@ -61,8 +61,6 @@ void addStaffToEvent()
     printf(BOLD "Choice: " RESET);
     if (scanf("%d", &searchMode) != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         searchMode = 0;
         clearInputBuffer();
     }
@@ -86,7 +84,6 @@ void addStaffToEvent()
         return;
     }
     inputString(query, sizeof(query));
-    if (feof(stdin)) return;
 
     User results[MAX_SEARCH_RESULTS];
     int count = 0;
@@ -116,8 +113,6 @@ void addStaffToEvent()
     printf(BOLD "\nSelect member (1-%d) or 0 to cancel: " RESET, count);
     if (scanf("%d", &choice) != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         choice = 0;
         clearInputBuffer();
     }
@@ -148,8 +143,6 @@ void addStaffToEvent()
     printf(BOLD "Enter Role (%d: Leader, %d: Member, %d: Support): " RESET, STAFF_LEADER, STAFF_MEMBER, STAFF_SUPPORT);
     if (scanf("%d", &tempRole) != 1)
     {
-        // Preventing infinite loop when EOF
-        if (feof(stdin)) return;
         tempRole = STAFF_MEMBER;
         clearInputBuffer();
     }
@@ -161,7 +154,6 @@ void addStaffToEvent()
     // Input description/mission
     printf(BOLD "Enter Mission Description: " RESET);
     inputString(entry.description, sizeof(entry.description));
-    if (feof(stdin)) return;
 
     // Append to staff list
     e.staffList[e.staffCount] = entry;

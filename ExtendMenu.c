@@ -27,7 +27,6 @@ void searchEventMenuBCN()
 
         if (scanf("%d", &choice) != 1)
         {
-            if (feof(stdin)) return;
             clearInputBuffer();
             printf(RED BOLD "[!] " RESET "Invalid input. Please enter a number.\n");
             continue;
