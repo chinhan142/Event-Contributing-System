@@ -26,7 +26,7 @@ int staffMenu(Account *acc)
         printf("\n");
 
         printf(RED BOLD "  0. Logout System\n" RESET);
-        printf(CYAN "=========================================================================================================\n" RESET);
+        printf(CYAN "==================================================\n" RESET);
         printf(BOLD "Your Selection >> " RESET);
         int res = scanf("%d", &choice);
         clearInputBuffer();

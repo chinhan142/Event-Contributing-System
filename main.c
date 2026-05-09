@@ -45,14 +45,16 @@ int main()
         else if (loginStatus == LOGIN_LOCKED)
         {
             printf(RED BOLD "[!] " RESET "This account is locked! Please contact BCN.\n");
+            printf(RED BOLD "[!] " RESET "The program will now terminate for security reasons.\n");
             pressEnterToContinue();
+            return 0; // Rule STT 0.1: Exit program
         }
         else
         {
             loginSession = true;
             if (!findAccountById(studentId, &currentAcc))
             {
-                printf(RED "[ERROR] Cannot load account details.\n" RESET);
+                printf(RED BOLD "[!] " RESET "Cannot load account details.\n");
                 return 1;
             }
             if (loginStatus == LOGIN_SUCCESS_BCN)
