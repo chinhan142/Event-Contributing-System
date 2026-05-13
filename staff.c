@@ -22,6 +22,22 @@ int isStaffInEvent(Event *e, const char *studentId)
     return 0;
 }
 
+static int compareStaffEntry(const void *a, const void *b)
+{
+    const StaffEntry *sa = a;
+    const StaffEntry *sb = b;
+    return strcmp(sa->studentId, sb->studentId);
+}
+
+void sortStaffList(Event *event)
+{
+    if (event == NULL || event->staffCount <= 1)
+    {
+        return;
+    }
+    qsort(event->staffList, event->staffCount, sizeof(StaffEntry), compareStaffEntry);
+}
+
 // 2.5: Implementation of adding staff
 void addStaffToEvent()
 {
@@ -146,14 +162,23 @@ void addStaffToEvent()
     printf(BOLD "Enter Mission Description: " RESET);
     inputString(entry.description, sizeof(entry.description));
 
-    // Append to staff list
-    e.staffList[e.staffCount] = entry;
+    // Insert into the staff list in sorted order by student ID
+    int insertPos = e.staffCount;
+    while (insertPos > 0 && strcmp(e.staffList[insertPos - 1].studentId, entry.studentId) > 0)
+    {
+        e.staffList[insertPos] = e.staffList[insertPos - 1];
+        insertPos--;
+    }
+    e.staffList[insertPos] = entry;
     e.staffCount++;
-    if(e.status != STATUS_UPCOMING){
+    sortStaffList(&e);
+
+    if (e.status != STATUS_UPCOMING)
+    {
         selected.eventCount++;
         int index = findUserIndex(selected.studentId);
-        if(index != -1) saveUserAt(index,&selected);
-    } 
+        if (index != -1) saveUserAt(index, &selected);
+    }
 
     // Save back to file
     if (saveEventAt(idx, &e))
@@ -400,14 +425,17 @@ int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
     {
         return 0;
     }
-    int left = 0, right = event->staffCount - 1;
-    while (left <= right)    {
+
+    int left = 0;
+    int right = event->staffCount - 1;
+    while (left <= right)
+    {
         int mid = left + (right - left) / 2;
         int cmp = strcmp(event->staffList[mid].studentId, studentId);
         if (cmp == 0)
         {
             *role = event->staffList[mid].role;
-            return 1; // Found
+            return 1;
         }
         else if (cmp < 0)
         {
@@ -418,6 +446,17 @@ int findStaffInEvent(const Event *event, const char *studentId, StaffRole *role)
             right = mid - 1;
         }
     }
+
+    // Fallback for legacy unsorted data
+    for (int i = 0; i < event->staffCount; i++)
+    {
+        if (strcmp(event->staffList[i].studentId, studentId) == 0)
+        {
+            *role = event->staffList[i].role;
+            return 1;
+        }
+    }
+
     return 0; // Not found
 }
 
@@ -544,6 +583,8 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
         for (size_t i = 0; i < eventsRead; i++)
         {
             cleanEventData(&eventChunk[i]); // remove garbage characters from eventId and other string fields
+            updateStatus(&eventChunk[i]);
+            sortStaffList(&eventChunk[i]);
             
             //if there is a joined student
             if (findStaffInEvent(&eventChunk[i], studentId, &role))
