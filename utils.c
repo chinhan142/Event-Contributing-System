@@ -204,6 +204,28 @@ int partitionByName(MatchedEvent *arr, int low, int high)
     return i + 1;
 }
 
+int partitionByNameDesc(MatchedEvent *arr, int low, int high)
+{
+    MatchedEvent pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++)
+    {
+        if (strcmp(arr[j].event.name, pivot.event.name) > 0)
+        {
+            i++;
+            MatchedEvent temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    MatchedEvent temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+
+    return i + 1;
+}
+
 int partitionByIdAsc(MatchedEvent *arr, int low, int high)
 {
     // choose the last element as the pivot
@@ -240,7 +262,15 @@ void quicksortByName(MatchedEvent *arr, int low, int high)
         quicksortByName(arr, pi + 1, high);
     }
 }
-
+void quicksortByNameDesc(MatchedEvent *arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partitionByNameDesc(arr, low, high);
+        quicksortByNameDesc(arr, low, pi - 1);
+        quicksortByNameDesc(arr, pi + 1, high);
+    }
+}
 void quicksortByDateAsc(MatchedEvent *arr, int low, int high)
 {
     if (low < high)
@@ -288,6 +318,14 @@ void sortUserEventsByName(MatchedEvent *events, int count)
     if (count > 1)
     {
         quicksortByName(events, 0, count - 1);
+    }
+}
+
+void sortUserEventsByNameDesc(MatchedEvent *events, int count)
+{
+    if (count > 1)
+    {
+        quicksortByNameDesc(events, 0, count - 1);
     }
 }
 

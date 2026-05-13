@@ -23,6 +23,8 @@ int canModifyStaff(Event *e);
 
 void cleanEventData(Event *event);
 
+void sortStaffList(Event *event);
+
 void printEventRowRole(const Event *event, StaffRole role, const char *studentName);
 
 // Helper: process a chunk of data read from file
