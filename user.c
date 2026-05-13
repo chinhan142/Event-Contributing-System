@@ -84,6 +84,8 @@ void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *f
     for (size_t i = 0; i < eventsRead; i++)
     {
         cleanUserEventData(&chunk[i]);
+        updateStatus(&chunk[i]);
+        sortStaffList(&chunk[i]);
 
         //if the student is found in the event, print out the event details
         if (findStaffInEvent(&chunk[i], studentId, &role))
@@ -96,6 +98,33 @@ void processChunk(Event *chunk, size_t eventsRead, const char *studentId, int *f
 
 int findStaffInEventUser(const Event *event, const char *studentId, StaffRole *role) // helper function to check if the student is involved in the event and return the role of the student in that event. It returns 1 if found and 0 if not found.
 {
+    if (event == NULL || studentId == NULL || role == NULL)
+    {
+        return 0;
+    }
+
+    int left = 0;
+    int right = event->staffCount - 1;
+    while (left <= right)
+    {
+        int mid = left + (right - left) / 2;
+        int cmp = strcmp(event->staffList[mid].studentId, studentId);
+        if (cmp == 0)
+        {
+            *role = event->staffList[mid].role;
+            return 1;
+        }
+        else if (cmp < 0)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
+        }
+    }
+
+    // Fallback for legacy unsorted staff lists
     for (int i = 0; i < event->staffCount; i++)
     {
         if (strcmp(event->staffList[i].studentId, studentId) == 0)
@@ -283,7 +312,7 @@ void viewProfile(const Account *acc){
     printf(BOLD "  %-15s : " RESET "%s\n", "Email", persona.email);
     printf(BOLD "  %-15s : " RESET "%s\n", "Phone Number", persona.phoneNumber);
     printf(BOLD "  %-15s : " RESET GREEN BOLD "%s" RESET "\n", "Position", (acc->role == 1 ? "BCN" : "Member"));
-    printf(BOLD "  %-15s : " RESET MAGENTA "%s" RESET "\n", "Specialize", persona.specialize);
+    printf(BOLD "  %-15s : " RESET MAGENTA "%s" RESET "\n", "Department", persona.specialize);
     printf(YELLOW BOLD "==================================================\n" RESET);
 }
 
@@ -322,6 +351,8 @@ MatchedEvent* getCurrentEventsForUser(const Account *acc, int *count)
         for (size_t i = 0; i < eventsRead; i++)
         {
             cleanUserEventData(&eventChunk[i]);
+            updateStatus(&eventChunk[i]);
+            sortStaffList(&eventChunk[i]);
             if (findStaffInEvent(&eventChunk[i], acc->studentId, &role) && eventChunk[i].status == STATUS_ONGOING)
             {
                 if (foundCount >= capacity)
@@ -362,22 +393,15 @@ void printCurrentEvents(MatchedEvent *events, int count, const char *studentId)
     }
 }
 
-// print out current events for user
-void viewCurrentEvents(const Account *acc) {
-    int count;
-    MatchedEvent *events = getCurrentEventsForUser(acc, &count);
-    if (events == NULL && count == 0)
-    {
-        printf("\n" YELLOW BOLD "[INFO] " RESET "No events available in the system.\n");
-        return;
-    }
+static void displayCurrentEventsList(MatchedEvent *events, int count, const char *studentId)
+{
     printDivider("CURRENT ONGOING EVENTS");
     printf(CYAN "| " BOLD "%-10s" RESET CYAN " | " BOLD "%-25s" RESET CYAN " | " BOLD "%-25s" RESET CYAN " | " BOLD "%-12s" RESET CYAN " | " BOLD "%-10s" RESET CYAN " |\n" RESET, "Event ID", "Event Name", "Student Name", "Your Role", "Start Date");
     printf(CYAN "+------------+---------------------------+---------------------------+--------------+------------+\n" RESET);
 
     if (count > 0)
     {
-        printCurrentEvents(events, count, acc->studentId);
+        printCurrentEvents(events, count, studentId);
     }
 
     printf(CYAN "+------------+---------------------------+---------------------------+--------------+------------+\n" RESET);
@@ -389,6 +413,18 @@ void viewCurrentEvents(const Account *acc) {
     {
         printf(CYAN BOLD " Total: " RESET "%d ongoing event(s) found.\n", count);
     }
+}
+
+// print out current events for user
+void viewCurrentEvents(const Account *acc) {
+    int count;
+    MatchedEvent *events = getCurrentEventsForUser(acc, &count);
+    if (events == NULL && count == 0)
+    {
+        printf("\n" YELLOW BOLD "[INFO] " RESET "No events available in the system.\n");
+        return;
+    }
+    displayCurrentEventsList(events, count, acc->studentId);
 
     if (events != NULL)
     {
@@ -397,22 +433,40 @@ void viewCurrentEvents(const Account *acc) {
 }
 
 // Event menu for user to do operations related to their current events
-void currentEventsMenu(const Account *acc) { 
+void currentEventsMenu(const Account *acc) {
+    MatchedEvent *events = NULL;
+    int count = 0;
+    int shouldRefresh = 1;
+
     while (1) {
+        if (shouldRefresh) {
+            if (events != NULL) {
+                free(events);
+                events = NULL;
+            }
+            events = getCurrentEventsForUser(acc, &count);
+            shouldRefresh = 0;
+        }
+
         clearScreen();
-        viewCurrentEvents(acc);
+        if (events == NULL && count == 0) {
+            printf("\n" YELLOW BOLD "[INFO] " RESET "No events available in the system.\n");
+        } else {
+            displayCurrentEventsList(events, count, acc->studentId);
+        }
+
         printf("\n" YELLOW BOLD "Options:\n" RESET);
         printf(GREEN "  1." RESET " View Event Details\n");
         printf(GREEN "  2." RESET " Sort Events\n");
         printf(GREEN "  3." RESET " Refresh List\n");
         printf(GREEN "  4." RESET " Back to Main Menu\n");
         printf(BOLD "Enter your choice: " RESET);
-        
+
         char choice[10];
         fgets(choice, sizeof(choice), stdin);
         choice[strcspn(choice, "\r\n")] = '\0'; // Remove newline
 
-        if (strcmp(choice, "1") == 0) {  //compare the input with options and call the corresponding function
+        if (strcmp(choice, "1") == 0) {
             if (acc == NULL) {
                 printf(RED BOLD "[ERROR] " RESET "Cannot find event details.\n");
                 pressEnterToContinue();
@@ -421,75 +475,101 @@ void currentEventsMenu(const Account *acc) {
             viewUserEventDetails(acc, NULL);
             pressEnterToContinue();
         } else if (strcmp(choice, "2") == 0) {
+            if (events == NULL || count == 0) {
+                printf(YELLOW BOLD "[INFO] " RESET "No events available to sort.\n");
+                pressEnterToContinue();
+                continue;
+            }
+            clearScreen();
             printf("How would you like to sort the events?\n");
             printf("1. By Name\n");
             printf("2. By Date\n");
             printf("3. By Event ID\n");
             printf(BOLD "Enter your choice: " RESET);
-            
+
             char sortChoice[10];
             fgets(sortChoice, sizeof(sortChoice), stdin);
-            sortChoice[strcspn(sortChoice, "\r\n")] = '\0'; 
+            sortChoice[strcspn(sortChoice, "\r\n")] = '\0';
 
-            int count;
-            MatchedEvent *events = getCurrentEventsForUser(acc, &count);
-            if (events != NULL) {
-                if (strcmp(sortChoice, "1") == 0) {                            
+            if (strcmp(sortChoice, "1") == 0) {
+                printf("\n" YELLOW BOLD "Sorting by Name:\n" RESET);
+                printf("How would you like to sort by Name?\n");
+                printf("1. Ascending\n");
+                printf("2. Descending\n");
+                printf(BOLD "Enter your choice: " RESET);
+                char nameSortChoice[10];
+                fgets(nameSortChoice, sizeof(nameSortChoice), stdin);
+                nameSortChoice[strcspn(nameSortChoice, "\r\n")] = '\0';
+                if (strcmp(nameSortChoice, "1") == 0) {
                     sortUserEventsByName(events, count);
-                } else if (strcmp(sortChoice, "2") == 0) {
-                    printf("How would you like to sort by Date?\n");
-                    printf("1. Ascending\n");  
-                    printf("2. Descending\n");
-                    printf(BOLD "Enter your choice: " RESET);
-                    char dateSortChoice[10];
-                    fgets(dateSortChoice, sizeof(dateSortChoice), stdin);
-                    dateSortChoice[strcspn(dateSortChoice, "\r\n")] = '\0';
-                    if (strcmp(dateSortChoice, "1") == 0) {
-                        sortUserEventsByDateAsc(events, count);
-                    } else if (strcmp(dateSortChoice, "2") == 0) {
-                        sortUserEventsByDate(events, count);
-                    } else {
-                        printf(RED BOLD "[ERROR] " RESET "Invalid sort choice.\n");
-                        free(events);
-                        continue;
-                    }
-                } else if (strcmp(sortChoice, "3") == 0) {
-                    printf("How would you like to sort by Event ID?\n");
-                    printf("1. Ascending\n");
-                    printf("2. Descending\n");
-                    printf(BOLD "Enter your choice: " RESET);
-
-                    char idSortChoice[10];
-                    fgets(idSortChoice, sizeof(idSortChoice), stdin);
-                    idSortChoice[strcspn(idSortChoice, "\r\n")] = '\0';
-
-                    if (strcmp(idSortChoice, "1") == 0) {
-                        sortUserEventsByIdAsc(events, count);
-                    } else if (strcmp(idSortChoice, "2") == 0) {
-                        sortUserEventsByIdDesc(events, count);
-                    } else {
-                        printf(RED BOLD "[ERROR] " RESET "Invalid sort choice.\n");
-                        free(events);
-                        continue;
-                    }
+                } else if (strcmp(nameSortChoice, "2") == 0) {
+                    sortUserEventsByNameDesc(events, count);
                 } else {
                     printf(RED BOLD "[ERROR] " RESET "Invalid sort choice.\n");
-                    free(events);
+                    pressEnterToContinue();
                     continue;
                 }
-                printCurrentEvents(events, count, acc->studentId);
-                free(events);
+            } else if (strcmp(sortChoice, "2") == 0) {
+                printf("\n" YELLOW BOLD "Sorting by Date:\n" RESET);
+                printf("How would you like to sort by Date?\n");
+                printf("1. Ascending\n");
+                printf("2. Descending\n");
+                printf(BOLD "Enter your choice: " RESET);
+                char dateSortChoice[10];
+                fgets(dateSortChoice, sizeof(dateSortChoice), stdin);
+                dateSortChoice[strcspn(dateSortChoice, "\r\n")] = '\0';
+                if (strcmp(dateSortChoice, "1") == 0) {
+                    sortUserEventsByDateAsc(events, count);
+                } else if (strcmp(dateSortChoice, "2") == 0) {
+                    sortUserEventsByDate(events, count);
+                } else {
+                    printf(RED BOLD "[ERROR] " RESET "Invalid sort choice.\n");
+                    pressEnterToContinue();
+                    continue;
+                }
+            } else if (strcmp(sortChoice, "3") == 0) {
+                printf("\n" YELLOW BOLD "Sorting by Event ID:\n" RESET);
+                printf("How would you like to sort by Event ID?\n");
+                printf("1. Ascending\n");
+                printf("2. Descending\n");
+                printf(BOLD "Enter your choice: " RESET);
+
+                char idSortChoice[10];
+                fgets(idSortChoice, sizeof(idSortChoice), stdin);
+                idSortChoice[strcspn(idSortChoice, "\r\n")] = '\0';
+
+                if (strcmp(idSortChoice, "1") == 0) {
+                    sortUserEventsByIdAsc(events, count);
+                } else if (strcmp(idSortChoice, "2") == 0) {
+                    sortUserEventsByIdDesc(events, count);
+                } else {
+                    printf(RED BOLD "[ERROR] " RESET "Invalid sort choice.\n");
+                    pressEnterToContinue();
+                    continue;
+                }
+            } else {
+                printf(RED BOLD "[ERROR] " RESET "Invalid sort choice.\n");
                 pressEnterToContinue();
+                continue;
             }
+
+            clearScreen();
+            displayCurrentEventsList(events, count, acc->studentId);
+            pressEnterToContinue();
         } else if (strcmp(choice, "3") == 0) {
-            continue; // Just refresh the list
-            clearScreen();
+            shouldRefresh = 1;
+            continue;
         } else if (strcmp(choice, "4") == 0) {
-            break; // Exit to main menu
-            clearScreen();
+            break;
         } else {
             printf(RED BOLD "[ERROR] " RESET "Invalid choice. Please try again.\n");
+            pressEnterToContinue();
         }
+    }
+
+    if (events != NULL)
+    {
+        free(events);
     }
 }
 
@@ -509,15 +589,13 @@ void viewUserEventDetails(const Account *acc, const char *eventId){
     toLowerStr(lowerInputEventId, inputEventId); // ensure that the event ID is still valid even if the user input in casesentive
     if (strlen(lowerInputEventId) == 0) {
         return; // User chose to go back
-        clearScreen();
     }
     if (strlen(lowerInputEventId) > EVENT_ID_LENGTH || lowerInputEventId[0] != 'e' || lowerInputEventId[1] != 'v') {
         printf(RED BOLD "[ERROR] " RESET "Invalid Event ID format. Please try again.\n");
         return;
     }
     
-    userEventDetails(acc, inputEventId);
-    clearScreen();
+    userEventDetails(acc, lowerInputEventId);
 }
 
 // Function to display event details for a specific event that the user is involved in
@@ -533,9 +611,12 @@ void userEventDetails(const Account *acc, const char *eventId)
     int found = 0;
     while (fread(&tempEvent, sizeof(Event), 1, f) == 1)
     {
-        cleanUserEventData(&tempEvent); 
+        cleanUserEventData(&tempEvent);
+        updateStatus(&tempEvent);
+        sortStaffList(&tempEvent);
+
         char lowerTempEventId[EVENT_ID_LENGTH];
-        toLowerStr(lowerTempEventId, tempEvent.eventId); // ensure that the event ID can be found even if the user input in casesentive
+        toLowerStr(lowerTempEventId, tempEvent.eventId); // ensure that the event ID can be found even if the user input is case-insensitive
         if (strcmp(lowerTempEventId, eventId) == 0)
         {
             StaffRole role;
@@ -566,7 +647,6 @@ void userEventDetails(const Account *acc, const char *eventId)
                 printf(BOLD "  %-15s : " RESET "%s%s" RESET "\n", "Your Role", rColor, rName);
                 found = 1;
                 printf(YELLOW BOLD "==================================================\n" RESET);
-                pressEnterToContinue();
                 break;
             }
         }
