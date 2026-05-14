@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "menuBCN.h"
 #include "utils.h"
 #include "fileio.h"
@@ -7,6 +8,7 @@
 #include "user.h"
 #include "auth.h"
 #include "ExtendMenu.h"
+#include "report.h"
 #include "colors.h"
 int bcnMenu(Account *acc)
 {
@@ -35,12 +37,13 @@ int bcnMenu(Account *acc)
 
         printf(YELLOW BOLD "  [ REPORTS & ANALYTICS ]\n" RESET);
         printf(GREEN "  12." RESET " Generate Staff Statistics\n");
+        printf(GREEN "  13." RESET " Export Events to Text File\n");
         printf("\n");
 
         printf(YELLOW BOLD "  [ ACCOUNT SETTINGS ]\n" RESET);
-        printf(GREEN "  13." RESET " View My Profile\n");
-        printf(GREEN "  14." RESET " Change My Password\n");
-        printf(GREEN "  15." RESET " Reset Member Password\n");
+        printf(GREEN "  14." RESET " View My Profile\n");
+        printf(GREEN "  15." RESET " Change My Password\n");
+        printf(GREEN "  16." RESET " Reset Member Password\n");
         printf("\n");
 
         printf(RED BOLD "  0. Logout System\n" RESET);
@@ -96,13 +99,16 @@ int bcnMenu(Account *acc)
         case 12: // Generate staff statistics
             generateStaffStatistics(); 
             break;
-        case 13: // View profile
+        case 13: // Export events
+            exportEventsMenu();
+            break;
+        case 14: // View profile
             viewProfile(acc);
             break;
-        case 14: // Change password
+        case 15: // Change password
             changeOwnPassword(acc);
             break;
-        case 15: // Reset password
+        case 16: // Reset password
             resetMemberPassword();
             break;
         case 0: // Logout
@@ -120,4 +126,92 @@ int bcnMenu(Account *acc)
 
     } while (choice != 0);
     return 0;
+}
+
+// Display event list for user selection
+void displayEventListForSelection()
+{
+    int totalEvents = getNextEventIndex();
+    if (totalEvents <= 0)
+    {
+        printf("No events available\n");
+        return;
+    }
+
+    printf(CYAN "=== SELECT AN EVENT ===\n" RESET);
+    printf(CYAN "%-15s | %-30s | %-25s\n" RESET, "Event ID", "Event Name", "Location");
+    printf(CYAN "%s\n" RESET, "====================================================================");
+
+    for (int i = 0; i < totalEvents; i++)
+    {
+        Event event;
+        if (loadEventAt(i, &event))
+        {
+            // Truncate long strings for display
+            char name[32] = {0};
+            char location[27] = {0};
+            strncpy(name, event.name, 30);
+            strncpy(location, event.location, 25);
+            if (strlen(event.name) > 30) strcat(name, "..");
+            if (strlen(event.location) > 25) strcat(location, "..");
+            
+            printf("%-15s | %-30s | %-25s\n", event.eventId, name, location);
+        }
+    }
+    printf(CYAN "%s\n" RESET, "====================================================================");
+}
+
+// Export events menu
+void exportEventsMenu()
+{
+    int choice;
+    do
+    {
+        clearScreen();
+        printDivider("EXPORT EVENTS");
+
+        printf(YELLOW BOLD "Export Options:\n" RESET);
+        printf(GREEN "1." RESET " Export a Single Event\n");
+        printf(GREEN "2." RESET " Export All Events\n");
+        printf(RED "0." RESET " Back to Menu\n");
+        printf(CYAN "==================================================\n" RESET);
+        printf(BOLD "Your Selection >> " RESET);
+
+        int res = scanf("%d", &choice);
+        clearInputBuffer();
+        if (res != 1)
+        {
+            choice = -1;
+        }
+
+        switch (choice)
+        {
+        case 1: { // Export single event
+            clearScreen();
+            displayEventListForSelection();
+            char eventId[EVENT_ID_LENGTH];
+            printf("\n" BOLD "Enter Event ID to export: " RESET);
+            scanf("%s", eventId);
+            clearInputBuffer();
+            exportSingleEvent(eventId);
+            break;
+        }
+        case 2: { // Export all events
+            printf(BOLD "Exporting all events...\n" RESET);
+            exportAllEvents();
+            break;
+        }
+        case 0: // Back
+            return;
+        default:
+            printf(RED BOLD "[!] " RESET "Invalid choice!\n");
+            break;
+        }
+
+        if (choice != 0)
+        {
+            pressEnterToContinue();
+        }
+
+    } while (choice != 0);
 }
