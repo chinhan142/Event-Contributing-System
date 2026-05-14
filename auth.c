@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "auth.h"
+#include "colors.h"
 #include "utils.h"
 #include "paths.h"
 
@@ -38,6 +39,7 @@ int findAccountById(char *id, Account *result)
     FILE *f = fopen(ACCOUNT_DATA_PATH, "rb");
     if (f == NULL)
     {
+        printf(RED BOLD "[ERROR] " RESET "Cannot open accounts.dat file\n");
         return 0;
     }
 
@@ -112,37 +114,37 @@ void changeOwnPassword(Account *acc)
         confirmPass[PASSWORD_LENGTH];
 
     printDivider("CHANGE PASSWORD");
-    printf("Enter current password: ");
+    printf(BOLD "Enter current password: " RESET);
     inputString(oldPass, sizeof(oldPass));
 
     if (strcmp(acc->password, oldPass) != 0)
     {
-        printf("\033[31m[ERROR] Wrong current password!\033[0m\n");
+        printf(RED BOLD "[ERROR] " RESET "Wrong current password!\n");
         return;
     }
 
-    printf("Enter new password: ");
+    printf(BOLD "Enter new password: " RESET);
     inputString(newPass, sizeof(newPass));
-    printf("Confirm new password: ");
+    printf(BOLD "Confirm new password: " RESET);
     inputString(confirmPass, sizeof(confirmPass));
 
     if (strcmp(newPass, confirmPass) != 0)
     {
-        printf("\033[31m[ERROR] New passwords do not match!\033[0m\n");
+        printf(RED BOLD "[ERROR] " RESET "New passwords do not match!\n");
         return;
     }
 
     strcpy(acc->password, newPass);
     updateAccount(acc);
 
-    printf("\033[32m[SUCCESS] Password changed successfully!\033[0m\n");
+    printf(GREEN "[SUCCESS] " RESET "Password changed successfully!\n");
 }
 
 void resetMemberPassword()
 {
     char targetId[ID_LENGTH];
     printDivider("RESET MEMBER PASSWORD");
-    printf("Enter Member Student ID to reset: ");
+    printf(BOLD "Enter Member Student ID to reset: " RESET);
     inputString(targetId, sizeof(targetId));
 
     Account targetAcc;
@@ -153,15 +155,15 @@ void resetMemberPassword()
         targetAcc.isLocked = ACCOUNT_UNLOCKED;
         targetAcc.failCount = 0;
 
-        if (confirmAction("Are you sure you want to reset this password to default?"))
+        if (confirmAction(RED "Are you sure you want to reset this password to default?" RESET))
         {
             updateAccount(&targetAcc);
-            printf("\033[32m[SUCCESS] Password for %s has been reset to default.\033[0m\n", targetId);
+            printf(GREEN BOLD "[SUCCESS] " RESET "Password for %s has been reset to default.\n", targetId);
         }
     }
     else
     {
-        printf("\033[31m[ERROR] Student ID not found!\033[0m\n");
+        printf(RED BOLD "[ERROR] " RESET "Student ID not found!\n");
     }
 }
 

@@ -1,6 +1,6 @@
 #ifndef EVENT_H
 #define EVENT_H
-
+#include <time.h>
 typedef struct Account Account;
 
 #define ID_LENGTH 20
@@ -10,6 +10,8 @@ typedef struct Account Account;
 #define DESC_LENGTH 255
 #define LOCATION_LENGTH 255
 #define DATE_LENGTH 20
+
+//structures for event and staff related data
 typedef enum
 {
     STATUS_UPCOMING = 0,
@@ -43,23 +45,39 @@ typedef struct
     int staffCount;
     StaffEntry staffList[MAX_STAFF_PER_EVENT];
 } Event;
-void printEventResult();
+
+
+
+//validation functions
 int isValidDate(char *date);
 int isChronological(char *start, char *end);
 int checkTime(int year, int mon, int day);
+int checkSemester(time_t timestampCheck);
+
+//event related functions
 void createEvent();
 void updateStatus(Event *event);
 int inputEventStatus();
 void displayAllEvent(int filterStatus);
+
+//event update functions
 void updateEventDetails();
 void updateName(Event *event);
 void updateDescription(Event *event);
 void updateLocation(Event *event);
 void updateStartDate(Event *event);
 void updateEndDate(Event *event);
+
+//Event management functions
 Event chooseEvent();
 void deleteEvent();
 void viewEventDetails();
 void manualUpdateEventStatus();
 
+//Searching funcion
+void searchEventsByStartDateRange();
+
+//others
+time_t toTimestamp(Event *event);
+void printEventByName();
 #endif

@@ -6,48 +6,47 @@
 #include "user.h"
 #include "menuStaff.h"
 #include "auth.h"
+#include "colors.h"
 int staffMenu(Account *acc)
 {
     int choice;
     do
     {
-        printDivider("STAFF MENU");
-        printf("  [My Events]\n");
-        printf("  1. View current events\n");
-        printf("  2. View event detail\n");
-        printf("  3. View event history\n");
+        clearScreen();
+        printDivider("MEMBER DASHBOARD");
+        
+        printf(YELLOW BOLD "  [ MY ACTIVITIES ]\n" RESET);
+        printf(GREEN "  1." RESET " View Ongoing Events\n");
+        printf(GREEN "  2." RESET " View My Participation History\n");
         printf("\n");
-        printf("  [Account]\n");
-        printf("  4. View my profile\n");
-        printf("  5. Change password\n");
+
+        printf(YELLOW BOLD "  [ ACCOUNT SETTINGS ]\n" RESET);
+        printf(GREEN "  3." RESET " View My Profile\n");
+        printf(GREEN "  4." RESET " Change My Password\n");
         printf("\n");
-        printf("  0. Logout\n");
-        printf("========================================\n");
-        printf("Choice: ");
-        scanf("%d", &choice);
-        getchar();
+
+        printf(RED BOLD "  0. Logout System\n" RESET);
+        printf(CYAN "==================================================\n" RESET);
+        printf(BOLD "Your Selection >> " RESET);
+        int res = scanf("%d", &choice);
+        clearInputBuffer();
+        if (res != 1) {
+            choice = -1;
+        }
 
         switch (choice)
         {
             // calling function here
         case 1:
-            printf("View current events\n");
-            viewCurrentEvents(acc, 0);
+            currentEventsMenu(acc);
             break;
         case 2:
-            printf("View event detail\n");
-            viewUserEventDetails(acc, NULL);
-            break;
-        case 3:
-            printf("View Event history\n");
             displayCurrentUserEventHistory(acc);
             break;
-        case 4:
-            printf("View profile\n");
+        case 3:
             viewProfile(acc);
             break;
-        case 5:
-            printf("Change password\n");
+        case 4:
             changeOwnPassword(acc);
             break;
         case 0:
@@ -55,8 +54,12 @@ int staffMenu(Account *acc)
                 return 1;
             break;
         default:
-            printf("[!] Invalid choice!\n");
+            printf(RED BOLD "[!] " RESET "Invalid choice!\n");
             break;
+        }
+
+        if (choice != 0 && choice != 1) {
+            pressEnterToContinue();
         }
     } while (choice != 0);
     return 0;

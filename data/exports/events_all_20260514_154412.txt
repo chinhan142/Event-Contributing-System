@@ -1,0 +1,89 @@
+========== EXPORTED EVENTS ==========
+Export Time: 2026-05-14 15:44:12
+Total Events: 10
+
+------- EVENT -------
+Event Name: Workshop Lap trinh C
+Location: Hall A
+Dates: 2024-05-01 - 2024-05-02
+
+Staff:
+  SE203237 - Role: Leader - Task: do smt 
+
+------- EVENT -------
+Event Name: E
+Location: Vung Tau
+Dates: 2024-04-15 - 2024-04-17
+
+Staff:
+  SE200441 - Role: Member - Task: Hau can
+  SE210041 - Role: Leader - Task: haha
+  SE211059 - Role: Leader - Task: 0
+
+------- EVENT -------
+Event Name: R.ODE Battle 2023
+Location: P.402
+Dates: 2023-12-20 - 2023-12-21
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: Test
+Location: test
+Dates: 2026-05-01 - 2026-06-01
+
+Staff:
+  SE203237 - Role: Leader - Task: haah
+  SE210041 - Role: Leader - Task: test
+  SE211059 - Role: Leader - Task: T
+
+------- EVENT -------
+Event Name: T
+Location: T
+Dates: 2021-01-01 - 2021-01-01
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: T
+Location: T
+Dates: 2021-01-01 - 2021-01-01
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: E
+Location: T
+Dates: 2021-01-01 - 2027-01-01
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: E
+Location: E
+Dates: 2021-01-01 - 2021-01-01
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: R
+Location: R
+Dates: 2021-01-01 - 2027-01-01
+
+Staff:
+  SE203237 - Role: Leader - Task: do smt
+
+------- EVENT -------
+Event Name: 0
+Location: t
+Dates: 2028-12-23 - 2029-11-23
+
+Staff:
+  (No staff assigned)
+
+========== END OF EXPORT ==========
