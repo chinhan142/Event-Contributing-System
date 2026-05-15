@@ -3,10 +3,4 @@
 *.o
 *.out
 *.dat
-main
-
-# Test files
-tests/*
-!tests/test_staff.c
-tests/**/*.exe
 
