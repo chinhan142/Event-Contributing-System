@@ -4,6 +4,7 @@
 #include "auth.h"
 #include "user.h"
 #include "event.h"
+#include "staff.h"
 #include "paths.h"
 // Get the index of the next event record in the events.dat file
 int getNextEventIndex()
@@ -63,7 +64,11 @@ int loadEventWithFile(FILE *f, int index, Event *e)
     //jump to the position of the record
     fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
     int readCount = fread(e, sizeof(Event), 1, f);
-    
+    if (readCount > 0)
+    {
+        updateStatus(e);
+        sortStaffList(e);
+    }
     return (readCount > 0);
 }
 // Load an event struct from a specific record index
@@ -78,6 +83,11 @@ int loadEventAt(int index, Event *e)
     fseeko64(f, (long long)index * sizeof(Event), SEEK_SET);
     int readCount = fread(e, sizeof(Event), 1, f);
     fclose(f);
+    if (readCount > 0)
+    {
+        updateStatus(e);
+        sortStaffList(e);
+    }
     return (readCount > 0);
 }
 
