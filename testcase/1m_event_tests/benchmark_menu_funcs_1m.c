@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 
-static const char *INPUT_FILE = "testcase/1m_event_tests/.bench_input.txt";
+static const char *INPUT_FILE = "testcase/1m_event_tests/.bench_input_runtime.txt";
 
 static int write_input_file(const char *content)
 {
@@ -109,9 +109,17 @@ int main(int argc, char *argv[])
     {
         benchmark_void_with_input("printEventResult (Case 7 - ID)", printEventResult, "EV1000000\n");
     }
+    else if (strcmp(argv[1], "id_small") == 0)
+    {
+        benchmark_void_with_input("printEventResult (Case 7 - ID, small data)", printEventResult, "EV000001\n");
+    }
     else if (strcmp(argv[1], "name") == 0)
     {
         benchmark_void_with_input("printEventByName (Case 7 - Name)", printEventByName, "EVENT NUMBER 1000000\n");
+    }
+    else if (strcmp(argv[1], "name_small") == 0)
+    {
+        benchmark_void_with_input("printEventByName (Case 7 - Name, small data)", printEventByName, "WORKSHOP\n");
     }
     else if (strcmp(argv[1], "date") == 0)
     {
@@ -127,7 +135,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        printf("Usage: benchmark_menu_funcs_1m.exe [all|id|name|date|case11|case2]\n");
+        printf("Usage: benchmark_menu_funcs_1m.exe [all|id|id_small|name|name_small|date|case11|case2]\n");
         return 1;
     }
 

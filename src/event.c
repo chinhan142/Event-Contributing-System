@@ -376,7 +376,7 @@ void printEventResult()
             strcpy(statusStr, "Ongoing");
             break;
         case STATUS_FINISHED:
-            strcpy(statusStr, "Completed");
+            strcpy(statusStr, "Finished");
             break;
         default:
             strcpy(statusStr, "Unknown");
