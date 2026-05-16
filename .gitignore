@@ -3,8 +3,3 @@
 *.o
 *.out
 *.dat
-
-# Agent attributes
-.agents/attribute/
-
-
