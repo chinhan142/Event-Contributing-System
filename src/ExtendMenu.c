@@ -207,7 +207,7 @@ void getInactiveStaffInSemester(){
             // if(stoi(startDate,0,3) == 2026){
             //     printf("%ld %ld",checkSemester(now), checkSemester(toTimestamp(&(list[i].event))));
             // }
-            if(currentYear == stoi(startDate,0,3) && list[i].event.status != STATUS_UPCOMING){
+            if(currentYear == stoi(startDate,0,3)){
                 if(checkSemester(now) == checkSemester(toTimestamp(&(list[i].event)))){
                     result[index].isActiveInThisSemester = 1;
                 }
