@@ -157,6 +157,7 @@ void addStaffToEvent()
     {
         tempRole = STAFF_MEMBER;
     }
+    entry.role = (StaffRole)tempRole;
 
     // Input description/mission
     printf(BOLD "Enter Mission Description: " RESET);
