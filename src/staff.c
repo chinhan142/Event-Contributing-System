@@ -586,6 +586,7 @@ MatchedEvent* getEventsByStudentId(const char *studentId, int *outFoundCount)
             cleanEventData(&eventChunk[i]); // remove garbage characters from eventId and other string fields
             updateStatus(&eventChunk[i]);
             sortStaffList(&eventChunk[i]);
+            if (eventChunk[i].isDeleted == 1) continue;
             
             //if there is a joined student
             if (findStaffInEvent(&eventChunk[i], studentId, &role))

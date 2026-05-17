@@ -129,6 +129,10 @@ int findEventIndexById(const char *id)
         if (cmp == 0)
         {
             fclose(f);
+            if (temp.isDeleted == 1)
+            {
+                return -1;
+            }
             return mid;
         }
 
@@ -147,26 +151,14 @@ int findEventIndexById(const char *id)
 }
 
 void deleteEventById(char *id){
-    FILE *f = fopen(EVENT_DATA_PATH, "rb");
-    if (f == NULL){
-        return;
-    }
-    FILE *temp = fopen(TEMP_DATA_PATH, "wb");
-    if (temp == NULL){
-        fclose(f);
-        return;
-    }
+    int index = findEventIndexById(id);
+    if (index == -1) return;
+
     Event event;
-    while(fread(&event,sizeof(Event),1,f)){
-        // Đã sửa: Dùng strcasecmp để đồng bộ với hàm tìm kiếm
-        if(strcasecmp(event.eventId,id) == 0) continue;
-        fwrite(&event,sizeof(Event),1,temp);
-    }
-    fclose(f);
-    fclose(temp);
-    
-    if (remove(EVENT_DATA_PATH) == 0) {
-        rename(TEMP_DATA_PATH, EVENT_DATA_PATH);
+    if (loadEventAt(index, &event))
+    {
+        event.isDeleted = 1;
+        saveEventAt(index, &event);
     }
 }
 
