@@ -12,10 +12,11 @@
 #include "menuStaff.h"
 #include "init.h"
 #include "colors.h"
+#include "app.h"
 
 bool loginSession = false;
 
-int main()
+int runApp(void)
 {
     char studentId[20];
     char password[255];

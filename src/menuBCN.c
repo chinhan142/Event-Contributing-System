@@ -7,7 +7,7 @@
 #include "staff.h"
 #include "user.h"
 #include "auth.h"
-#include "ExtendMenu.h"
+#include "menuSearch.h"
 #include "report.h"
 #include "colors.h"
 int bcnMenu(Account *acc)
