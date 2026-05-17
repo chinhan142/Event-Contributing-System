@@ -210,11 +210,15 @@ void createEvent()
     strcpy(newEvent.eventId, "EV000000");
     int pos = 7;
     int backupID = tempID;
-    while (backupID > 0 && pos > 1)
+    if(tempID < 1000000)
     {
-        newEvent.eventId[pos--] = (backupID % 10) + '0';
-        backupID /= 10;
+        while (backupID > 0 && pos > 1)
+        {
+            newEvent.eventId[pos--] = (backupID % 10) + '0';
+            backupID /= 10;
+        }
     }
+    else strcpy(newEvent.eventId, "EV1000000");
 
     if (saveEventAt(index, &newEvent))
     {

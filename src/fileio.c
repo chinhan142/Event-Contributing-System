@@ -105,8 +105,8 @@ int findEventIndexById(const char *id)
         return -1;
     }
 
-    _fseeki64(f, 0, SEEK_END);
-    long long size = _ftelli64(f);
+    fseeko64(f, 0, SEEK_END);
+    long long size = ftello64(f);
     int total = (int)(size / sizeof(Event));
 
     int left = 0;
