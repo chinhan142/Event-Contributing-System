@@ -302,7 +302,6 @@ void viewProfile(const Account *acc){
 
     if (userFound == 0){
         printf(RED BOLD "[ERROR] " RESET "Cannot find user profile.\n");
-        pressEnterToContinue();
         return;
     }
 
@@ -466,14 +465,13 @@ void currentEventsMenu(const Account *acc) {
         fgets(choice, sizeof(choice), stdin);
         choice[strcspn(choice, "\r\n")] = '\0'; // Remove newline
 
-        if (strcmp(choice, "1") == 0) {
+        if (strcmp(choice, "1") == 0) { //compare the user input to determine which option
             if (acc == NULL) {
                 printf(RED BOLD "[ERROR] " RESET "Cannot find event details.\n");
                 pressEnterToContinue();
                 continue;
             }
             viewUserEventDetails(acc, NULL);
-            pressEnterToContinue();
         } else if (strcmp(choice, "2") == 0) {
             if (events == NULL || count == 0) {
                 printf(YELLOW BOLD "[INFO] " RESET "No events available to sort.\n");
