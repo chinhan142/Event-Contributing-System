@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
-mkdir -p output
-gcc test_staff.c ../staff.c ../user.c ../auth.c ../event.c ../fileio.c ../init.c ../menuBCN.c ../menuStaff.c ../report.c ../utils.c -o output/test_staff.exe -Wall
-./output/test_staff.exe
+ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT_DIR"
+
+mkdir -p tests/staff/output
+gcc tests/staff/test_staff.c \
+  src/staff.c src/user.c src/auth.c src/event.c src/fileio.c \
+  src/init.c src/menuBCN.c src/menuStaff.c src/report.c \
+  src/utils.c src/ExtendMenu.c \
+  -Iinclude -o tests/staff/output/test_staff.exe -Wall
+./tests/staff/output/test_staff.exe

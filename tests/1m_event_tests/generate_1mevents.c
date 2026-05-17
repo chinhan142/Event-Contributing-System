@@ -1,10 +1,10 @@
-#include "../../event.h"
-#include "../../fileio.h"
+#include "../../include/event.h"
+#include "../../include/fileio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../paths.h"
+#include "../../include/paths.h"
 
 #define TARGET_COUNT 1000000
 #define FILE_PATH EVENT_1M_DATA_PATH

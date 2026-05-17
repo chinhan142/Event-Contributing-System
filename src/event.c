@@ -9,30 +9,6 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-/* first index has date <= toDate */
-static int firstIdxLE_ToDateDesc(const MatchedEvent *arr, int n, const char *toDate){
-    int l = 0, r = n;
-    while(l < r){
-        int m = l + (r - l)/2;
-        if (strcmp(arr[m].event.startDate, toDate) > 0)
-            l = m + 1;        
-        else
-            r = m;       
-    }
-    return l;
-}
-/* first index has date < fromDate */
-static int firstIdxLT_FromDateDesc(const MatchedEvent *arr, int n, const char *fromDate){
-    int l = 0, r = n;
-    while(l < r){
-        int m = l + (r - l)/2;
-        if (strcmp(arr[m].event.startDate, fromDate) >= 0)
-            l = m + 1;
-        else
-            r = m;
-    }
-    return l;
-}
 
 // Returns the difference in seconds between now and the specified date (start date and end date)
 int checkTime(int year, int mon, int day)
@@ -778,65 +754,64 @@ void searchEventsByStartDateRange()
         
     } while (!isChronological(fromDate, toDate));
     int filterStatus = inputEventStatus();
-    int total = getNextEventIndex();
-    if (total <= 0){
+    FILE *f = fopen(EVENT_DATA_PATH, "rb");
+    if (f == NULL)
+    {
         printf(YELLOW BOLD "[INFO] " RESET "No events found.\n");
         return;
     }
-    MatchedEvent *arr = (MatchedEvent *)calloc((size_t)total, sizeof(MatchedEvent));
-    if (!arr) {
-        printf(RED BOLD "[ERROR] " RESET "Out of memory.\n");
-        return;
-    }
 
-    int n = 0;
-    Event e;
-    for (int i = 0; i < total; i++)
-    {
-        if (loadEventAt(i, &e))
-        {
-            arr[n].event = e;
-            arr[n].studentRole = STAFF_MEMBER; /* placeholder */
-            n++;
-        }
-    }
-    if (n == 0) {
-        free(arr);
-        printf(YELLOW BOLD "[INFO] " RESET "No readable events.\n");
-        return;
-    }
-
-    if (n > 1) quicksortByDate(arr, 0, n - 1); // sorting events by start date in descending order
-
-    int L = firstIdxLE_ToDateDesc(arr, n, toDate);
-    int R = firstIdxLT_FromDateDesc(arr, n, fromDate);
-
-    printDivider("EVENTS IN DATE RANGE (BINARY SEARCH)");
+    printDivider("EVENTS IN DATE RANGE");
     printf("%s", line);
     printf(headerFmt, "ID", "Event Name", "Start", "End", "Location", "Staff", "Status");
     printf("%s", line);
-    
-    int count = 0;
-    for (int i = L; i < R; i++)
-    {
-        Event *ev = &arr[i].event;
-        if (filterStatus != -1 && (int)ev->status != filterStatus) continue;
 
-        const char *st = "Unknown";
-        const char *stColor = RESET;
-        if ((int)ev->status >= STATUS_UPCOMING && (int)ev->status <= STATUS_FINISHED) {
-            st = statusNames[ev->status];
-            stColor = statusColors[ev->status];
-        }
-        printf(rowFmt, ev->eventId, ev->name, ev->startDate, ev->endDate, ev->location, ev->staffCount, stColor, st);
-        count++;
+    Event *chunk = (Event *)malloc(sizeof(Event) * CHUNK_SIZE);
+    if (chunk == NULL)
+    {
+        fclose(f);
+        printf(RED BOLD "[ERROR] " RESET "Out of memory.\n");
+        return;
     }
+    int count = 0;
+    size_t eventsRead = 0;
+
+    while ((eventsRead = fread(chunk, sizeof(Event), CHUNK_SIZE, f)) > 0)
+    {
+        for (size_t i = 0; i < eventsRead; i++)
+        {
+            Event *ev = &chunk[i];
+            updateStatus(ev);
+
+            if (strcmp(ev->startDate, fromDate) < 0 || strcmp(ev->startDate, toDate) > 0)
+            {
+                continue;
+            }
+
+            if (filterStatus != -1 && (int)ev->status != filterStatus)
+            {
+                continue;
+            }
+
+            const char *st = "Unknown";
+            const char *stColor = RESET;
+            if ((int)ev->status >= STATUS_UPCOMING && (int)ev->status <= STATUS_FINISHED)
+            {
+                st = statusNames[ev->status];
+                stColor = statusColors[ev->status];
+            }
+
+            printf(rowFmt, ev->eventId, ev->name, ev->startDate, ev->endDate, ev->location, ev->staffCount, stColor, st);
+            count++;
+        }
+    }
+
+    fclose(f);
+    free(chunk);
 
     printf("%s", line);
     if (count == 0) printf(YELLOW BOLD "[INFO] " RESET "No events found with current filters.\n");
     else printf(CYAN BOLD "Total: %d event(s) found.\n" RESET, count);
-
-    free(arr);
 }
         
 
