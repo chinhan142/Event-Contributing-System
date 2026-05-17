@@ -361,8 +361,8 @@ void printEventResult()
     
     printf("\n");
     printDivider("SEARCH RESULTS");
-    printf(CYAN BOLD "%-12s | %-25s | %-12s | %-12s | %-20s | %s\n" RESET, "Event ID", "Name", "Status", "Date", "User Name", "Role");
-    printf(CYAN "=========================================================================================================\n" RESET);
+    printf(CYAN BOLD "%-12s | %-25s | %-12s | %-12s | %-11s\n" RESET, "Event ID", "Name", "Status", "Date", "Staff Count");
+    printf(CYAN "========================================================================================\n" RESET);
     
     if (loadEventWithFile(f, index, &temp))
     {
@@ -376,44 +376,15 @@ void printEventResult()
             strcpy(statusStr, "Ongoing");
             break;
         case STATUS_FINISHED:
-            strcpy(statusStr, "Completed");
+            strcpy(statusStr, "Finished");
             break;
         default:
             strcpy(statusStr, "Unknown");
             break;
         }
-        User currentUser;
-        char userName[50] = "Unknown";
-        char userRole[30] = "Unknown";
-
-        // Avoid out-of-bounds access when the event has no assigned staff.
-        if (temp.staffCount > 0)
-        {
-            int foundUser = findUserById(temp.staffList[0].studentId, &currentUser);
-            if (foundUser)
-            {
-                strcpy(userName, currentUser.studentName);
-            }
-
-            switch (temp.staffList[0].role)
-            {
-            case STAFF_LEADER:
-                strcpy(userRole, "Leader");
-                break;
-            case STAFF_MEMBER:
-                strcpy(userRole, "Member");
-                break;
-            case STAFF_SUPPORT:
-                strcpy(userRole, "Support");
-                break;
-            default:
-                strcpy(userRole, "Unknown");
-                break;
-            }
-        }
-        printf("%-12s | %-25s | %-12s | %-12s | %-20s | %s\n", 
-               temp.eventId, temp.name, statusStr, temp.startDate, userName, userRole);
-               printf("=========================================================================================================\n");
+        printf("%-12s | %-25s | %-12s | %-12s | %-11d\n",
+               temp.eventId, temp.name, statusStr, temp.startDate, temp.staffCount);
+        printf("========================================================================================\n");
     }
     fclose(f);
 }
@@ -904,6 +875,7 @@ void printEventByName()
 
     while (fread(&ev, sizeof(Event), 1, f) == 1)
     {
+        updateStatus(&ev);
         char evNameUpper[NAME_LENGTH];
         strcpy(evNameUpper, ev.name);
         toUpperStr(evNameUpper, evNameUpper);
