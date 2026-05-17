@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "event.h"
-#include "ExtendMenu.h"
+#include "menuSearch.h"
 #include "utils.h"
 #include "paths.h"
 #include <string.h>
