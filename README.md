@@ -172,30 +172,6 @@ The system provides two access levels:
   - View event details
   - Limited report access
 
-### Account Registration
-
-**New club members can register their own account:**
-
-When you start the application, you will see the login menu with three options:
-
-1. Select **Option 2: Register**
-2. Enter your **Student ID** in the format `SExxxxxx` (where x is a digit, e.g., `SE203237`)
-3. Enter your **Full Name**
-4. Enter your **Email Address**
-5. Create a **password** for your account
-6. Confirm your password
-7. Your account and user profile will be automatically saved and ready to use
-
-**Registration Requirements:**
-- ✅ Student ID must follow the format: `SExxxxxx` (SE + 6 digits)
-- ✅ Full Name required
-- ✅ Email address required
-- ✅ Password must be confirmed
-- ✅ Each Student ID can only be registered once
-- ✅ New accounts are created with **Member (Staff)** role by default
-- ✅ User profile is automatically created for event assignment
-- ✅ All registration data is automatically saved to `accounts.dat` and `users.dat`
-
 ### Default Login Credentials
 
 When you run the application for the first time, the system initializes with pre-configured accounts. Use the following credentials to log in:
@@ -216,10 +192,9 @@ When you run the application for the first time, the system initializes with pre
 **How to Log In:**
 
 1. Start the application: `bash build.sh`
-2. At the login menu, select **Option 1: Login**
-3. Enter your username (Student ID or `admin`)
-4. Enter your password
-5. The system will verify your credentials and grant access based on your role
+2. At the login prompt, enter your username (e.g., `admin`)
+3. Enter your password (e.g., `admin`)
+4. The system will verify your credentials and grant access based on your role
 
 ### Default Data
 
