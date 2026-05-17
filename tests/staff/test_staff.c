@@ -1,6 +1,6 @@
-#include "../init.h"
-#include "../staff.h"
-#include "../user.h"
+#include "../../include/init.h"
+#include "../../include/staff.h"
+#include "../../include/user.h"
 #include <stdio.h>
 #include <string.h>
 

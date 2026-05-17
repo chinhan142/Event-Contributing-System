@@ -1,14 +1,14 @@
-#include "../../event.h"
-#include "../../fileio.h"
+#include "../../include/event.h"
+#include "../../include/fileio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "../../paths.h"
+#include "../../include/paths.h"
 
 #define FILE_PATH EVENT_1M_DATA_PATH
 
-void test_search_performance_1m() {
+int test_search_performance_1m() {
     const char *targetId = "EV1000000";
     printf("[PERF TEST] Searching for %s in 1,000,000 events...\n", targetId);
 
@@ -17,7 +17,7 @@ void test_search_performance_1m() {
     FILE *f = fopen(FILE_PATH, "rb");
     if (!f) {
         printf("[ERROR] Could not open %s. Please run generate_1mevents first.\n", FILE_PATH);
-        return;
+        return 1;
     }
 
     Event temp;
@@ -39,6 +39,7 @@ void test_search_performance_1m() {
         printf("PASSED: Found at index %d\n", index);
     } else {
         printf("FAILED: Event %s not found in %s.\n", targetId, FILE_PATH);
+        return 2;
     }
 
     printf("Search Time: %.4f seconds\n", time_taken);
@@ -48,9 +49,10 @@ void test_search_performance_1m() {
     } else {
         printf("[RESULT] Performance is ACCEPTABLE.\n");
     }
+
+    return 0;
 }
 
 int main() {
-    test_search_performance_1m();
-    return 0;
+    return test_search_performance_1m();
 }
