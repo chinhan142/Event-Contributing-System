@@ -41,4 +41,8 @@ void changeOwnPassword(Account *acc);
 void resetMemberPassword();
 int logoutMain();
 
+// Registration functions
+int validateStudentId(const char *id);
+void registerAccount(void);
+
 #endif

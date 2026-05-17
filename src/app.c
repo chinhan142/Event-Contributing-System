@@ -30,7 +30,39 @@ int runApp(void)
     
     while (!loginSession)
     {
-        printf(YELLOW "\n[ LOGIN REQUIRED ]\n" RESET);
+        printf(YELLOW "\n[ LOGIN MENU ]\n" RESET);
+        printf(BOLD "1. Login\n" RESET);
+        printf(BOLD "2. Register\n" RESET);
+        printf(BOLD "3. Exit\n" RESET);
+        printf(BOLD "Choose an option (1-3): " RESET);
+        
+        int menuChoice;
+        scanf("%d", &menuChoice);
+        getchar(); // consume newline
+        
+        if (menuChoice == 2)
+        {
+            clearScreen();
+            registerAccount();
+            pressEnterToContinue();
+            clearScreen();
+            printAppBanner();
+            continue;
+        }
+        else if (menuChoice == 3)
+        {
+            printf(YELLOW BOLD "\nThank you for using F-Code Event Staff Management System!\n" RESET);
+            return 0;
+        }
+        else if (menuChoice != 1)
+        {
+            printf(RED BOLD "[ERROR] " RESET "Invalid option! Please try again.\n");
+            pressEnterToContinue();
+            clearScreen();
+            printAppBanner();
+            continue;
+        }
+        
         printf(BOLD "Username : " RESET);
         inputString(studentId, sizeof(studentId));
 
