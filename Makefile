@@ -1,11 +1,22 @@
 CC = gcc
-TARGET = main
+CFLAGS = -Wall -Iinclude
+SRC_DIR = src
+BIN_DIR = bin
+TARGET = $(BIN_DIR)/main.exe
 
-all:
-	$(CC) *.c -o $(TARGET) -Wall
+# Lấy tất cả file .c trong src/
+SRCS = main.c $(wildcard $(SRC_DIR)/*.c)
+
+all: $(TARGET)
+
+$(TARGET): $(SRCS)
+	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+	$(CC) $(SRCS) -o $(TARGET) $(CFLAGS)
 
 clean:
-	rm -f $(TARGET).exe
+	@if exist $(BIN_DIR) rmdir /s /q $(BIN_DIR)
 
-run:
-	make && ./$(TARGET)
+run: all
+	./$(TARGET)
+
+.PHONY: all clean run

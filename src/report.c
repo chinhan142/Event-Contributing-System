@@ -179,6 +179,7 @@ int exportAllEvents()
     {
         if (loadEventAt(i, &eventList[loadedCount]))
         {
+            if (eventList[loadedCount].isDeleted == 1) continue;
             loadedCount++;
         }
     }

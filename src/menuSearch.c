@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "event.h"
-#include "ExtendMenu.h"
+#include "menuSearch.h"
 #include "utils.h"
 #include "paths.h"
 #include <string.h>
@@ -108,6 +108,7 @@ void  displayStaffCountPerEvent(){
     printDivider("STAFF COUNT PER EVENT");
     int i = 1;
     while(fread(&e, sizeof(Event), 1, f)){
+        if (e.isDeleted == 1) continue;
         printf(GREEN "  %2d." RESET " %-30s : " CYAN BOLD "%d" RESET " %s\n", i, e.name, e.staffCount, e.staffCount > 1 ? "staffs" : "staff");
         i++;
     }
@@ -207,7 +208,7 @@ void getInactiveStaffInSemester(){
             // if(stoi(startDate,0,3) == 2026){
             //     printf("%ld %ld",checkSemester(now), checkSemester(toTimestamp(&(list[i].event))));
             // }
-            if(currentYear == stoi(startDate,0,3) && list[i].event.status != STATUS_UPCOMING){
+            if(currentYear == stoi(startDate,0,3)){
                 if(checkSemester(now) == checkSemester(toTimestamp(&(list[i].event)))){
                     result[index].isActiveInThisSemester = 1;
                 }

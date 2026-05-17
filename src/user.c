@@ -302,7 +302,6 @@ void viewProfile(const Account *acc){
 
     if (userFound == 0){
         printf(RED BOLD "[ERROR] " RESET "Cannot find user profile.\n");
-        pressEnterToContinue();
         return;
     }
 
@@ -353,6 +352,10 @@ MatchedEvent* getCurrentEventsForUser(const Account *acc, int *count)
             cleanUserEventData(&eventChunk[i]);
             updateStatus(&eventChunk[i]);
             sortStaffList(&eventChunk[i]);
+            if (eventChunk[i].isDeleted == 1)
+            {
+                continue;
+            }
             if (findStaffInEvent(&eventChunk[i], acc->studentId, &role) && eventChunk[i].status == STATUS_ONGOING)
             {
                 if (foundCount >= capacity)
@@ -466,14 +469,13 @@ void currentEventsMenu(const Account *acc) {
         fgets(choice, sizeof(choice), stdin);
         choice[strcspn(choice, "\r\n")] = '\0'; // Remove newline
 
-        if (strcmp(choice, "1") == 0) {
+        if (strcmp(choice, "1") == 0) { //compare the user input to determine which option
             if (acc == NULL) {
                 printf(RED BOLD "[ERROR] " RESET "Cannot find event details.\n");
                 pressEnterToContinue();
                 continue;
             }
             viewUserEventDetails(acc, NULL);
-            pressEnterToContinue();
         } else if (strcmp(choice, "2") == 0) {
             if (events == NULL || count == 0) {
                 printf(YELLOW BOLD "[INFO] " RESET "No events available to sort.\n");
@@ -660,3 +662,82 @@ void userEventDetails(const Account *acc, const char *eventId)
 
     fclose(f);
 }
+
+void recalculateUserEventCounts()
+{
+    // 1. Read all users from USER_DATA_PATH
+    FILE *uf = fopen(USER_DATA_PATH, "r+b");
+    if (uf == NULL)
+    {
+        return; // No users to update
+    }
+
+    // Determine how many users there are
+    fseeko64(uf, 0, SEEK_END);
+    long long uSize = ftello64(uf);
+    int numUsers = uSize / sizeof(User);
+    if (numUsers <= 0)
+    {
+        fclose(uf);
+        return;
+    }
+
+    User *users = (User *)malloc(numUsers * sizeof(User));
+    if (users == NULL)
+    {
+        fclose(uf);
+        return;
+    }
+
+    fseeko64(uf, 0, SEEK_SET);
+    fread(users, sizeof(User), numUsers, uf);
+
+    // Initialize all eventCount to 0
+    for (int i = 0; i < numUsers; i++)
+    {
+        users[i].eventCount = 0;
+    }
+
+    // 2. Read all events from EVENT_DATA_PATH
+    FILE *ef = fopen(EVENT_DATA_PATH, "rb");
+    if (ef != NULL)
+    {
+        Event tempEvent;
+        while (fread(&tempEvent, sizeof(Event), 1, ef))
+        {
+            if (tempEvent.isDeleted == 1)
+            {
+                continue; // Skip soft-deleted events
+            }
+
+            // Update status dynamically based on current time
+            updateStatus(&tempEvent);
+
+            // Only count ONGOING or FINISHED events
+            if (tempEvent.status != STATUS_UPCOMING)
+            {
+                for (int s = 0; s < tempEvent.staffCount; s++)
+                {
+                    // Find this staff in users array
+                    for (int u = 0; u < numUsers; u++)
+                    {
+                        if (strcmp(users[u].studentId, tempEvent.staffList[s].studentId) == 0)
+                        {
+                            users[u].eventCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        fclose(ef);
+    }
+
+    // 3. Write back all users to USER_DATA_PATH
+    fseeko64(uf, 0, SEEK_SET);
+    fwrite(users, sizeof(User), numUsers, uf);
+    fclose(uf);
+
+    free(users);
+}
+
