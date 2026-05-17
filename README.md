@@ -172,6 +172,30 @@ The system provides two access levels:
   - View event details
   - Limited report access
 
+### Default Login Credentials
+
+When you run the application for the first time, the system initializes with pre-configured accounts. Use the following credentials to log in:
+
+#### Admin Account (BCN)
+| Credential | Value |
+|------------|-------|
+| **Username** | `admin` |
+| **Password** | `admin` |
+| **Role** | Board of Management |
+
+#### Staff Accounts (Member)
+| Username | Password | Role |
+|----------|----------|------|
+| `SE111111` | `SE111111` | Staff Member |
+| `SE203237` | `SE203237` | Staff Member |
+
+**How to Log In:**
+
+1. Start the application: `bash build.sh`
+2. At the login prompt, enter your username (e.g., `admin`)
+3. Enter your password (e.g., `admin`)
+4. The system will verify your credentials and grant access based on your role
+
 ### Default Data
 
 - Initial user accounts and events are loaded from `/data/accounts.dat` and `/data/events.dat`
