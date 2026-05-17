@@ -5,7 +5,7 @@ BIN_DIR = bin
 TARGET = $(BIN_DIR)/main.exe
 
 # Lấy tất cả file .c trong src/
-SRCS = $(wildcard $(SRC_DIR)/*.c)
+SRCS = main.c $(wildcard $(SRC_DIR)/*.c)
 
 all: $(TARGET)
 

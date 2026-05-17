@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "event.h"
-#include "ExtendMenu.h"
+#include "menuSearch.h"
 #include "utils.h"
 #include "paths.h"
 #include <string.h>
@@ -108,6 +108,7 @@ void  displayStaffCountPerEvent(){
     printDivider("STAFF COUNT PER EVENT");
     int i = 1;
     while(fread(&e, sizeof(Event), 1, f)){
+        if (e.isDeleted == 1) continue;
         printf(GREEN "  %2d." RESET " %-30s : " CYAN BOLD "%d" RESET " %s\n", i, e.name, e.staffCount, e.staffCount > 1 ? "staffs" : "staff");
         i++;
     }
