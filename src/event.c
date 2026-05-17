@@ -186,6 +186,7 @@ void createEvent()
     inputString(newEvent.location, sizeof(newEvent.location));
 
     newEvent.staffCount = 0;
+    newEvent.isDeleted = 0;
     updateStatus(&newEvent);
 
     int index = getNextEventIndex();
@@ -275,6 +276,7 @@ void displayAllEvent(int filterStatus)
     {
         if (loadEventAt(i, &event))
         {
+            if (event.isDeleted == 1) continue;
             if (filterStatus == -1 || (int)event.status == filterStatus)
             {
                 printf(rowFmt,
@@ -783,6 +785,11 @@ void searchEventsByStartDateRange()
             Event *ev = &chunk[i];
             updateStatus(ev);
 
+            if (ev->isDeleted == 1)
+            {
+                continue;
+            }
+
             if (strcmp(ev->startDate, fromDate) < 0 || strcmp(ev->startDate, toDate) > 0)
             {
                 continue;
@@ -851,6 +858,7 @@ void printEventByName()
     while (fread(&ev, sizeof(Event), 1, f) == 1)
     {
         updateStatus(&ev);
+        if (ev.isDeleted == 1) continue;
         char evNameUpper[NAME_LENGTH];
         strcpy(evNameUpper, ev.name);
         toUpperStr(evNameUpper, evNameUpper);

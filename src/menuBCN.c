@@ -147,6 +147,7 @@ void displayEventListForSelection()
         Event event;
         if (loadEventAt(i, &event))
         {
+            if (event.isDeleted == 1) continue;
             // Truncate long strings for display
             char name[32] = {0};
             char location[27] = {0};
