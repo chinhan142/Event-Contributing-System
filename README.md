@@ -1,57 +1,300 @@
 # F-Code Event Staff Management System
 
+<div align="center">
+
+**A Terminal-Based Event & Staff Management System for F-Code Club**
+
+[![Language](https://img.shields.io/badge/Language-C-blue.svg?style=flat-square)](https://en.cppreference.com/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-brightgreen.svg?style=flat-square)](https://gcc.gnu.org/)
+
+</div>
+
+---
+
+## 📋 Overview
+
 The **F-Code Event Staff Management System** is a terminal-based application designed to streamline the management of club events and staff assignments. Developed for the **F-Code Academic Club** at **FPT University HCMC**, this system replaces manual tracking with a robust, file-based digital solution.
+
+**Key Highlights:**
+- 🔐 **Role-based Access Control** - Admin (BCN) and Member (Staff) accounts
+- 📊 **Event Management** - Create, edit, and track club events with detailed staff assignments
+- 👥 **Staff Management** - Manage staff records and assignments with up to 1M events support
+- 💾 **Persistent Storage** - Binary file-based data persistence with automatic data loading
+- 📈 **Reporting** - Generate and export event statistics to text files
+- 🎨 **Colored UI** - Enhanced terminal interface with ANSI color codes
 
 ---
 
 ## 👥 Project Team: Glory Man United
-* **Mentor:** Vo Dang Khoa
-* **Team Members:**
-    * **Bui Pham Chi Nhan** (SE203237) - Team Leader
-    * **Tran Le Anh Quan** (SE200441)
-    * **Vo Le Kien Huy** (SE210556)
-    * **Tran Cao Thanh** (SE210041)
-    * **Nguyen Tan Loi** (SE211059)
+
+**Mentor:** Vo Dang Khoa
+
+**Team Members:**
+| Name | Student ID | Role |
+|------|-----------|------|
+| Bui Pham Chi Nhan | SE203237 | Team Leader |
+| Tran Le Anh Quan | SE200441 | Developer |
+| Vo Le Kien Huy | SE210556 | Developer |
+| Tran Cao Thanh | SE210041 | Developer |
+| Nguyen Tan Loi | SE211059 | Developer |
 
 ---
 
 ## 🛠 Technical Specifications
-* **Programming Language:** C.
-* **Data Storage:** Persistent storage using binary files (`.dat`) located in the `/data` folder.
-* **Core Logic:** Implementation of nested structures, file I/O operations, and custom sorting algorithms.
-* **Constraints:**
-    * Support for up to 1,000,000 events.
-    * Maximum of 30 staff members per event.
-    * Role-based access control (Admin/BCN vs. Member/Staff).
+
+| Aspect | Details |
+|--------|---------|
+| **Language** | C (ISO C standard) |
+| **Build System** | GCC Compiler + Makefile |
+| **Data Storage** | Binary files (`.dat`) in `/data` folder |
+| **Architecture** | Modular design with header/source separation |
+| **Max Events** | 1,000,000 events |
+| **Max Staff/Event** | 30 staff members per event |
+| **Access Control** | Role-based (Admin/BCN, Member/Staff) |
 
 ---
 
 ## 📂 Project Structure
-Based on the current project directory:
-* `main.c`: Entry point and main menu navigation logic.
-* `auth.h/.c`: Handles authentication, login sessions, and password security.
-* `event.h/.c`: Core logic for creating and managing event data.
-* `staff.h/.c`: Management of individual staff records and assignments within events.
-* `menuBCN.h/.c`: Interface and menu options specifically for the Board of Management.
-* `menuStaff.h/.c`: Interface and menu options for regular club members.
-* `fileio.h/.c`: Handlers for reading and writing data to external files.
-* `user.h/.c`: Logic related to user account profiles and details.
-* `report.h/.c`: Statistics and report generation features (exporting to .txt).
-* `init.h/.c`: System initialization and data loading protocols.
-* `utils.h/.c`: Utility functions for input validation and date formatting.
-* `colors.h`: ANSI escape codes for the console UI color scheme.
-* `data/`: Directory containing system data files like `events.dat` and `accounts.dat`.
+
+```
+EventSystem/
+├── main.c                    # Application entry point
+├── Makefile                  # Build configuration (Windows)
+├── build.sh                  # Build script (Linux/macOS)
+├── colors.h                  # ANSI color codes for UI
+├── init.c/h                  # System initialization
+├── paths.h                   # File path constants
+│
+├── include/                  # Header files
+│   ├── app.h                # Main application interface
+│   ├── auth.h               # Authentication & login
+│   ├── event.h              # Event data structures & logic
+│   ├── staff.h              # Staff management
+│   ├── user.h               # User account profiles
+│   ├── menuBCN.h            # Board management menus
+│   ├── menuSearch.h         # Search functionality
+│   ├── menuStaff.h          # Staff member menus
+│   ├── fileio.h             # File I/O operations
+│   ├── report.h             # Report generation
+│   ├── utils.h              # Utility functions
+│   └── colors.h             # UI colors
+│
+├── src/                      # Source files
+│   ├── app.c                # Main application logic
+│   ├── auth.c               # Authentication implementation
+│   ├── event.c              # Event management
+│   ├── staff.c              # Staff operations
+│   ├── user.c               # User profiles
+│   ├── menuBCN.c            # Admin menu interface
+│   ├── menuSearch.c         # Search implementation
+│   ├── menuStaff.c          # Member menu interface
+│   ├── fileio.c             # File reading/writing
+│   ├── report.c             # Report generation
+│   ├── utils.c              # Utility implementations
+│   └── init.c               # System initialization
+│
+├── data/                     # Data storage
+│   ├── exports/             # Generated reports
+│   ├── events.dat           # Event database
+│   └── accounts.dat         # User accounts
+│
+└── tests/                    # Test files
+    ├── 1m_event_tests/      # Large-scale performance tests
+    └── staff/               # Staff module tests
+```
+
+### Module Descriptions
+
+| Module | Purpose |
+|--------|---------|
+| **auth** | User login, session management, password handling |
+| **event** | Event creation, editing, deletion, and core logic |
+| **staff** | Staff records, role assignment, availability tracking |
+| **user** | User account profiles and permissions |
+| **menuBCN** | Administrative menu for board management |
+| **menuStaff** | User menu for regular club members |
+| **fileio** | Binary file read/write operations, data serialization |
+| **report** | Event statistics, export to text format |
+| **utils** | Input validation, string processing, date formatting |
+| **init** | Application startup, data initialization |
 
 ---
 
-## 🚀 Installation & Execution
-This project includes a dedicated build script to automate compilation using GCC.
+## 🚀 Getting Started
 
 ### Prerequisites
-* GCC Compiler.
-* Bash environment (Linux, macOS, or Git Bash for Windows).
 
-### How to Run
-Open your terminal in the project root directory and execute the following command:
+Ensure you have the following installed:
+
+- **GCC Compiler** (version 7.0 or higher)
+  - [Windows (MinGW)](https://www.mingw-w64.org/)
+  - Linux: `sudo apt-get install build-essential`
+  - macOS: `xcode-select --install`
+
+- **Bash** (or equivalent shell)
+  - Windows: Git Bash, WSL, or use Makefile
+  - Linux/macOS: Built-in
+
+### Installation Steps
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd EventSystem
+   ```
+
+2. **Run the build script:**
+   ```bash
+   bash build.sh
+   ```
+
+The script will automatically compile and launch the application.
+
+---
+
+## 💻 Usage
+
+The application starts automatically after successful compilation. Follow the on-screen menus to navigate.
+
+### User Accounts
+
+The system provides two access levels:
+
+- **Admin (BCN)** - Board of Management
+  - Full event creation and management
+  - Staff assignment and approval
+  - Report generation
+  - User account management
+
+- **Member (Staff)** - Regular Club Member
+  - View assigned events
+  - Update availability status
+  - View event details
+  - Limited report access
+
+### Default Data
+
+- Initial user accounts and events are loaded from `/data/accounts.dat` and `/data/events.dat`
+- If files don't exist, the system initializes default data
+- All changes are automatically saved to binary files
+
+### Generated Reports
+
+- Event statistics and summaries are exported to `/data/exports/` directory
+- Export filenames include timestamps: `events_all_YYYYMMDD_HHMMSS.txt`
+
+---
+
+## 🧪 Testing
+
+### Unit Tests
+
+Located in the `tests/` directory:
+
 ```bash
-bash build.sh
+# Test staff module
+cd tests/staff
+bash build_staff.sh
+
+# Test with large datasets (1M events)
+cd tests/1m_event_tests
+gcc generate_1mevents.c -Iinclude -o generate.exe
+./generate.exe
+```
+
+### Performance Benchmarks
+
+Testcase includes 1M event benchmark:
+
+```bash
+cd testcase/1m_event_tests
+gcc benchmark_menu_funcs_1m.c -o benchmark.exe -Iinclude
+./benchmark.exe
+```
+
+---
+
+## 📋 System Features
+
+### Event Management
+- ✅ Create new events with details (name, date, location, capacity)
+- ✅ Edit event information
+- ✅ Delete events
+- ✅ Search events by criteria
+- ✅ Sort events by multiple fields
+
+### Staff Management
+- ✅ Add/remove staff members
+- ✅ Assign staff to events
+- ✅ Track attendance and availability
+- ✅ Update staff roles
+
+### User Management
+- ✅ User authentication with password
+- ✅ Role-based access control
+- ✅ Account creation and deletion
+- ✅ Session management
+
+### Reporting
+- ✅ Generate event statistics
+- ✅ Export reports to text format
+- ✅ Filter reports by date range
+- ✅ Attendance tracking reports
+
+### Data Management
+- ✅ Persistent binary file storage
+- ✅ Automatic data backup on modification
+- ✅ Data integrity checks
+- ✅ File corruption recovery
+
+---
+
+## 🔧 Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| **GCC not found** | Install MinGW (Windows) or build-essential (Linux) |
+| **Permission denied** | Use `chmod +x build.sh` on Linux/macOS |
+| **Build fails** | Ensure all include files are in the `include/` folder |
+| **Data files missing** | Delete `data/` folder and restart to reinitialize |
+| **Bash not found (Windows)** | Use Git Bash, WSL, or run Makefile instead |
+
+---
+
+## 📝 Coding Standards
+
+- **Style Guide:** Follow Linux kernel coding style
+- **Comments:** English comments for public interfaces
+- **Functions:** Descriptive names with lowercase and underscores
+- **Variables:** Clear, self-documenting names
+- **Error Handling:** Return error codes; check before use
+
+---
+
+## 🤝 Contributing
+
+When contributing to this project:
+
+1. Follow the existing code style
+2. Add unit tests for new features
+3. Update documentation for changes
+4. Use descriptive commit messages
+5. Test on both Windows and Linux before submitting
+
+---
+
+## 📄 License
+
+This project is developed for academic purposes at FPT University.
+
+---
+
+## 📧 Contact
+
+For questions or support, contact the team leader:
+- **Bui Pham Chi Nhan** (SE203237)
+
+---
+
+**Last Updated:** May 2026  
+**Project Status:** Active Development
