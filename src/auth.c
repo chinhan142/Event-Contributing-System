@@ -175,3 +175,127 @@ int logoutMain()
     }
     return 0;
 }
+
+// Validate student ID format: must be SE followed by 6 digits (SExxxxxx)
+int validateStudentId(const char *id)
+{
+    if (strlen(id) != 8)
+        return 0;
+    
+    if (id[0] != 'S' || id[1] != 'E')
+        return 0;
+    
+    for (int i = 2; i < 8; i++)
+    {
+        if (id[i] < '0' || id[i] > '9')
+            return 0;
+    }
+    
+    return 1;
+}
+
+// Register a new account for club members
+void registerAccount(void)
+{
+    char studentId[ID_LENGTH];
+    char password[PASSWORD_LENGTH];
+    char confirmPass[PASSWORD_LENGTH];
+    char fullName[NAME_LENGTH];
+    char email[EMAIL_LENGTH];
+    Account newAccount;
+    User newUser;
+    
+    printDivider("REGISTER NEW ACCOUNT");
+    
+    // Get student ID
+    printf(BOLD "Enter Student ID (SExxxxxx format): " RESET);
+    inputString(studentId, sizeof(studentId));
+    
+    // Validate format
+    if (!validateStudentId(studentId))
+    {
+        printf(RED BOLD "[ERROR] " RESET "Invalid format! Student ID must be SExxxxxx (e.g., SE203237)\n");
+        return;
+    }
+    
+    // Check if account already exists
+    Account tempAcc;
+    if (findAccountById(studentId, &tempAcc))
+    {
+        printf(RED BOLD "[ERROR] " RESET "Account with Student ID %s already exists!\n", studentId);
+        return;
+    }
+    
+    // Get full name
+    printf(BOLD "Enter Full Name: " RESET);
+    inputString(fullName, sizeof(fullName));
+    
+    // Get email
+    printf(BOLD "Enter Email: " RESET);
+    inputString(email, sizeof(email));
+    
+    // Get password
+    printf(BOLD "Enter password: " RESET);
+    inputString(password, sizeof(password));
+    
+    printf(BOLD "Confirm password: " RESET);
+    inputString(confirmPass, sizeof(confirmPass));
+    
+    if (strcmp(password, confirmPass) != 0)
+    {
+        printf(RED BOLD "[ERROR] " RESET "Passwords do not match!\n");
+        return;
+    }
+    
+    // Create new account with member role
+    strcpy(newAccount.studentId, studentId);
+    strcpy(newAccount.password, password);
+    newAccount.role = ROLE_MEMBER;
+    newAccount.isLocked = ACCOUNT_UNLOCKED;
+    newAccount.failCount = 0;
+    
+    // Append to accounts.dat file
+    FILE *f = fopen(ACCOUNT_DATA_PATH, "ab");
+    if (f == NULL)
+    {
+        printf(RED BOLD "[ERROR] " RESET "Cannot open accounts.dat file\n");
+        return;
+    }
+    
+    if (fwrite(&newAccount, sizeof(Account), 1, f) != 1)
+    {
+        printf(RED BOLD "[ERROR] " RESET "Failed to save account\n");
+        fclose(f);
+        return;
+    }
+    
+    fclose(f);
+    
+    // Create user profile with initial values
+    strcpy(newUser.studentId, studentId);
+    strcpy(newUser.studentName, fullName);
+    strcpy(newUser.email, email);
+    strcpy(newUser.phoneNumber, "");
+    strcpy(newUser.specialize, "");
+    newUser.eventCount = 0;
+    newUser.isActiveInThisSemester = 1;  // Active by default
+    
+    // Append to users.dat file
+    FILE *uf = fopen(USER_DATA_PATH, "ab");
+    if (uf == NULL)
+    {
+        printf(RED BOLD "[ERROR] " RESET "Cannot open users.dat file\n");
+        return;
+    }
+    
+    if (fwrite(&newUser, sizeof(User), 1, uf) != 1)
+    {
+        printf(RED BOLD "[ERROR] " RESET "Failed to save user profile\n");
+        fclose(uf);
+        return;
+    }
+    
+    fclose(uf);
+    printf(GREEN BOLD "[SUCCESS] " RESET "Account and user profile registered successfully!\n");
+    printf(GREEN "You can now log in with your Student ID: %s\n" RESET, studentId);
+}

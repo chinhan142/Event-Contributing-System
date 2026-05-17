@@ -1,0 +1,53 @@
+========== EXPORTED EVENTS ==========
+Export Time: 2026-05-17 21:22:54
+Total Events: 6
+
+------- EVENT -------
+Event Name: Workshop Lap trinh C
+Location: Hall A
+Dates: 2024-05-01 - 2024-05-02
+
+Staff:
+  SE203237 - Role: Leader - Task: Leader Workshop
+
+------- EVENT -------
+Event Name: F-Code Teambuilding
+Location: Vung Tau
+Dates: 2024-04-15 - 2024-04-17
+
+Staff:
+  SE200441 - Role: Member - Task: Hau can
+
+------- EVENT -------
+Event Name: R.ODE Battle 2023
+Location: P.402
+Dates: 2023-12-20 - 2023-12-21
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: Test Demo
+Location: Hall A
+Dates: 2026-05-11 - 2026-05-18
+
+Staff:
+  SE211059 - Role: Member - Task: 
+
+------- EVENT -------
+Event Name: Test Demo 2
+Location: 
+Dates: 2026-02-16 - 2026-02-20
+
+Staff:
+  (No staff assigned)
+
+------- EVENT -------
+Event Name: Demo Test 32
+Location: 
+Dates: 2026-05-19 - 2026-05-31
+
+Staff:
+  SE211059 - Role: Member - Task: mid
+
+========== END OF EXPORT ==========
